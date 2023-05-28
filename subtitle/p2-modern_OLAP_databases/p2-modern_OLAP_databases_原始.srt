@@ -1,4287 +1,4267 @@
 ﻿1
-00:00:04,650 --> 00:00:07,560
-Hey, yo, yo, pack the chrome stuff by like mrs.
-
-2
-00:00:07,570 --> 00:00:09,200
-Jones, liverpool, mathematics.
-
-3
-00:00:09,210 --> 00:00:10,720
-We have the devil spoken stone, 
-
-4
-00:00:10,890 --> 00:00:11,960
-upward heads to bed, 
-
-5
-00:00:11,970 --> 00:00:14,360
-make shots and reference bed with the church guys. 
-
-6
 00:00:14,370 --> 00:00:16,120
 Sorry, for not be in pittsburgh, as I said,
 
-7
+2
 00:00:16,450 --> 00:00:17,880
 I had come out here to seattle. 
 
-8
+3
 00:00:18,040 --> 00:00:21,520
 I'm actually in front of the courthouse right now, 
 
-9
+4
 00:00:22,410 --> 00:00:25,200
 because smooth shoes, 
 
-10
+5
 00:00:25,210 --> 00:00:27,400
 boy three fingers and this guy has used the goose. 
 
-11
+6
 00:00:27,810 --> 00:00:31,560
 They got popped last year for passing bad checks. 
 
-12
+7
 00:00:31,570 --> 00:00:34,880
 And so they asked me to come in a as a character witness for them. 
 
-13
+8
 00:00:35,890 --> 00:00:38,080
 It's not looking good in there for them. 
 
-14
+9
 00:00:38,640 --> 00:00:39,790
 That's their problem, not mine.
 
-15
+10
 00:00:39,800 --> 00:00:43,070
 So I figured, let's come out here and do the class lecture.
 
-16
+11
 00:00:43,240 --> 00:00:44,310
 Let's talk about databases. 
 
-17
+12
 00:00:46,560 --> 00:00:48,430
 For today's class, we're going to be talking about.
 
-18
+13
 00:00:49,510 --> 00:00:55,820
 Sort of is that an overview of what with these sort of modern query engines
 
-19
+14
 00:00:55,830 --> 00:00:57,380
-or these modern lap database
+or these modern olap database
 
-20
+15
 00:00:57,390 --> 00:01:00,380
 systems look like at a high level, 
 
-21
+16
 00:01:00,880 --> 00:01:05,030
 that'll then set us up for how we progress through the various topics
 
-22
+17
 00:01:05,040 --> 00:01:06,750
 throughout the rest of the semester. 
 
-23
+18
 00:01:08,160 --> 00:01:10,510
 This is a high level outline of where we're going in this course. 
 
-24
+19
 00:01:10,520 --> 00:01:12,230
 And I didn't want to bring this up last class, 
 
-25
+20
 00:01:12,240 --> 00:01:16,720
 because I want to spend time talking about the sort of historical overview
 
-26
+21
 00:01:16,730 --> 00:01:18,840
 of the standard databases. 
 
-27
+22
 00:01:18,850 --> 00:01:22,740
 And so to understand why we're at the point where today we're focusing
 
-28
+23
 00:01:22,750 --> 00:01:24,220
 on the relational database systems, 
 
-29
+24
 00:01:24,710 --> 00:01:29,040
 but this is a high level architecture of the roadmap of how to build
 
-30
+25
 00:01:29,050 --> 00:01:32,680
-a modern o lab database system. 
+a modern olap database system. 
 
-31
+26
 00:01:33,850 --> 00:01:35,880
 We're going to first talk about storage. 
 
-32
+27
 00:01:36,220 --> 00:01:39,650
 Essentially, how do we actually going to represent data on disk?
 
-33
+28
 00:01:39,660 --> 00:01:40,650
 Compress it? 
 
-34
+29
 00:01:40,660 --> 00:01:46,760
 Maybe build some indexes that we can use for accelerating query execution. 
 
-35
+30
 00:01:47,610 --> 00:01:52,280
 And then we'll use all that storage ideas about how we want to store the datas. 
 
-36
+31
 00:01:52,520 --> 00:01:57,030
 Then spend most of time discussing how we actually want to execute queries
 
-37
+32
 00:01:57,040 --> 00:01:57,750
 on this data. 
 
-38
+33
 00:01:58,250 --> 00:02:00,800
 We'll talk about processing models how to schedule queries. 
 
-39
+34
 00:02:02,210 --> 00:02:03,480
 The task within them. 
 
-40
+35
 00:02:03,760 --> 00:02:06,380
 We'll spend a lot of time talking about how to do vector rise execution. 
 
-41
+36
 00:02:07,070 --> 00:02:12,710
 Taking advantage of cindy query compilation will be another major theme or method. 
 
-42
+37
 00:02:12,720 --> 00:02:13,950
 We can use to speed things up. 
 
-43
+38
 00:02:14,220 --> 00:02:16,970
 We'll spend a lot of time talking about different joint algorithms. 
 
-44
+39
 00:02:17,740 --> 00:02:20,250
 And something new that we'll discuss this year that I haven't discussed
 
-45
+40
 00:02:20,260 --> 00:02:22,160
 in previous years is materialized views. 
 
-46
+41
 00:02:22,170 --> 00:02:25,240
 And I have to make fully materialized views is actually something I know, 
 
-47
+42
 00:02:25,250 --> 00:02:27,480
 the least about in database systems. 
 
-48
+43
 00:02:27,490 --> 00:02:29,850
 So we'll spend some time on this. 
 
-49
+44
 00:02:29,860 --> 00:02:31,610
 And then we'll talk about query optimization. 
 
-50
+45
 00:02:31,620 --> 00:02:32,810
 How do you take a query plan? 
 
-51
+46
 00:02:32,820 --> 00:02:37,250
 Convert it into to single query, generate the query plan,
 
-52
+47
 00:02:38,490 --> 00:02:40,520
 how to design sort of modern network interfaces. 
 
-53
+48
 00:02:40,760 --> 00:02:42,760
 And then the rest of the semester after that, 
 
-54
+49
 00:02:43,140 --> 00:02:49,090
 will be doing an analysis and deep introspection into real systems
 
-55
+50
 00:02:49,100 --> 00:02:50,410
 like the snowflake system. 
 
-56
+51
 00:02:50,420 --> 00:02:52,060
 You guys read today's paper, 
 
-57
+52
 00:02:52,870 --> 00:02:58,100
 but also a big query spark and a bunch of other modern systems. 
 
-58
+53
 00:02:58,940 --> 00:03:03,890
 This this sort of layer diagram showing here is very similar to what we
 
-59
+54
 00:03:03,900 --> 00:03:05,210
 discussed in the intro class, 
 
-60
+55
 00:03:05,220 --> 00:03:07,730
 where it's essentially the system for going from the bottom up. 
 
-61
+56
 00:03:07,740 --> 00:03:10,780
 You're gonna build these different abstraction interfaces. 
 
-62
+57
 00:03:11,010 --> 00:03:13,380
 And they'll have, 
 
-63
+58
 00:03:14,250 --> 00:03:18,680
 you'll expose an api that we then integrate with into the layer above it. 
 
-64
+59
 00:03:18,690 --> 00:03:22,000
 And then to the nbn we end up with the client interface will be exposed
 
-65
+60
 00:03:22,010 --> 00:03:22,960
 to the application. 
 
-66
+61
 00:03:24,340 --> 00:03:27,340
 This going for the next three lectures for lectures or so, 
 
-67
+62
 00:03:27,350 --> 00:03:30,020
 we'll focus on the storage lab. 
 
-68
+63
 00:03:30,660 --> 00:03:34,970
 That'll then define how we actually want to when api will have exposed
 
-69
+64
 00:03:34,980 --> 00:03:36,250
 to us when we want to run queries. 
 
-70
+65
 00:03:38,790 --> 00:03:40,020
 Today's execution, as I said,
 
-71
+66
 00:03:40,030 --> 00:03:46,440
 this is a high level overview of what of what modern overlap systems look like. 
 
-72
+67
 00:03:47,630 --> 00:03:48,580
 So we're not going to go too deep. 
 
-73
+68
 00:03:48,590 --> 00:03:49,980
 And like, what are the algorithms you do?
 
-74
+69
 00:03:49,990 --> 00:03:51,900
 Fixing queries that also come later? 
 
-75
+70
 00:03:53,510 --> 00:03:56,100
 This class isn't necessarily about distributed databases, 
 
-76
+71
 00:03:56,110 --> 00:04:01,570
 because I want to spend time discussing what are the modern techniques
 
-77
+72
 00:04:01,580 --> 00:04:04,770
 of what you do on a single node to process data? 
 
-78
+73
 00:04:04,950 --> 00:04:09,790
 And then we'll layer on top of that the distributed architecture, 
 
-79
+74
 00:04:09,800 --> 00:04:12,980
 but it's good to understand a little bit of what these what it
 
-80
+75
 00:04:12,990 --> 00:04:15,510
 should be said would look like for a modern outlet system. 
 
-81
+76
 00:04:16,060 --> 00:04:19,050
 So understand the big fish were gone, 
 
-82
+77
 00:04:19,060 --> 00:04:22,490
 but it really has been the said before and many other classes. 
 
-83
+78
 00:04:23,000 --> 00:04:26,550
 We need to get the single node system to be high performance
 
-84
+79
 00:04:26,560 --> 00:04:28,030
 and super optimized first. 
 
-85
+80
 00:04:28,330 --> 00:04:29,760
 Before we make it distributed, 
 
-86
+81
 00:04:30,090 --> 00:04:32,040
 just like making a database distributed, 
 
-87
+82
 00:04:32,050 --> 00:04:34,920
 isn't this magic wand or magic solution? 
 
-88
+83
 00:04:35,080 --> 00:04:36,910
-That solves all the scalable skillet problems? 
+That solves all the scalable problems? 
 
-89
+84
 00:04:36,920 --> 00:04:39,990
 Like if you have a crappy single node system making distributed as means
 
-90
+85
 00:04:40,000 --> 00:04:41,550
 you have a multi node crappy system. 
 
-91
+86
 00:04:42,550 --> 00:04:43,660
 We need to kneel that down first. 
 
-92
+87
 00:04:43,670 --> 00:04:45,610
 And I want to spend a little time talking at the end
 
-93
+88
 00:04:45,620 --> 00:04:51,450
 about this bigger trend about the the commodization of the components
 
-94
+89
 00:04:51,940 --> 00:04:53,810
-of these o lab systems. 
+of these olap systems. 
 
-95
+90
 00:04:53,820 --> 00:04:57,930
 So we're mostly talking about systems like snowflake and spark, 
 
-96
+91
 00:04:58,870 --> 00:05:03,180
 where they're these monolithic systems that are all where the vendor
 
-97
+92
 00:05:03,190 --> 00:05:05,460
 has implemented all the bits and pieces of them. 
 
-98
+93
 00:05:05,700 --> 00:05:09,110
 But there is a trend now where people are trying to build sort
 
-99
+94
 00:05:09,120 --> 00:05:13,070
 of stand alone pieces of actually the layer diagram I showed before. 
 
-100
+95
 00:05:13,080 --> 00:05:14,390
 And in theory, 
 
-101
+96
 00:05:14,400 --> 00:05:16,790
 one could then tie these put these things together. 
 
-102
+97
 00:05:17,220 --> 00:05:19,450
 At later point, I hope that new whole lab system,
 
-103
+98
 00:05:19,460 --> 00:05:21,430
 but we're not entirely there yet, 
 
-104
+99
 00:05:21,440 --> 00:05:22,790
 but i'll talk about some early, 
 
-105
+100
 00:05:23,600 --> 00:05:26,150
 some early work in this space. 
 
-106
+101
 00:05:31,020 --> 00:05:35,750
 The first thing I understand what does distributed query what the execution
 
-107
+102
 00:05:35,760 --> 00:05:37,950
 distributed query look like in a
 
-108
+103
 00:05:39,270 --> 00:05:41,860
 what does an oled query look like in a distributed database system? 
 
-109
+104
 00:05:42,310 --> 00:05:43,830
 And I will say at a high level, 
 
-110
+105
 00:05:43,840 --> 00:05:46,350
 it's essentially the same as you would have in a single system. 
 
-111
+106
 00:05:47,000 --> 00:05:47,160
 Right? 
 
-112
+107
 00:05:47,170 --> 00:05:51,100
 Sql query shows up the you run through the parser, 
 
-113
+108
 00:05:51,110 --> 00:05:55,060
 the binder, the optimizer, and so forth.
 
-114
+109
 00:05:55,360 --> 00:06:00,110
 It'll generate a directed acyclic graph of physical operators, 
 
-115
+110
 00:06:00,500 --> 00:06:04,810
 where you have these physical operators scan and join implementation. 
 
-116
+111
 00:06:05,130 --> 00:06:09,840
 And they're taking some input coming from its children operators, 
 
-117
+112
 00:06:10,210 --> 00:06:11,820
 doing some amount of computation on them, 
 
-118
+113
 00:06:11,830 --> 00:06:19,600
 and then passing that along to the to its parent operator. 
 
-119
+114
 00:06:20,780 --> 00:06:26,940
 And so the fact that these operators may be excluded across multiple nodes
 
-120
+115
 00:06:27,310 --> 00:06:30,390
 versus all running on the single box, 
 
-121
+116
 00:06:30,400 --> 00:06:31,110
 single node. 
 
-122
+117
 00:06:31,810 --> 00:06:32,890
 At a higher there, again,
 
-123
+118
 00:06:32,900 --> 00:06:34,970
 there really isn't any difference. 
 
-124
+119
 00:06:38,390 --> 00:06:40,300
 There's the orchestration of the task and so forth, 
 
-125
+120
 00:06:40,310 --> 00:06:41,820
 but that's sort of outside the scope of what
 
-126
+121
 00:06:41,830 --> 00:06:42,940
 we're talking about right here today. 
 
-127
+122
 00:06:43,150 --> 00:06:44,580
 Like the day, there's a query plan.
 
-128
+123
 00:06:44,590 --> 00:06:46,140
 We break it up into task, 
 
-129
+124
 00:06:46,150 --> 00:06:47,420
 redistribute across nodes. 
 
-130
+125
 00:06:47,430 --> 00:06:49,580
 It's no different than taking a query plan, 
 
-131
+126
 00:06:49,590 --> 00:06:55,920
 breaking up the task and distribute across cores on a a multi cpu box, 
 
-132
+127
 00:06:57,240 --> 00:07:00,270
-all the operators that we had before, one of the single no system,
+all the operators that we had before, one of the single node system,
 
-133
+128
 00:07:00,280 --> 00:07:01,990
-cable scans, joints, and aggregation sorting.
+table scans, join, and aggregation sorting.
 
-134
+129
 00:07:02,220 --> 00:07:06,970
 All these exist in an initiative system. 
 
-135
+130
 00:07:08,240 --> 00:07:09,870
 At a high level, it's gonna look at this, right?
 
-136
+131
 00:07:10,040 --> 00:07:13,270
 Say there's gonna be some notion of a worker node. 
 
-137
+132
 00:07:13,800 --> 00:07:17,010
 And worker is going to have acpu it's going to have local memory. 
 
-138
+133
 00:07:17,020 --> 00:07:18,210
 It's going to have local disk. 
 
-139
+134
 00:07:18,680 --> 00:07:20,340
 And and say, 
 
-140
+135
 00:07:20,350 --> 00:07:22,620
 if we go from sort of left to right in the diagram here, 
 
-141
+136
 00:07:22,630 --> 00:07:23,940
 we're trying to execute a query. 
 
-142
+137
 00:07:24,380 --> 00:07:29,170
 The each of these nodes are responsible for taking some input in doing
 
-143
+138
 00:07:29,180 --> 00:07:31,810
 some computation for the operator that they've been assigned
 
-144
+139
 00:07:31,820 --> 00:07:32,690
 for a given task, 
 
-145
+140
 00:07:32,700 --> 00:07:37,560
 and then producing output as results that then either goes
 
-146
+141
 00:07:37,570 --> 00:07:42,270
-back to the client or goes off to the next worker notes. 
+back to the client or goes off to the next worker nodes. 
 
-147
+142
 00:07:42,900 --> 00:07:44,000
 Say we start in the very beginning, 
 
-148
+143
 00:07:44,010 --> 00:07:47,500
 say this is the bottom of query plan and we want to read what we call
 
-149
+144
 00:07:47,510 --> 00:07:48,580
 persistent data. 
 
-150
+145
 00:07:49,210 --> 00:07:52,880
 The persistent data is going to be the the underlying two poles
 
-151
+146
 00:07:52,970 --> 00:07:55,440
 of the tables that are defined in the database. 
 
-152
+147
 00:07:55,530 --> 00:07:59,880
 These going to be some files that are going to have data that we know
 
-153
+148
 00:07:59,890 --> 00:08:03,620
 how to interpret their types based on some scheme information, 
 
-154
+149
 00:08:03,630 --> 00:08:04,300
 a catalog. 
 
-155
+150
 00:08:04,770 --> 00:08:08,480
 We know how to access it and scan and do something, right?
 
-156
+151
 00:08:09,010 --> 00:08:12,680
 I'm not showing this diagram whether the persistent data is
 
-157
+152
 00:08:12,690 --> 00:08:15,540
 local to the worker node, 
 
-158
+153
 00:08:15,550 --> 00:08:17,860
 or it's some shared disk architecture or object store, 
 
-159
+154
 00:08:17,870 --> 00:08:18,900
 which will cover it a second. 
 
-160
+155
 00:08:19,300 --> 00:08:20,810
 It for our purposes here doesn't matter. 
 
-161
+156
 00:08:21,900 --> 00:08:23,770
 Again, we take in the persistent data,
 
-162
+157
 00:08:23,780 --> 00:08:25,010
 we're doing some kind of scan, 
 
-163
+158
 00:08:25,980 --> 00:08:28,130
 and we're going to boost some amount of intermediate data. 
 
-164
+159
 00:08:29,090 --> 00:08:31,640
 And then when you now should need to ship this intermediate data
 
-165
+160
 00:08:31,650 --> 00:08:35,830
 to the sort of the next stage of the query plan, 
 
-166
+161
 00:08:35,840 --> 00:08:38,550
 which either could be on the same node or a different node. 
 
-167
+162
 00:08:39,600 --> 00:08:45,920
 One of the ways we can do this is through what is called a shuffle operation. 
 
-168
+163
 00:08:46,240 --> 00:08:49,610
 Where after we do some operator, 
 
-169
+164
 00:08:50,080 --> 00:08:54,430
 we would pass along this intermediate data to another set of nodes that
 
-170
+165
 00:08:54,440 --> 00:08:57,990
 are going to distribute the the results based
 
-171
+166
 00:08:58,000 --> 00:09:00,870
 on some hash key or some range partitioning. 
 
-172
+167
 00:09:02,210 --> 00:09:04,600
 And then there will be some other workers that can then pull that data
 
-173
+168
 00:09:05,090 --> 00:09:06,480
 from the shuffle notes. 
 
-174
+169
 00:09:07,120 --> 00:09:10,160
 Now, i'm putting the shuffle node phase as optional here,
 
-175
+170
 00:09:11,600 --> 00:09:16,420
 because I don't think snowflake does this with explicit notes, but big,
 
-176
+171
 00:09:16,430 --> 00:09:17,580
 gray and drummer do this. 
 
-177
+172
 00:09:18,840 --> 00:09:23,360
 The ideas like these in memory nodes that are have the shuffle notes, 
 
-178
+173
 00:09:23,370 --> 00:09:24,280
 have a lot of memory. 
 
-179
+174
 00:09:24,290 --> 00:09:26,480
-And so they try to keep everything at cache without smoking a desk. 
+And so they try to keep everything at cache without in a disk. 
 
-180
+175
 00:09:26,490 --> 00:09:28,740
 And it's a way to sort of redistribute things. 
 
-181
+176
 00:09:28,970 --> 00:09:31,120
 I'm also showing here there's a sort of 1 to 1 correspondence
 
-182
+177
 00:09:31,130 --> 00:09:32,720
 between number shuffle nodes and worker nodes
 
-183
+178
 00:09:32,730 --> 00:09:36,040
 doesn't necessarily need to be the case you could fan out or fan
 
-184
+179
 00:09:36,050 --> 00:09:37,550
 in at this different stage. 
 
-185
+180
 00:09:37,560 --> 00:09:41,420
 But it's just way to get the intermediate data from the previous stage
 
-186
+181
 00:09:41,750 --> 00:09:42,420
 to the next stage. 
 
-187
+182
 00:09:42,430 --> 00:09:46,040
 And if necessary redistributed on some new partition game, 
 
-188
+183
 00:09:46,800 --> 00:09:49,060
 then this network or node does additional computations. 
 
-189
+184
 00:09:49,820 --> 00:09:50,970
 It has more intermediate data. 
 
-190
+185
 00:09:50,980 --> 00:09:53,130
 They say the trouble phase or not doesn't matter. 
 
-191
+186
 00:09:53,590 --> 00:09:55,780
 But they say, now it descends into this other worker node,
 
-192
+187
 00:09:55,790 --> 00:09:59,460
 who then does some file final aggregation of coalescing of the data
 
-193
+188
 00:09:59,470 --> 00:10:01,740
 to produce the result of the application? 
 
-194
+189
 00:10:02,650 --> 00:10:02,920
 Again, 
 
-195
+190
 00:10:06,260 --> 00:10:08,080
 there's nothing true, 
 
-196
+191
 00:10:08,330 --> 00:10:08,920
 drastically, 
 
-197
+192
 00:10:08,930 --> 00:10:12,080
 dramatically different than how we'd execute a query on attribute system
 
-198
+193
 00:10:12,090 --> 00:10:13,400
 versus a single node system. 
 
-199
+194
 00:10:13,550 --> 00:10:17,640
 We just may have to do spend more time doing data movement which
 
-200
+195
 00:10:17,650 --> 00:10:21,390
 nowadays is actually not as bad as it used to be that
 
-201
+196
 00:10:22,900 --> 00:10:26,550
 the hierarchy was that the the network going with the network was
 
-202
+197
 00:10:26,560 --> 00:10:29,470
 the slowest and reading from this is the slowest and the memory, 
 
-203
+198
 00:10:29,480 --> 00:10:31,590
 but never gotten really fast now. 
 
-204
+199
 00:10:31,960 --> 00:10:34,750
 Especially in the case of big grade, they have accelerated.
 
-205
+200
 00:10:36,680 --> 00:10:39,660
 You have hard acceleration for these fish shuffle operation. 
 
-206
+201
 00:10:40,030 --> 00:10:41,310
 In some cases, 
 
-207
+202
 00:10:41,320 --> 00:10:44,040
 it's actually faster to send things for the network than read from disk. 
 
-208
+203
 00:10:44,570 --> 00:10:48,130
 This shuffle phase was a big deal. 
 
-209
+204
 00:10:48,490 --> 00:10:52,300
 But the main thing I want to expose here is this idea of the notion
 
-210
+205
 00:10:52,310 --> 00:10:53,110
 of persistent data, 
 
-211
+206
 00:10:53,120 --> 00:10:53,650
 intermediate data, 
 
-212
+207
 00:10:53,860 --> 00:10:55,820
 because that's going to depend on or that. 
 
-213
+208
 00:10:56,100 --> 00:10:58,430
 What we actually do with the different types of data is going to depend
 
-214
+209
 00:10:58,440 --> 00:11:03,070
 on what the architecture of whether to share nothing to share disk system. 
 
-215
+210
 00:11:05,280 --> 00:11:08,670
 This taxonomy between persistent data and intermediate data comes
 
-216
+211
 00:11:08,680 --> 00:11:10,470
 from the significant paper that you guys read. 
 
-217
+212
 00:11:11,720 --> 00:11:16,190
 What they would call it persistent data is the data that's called a source
 
-218
+213
 00:11:16,200 --> 00:11:17,830
 of record for the database. 
 
-219
+214
 00:11:17,960 --> 00:11:21,860
 If I inserted to pull part of it, 
 
-220
+215
 00:11:22,390 --> 00:11:25,420
 bulk, loading some data or copying or insert operation.
 
-221
+216
 00:11:25,740 --> 00:11:33,520
 The I expect that two would reside in these persistent files
 
-222
+217
 00:11:33,530 --> 00:11:34,640
 in the persistent data. 
 
-223
+218
 00:11:35,990 --> 00:11:37,220
 In a modern system, 
 
-224
+219
 00:11:37,230 --> 00:11:40,510
 we're gonna assume that the persistent data of the files of persistent data
 
-225
+220
 00:11:40,680 --> 00:11:41,630
 is immutable. 
 
-226
+221
 00:11:42,420 --> 00:11:47,780
 And that's a dramatic change from how people designed assumed data systems
 
-227
+222
 00:11:47,790 --> 00:11:49,520
 were built from the years past, 
 
-228
+223
 00:11:49,530 --> 00:11:51,940
 because you assume you're running with a local disk that you
 
-229
+224
 00:11:51,950 --> 00:11:53,700
 can read and write as it as needed. 
 
-230
+225
 00:11:53,940 --> 00:11:56,010
 But in a modern cloud setting, 
 
-231
+226
 00:11:57,180 --> 00:11:58,350
 we are running on an object store, 
 
-232
+227
 00:11:58,360 --> 00:12:01,230
 or even if you're running on the early predecessor, 
 
-233
+228
 00:12:01,240 --> 00:12:04,980
 like hgfs those file systems were, 
 
-234
+229
 00:12:05,440 --> 00:12:06,620
 some of them were append only, 
 
-235
+230
 00:12:06,630 --> 00:12:09,010
 but you couldn't do in place updates. 
 
-236
+231
 00:12:09,800 --> 00:12:13,400
 So in the case of a modern lab system, 
 
-237
+232
 00:12:13,410 --> 00:12:14,960
 they're gonna assume that these files are immutable. 
 
-238
+233
 00:12:14,970 --> 00:12:17,720
 And he put you to support updating them and you have to maintain somebody
 
-239
+234
 00:12:17,730 --> 00:12:21,730
 to keep track of how whether something is, 
 
-240
+235
 00:12:21,740 --> 00:12:27,270
 whether a version of a tube has been overwritten by a newer version of. 
 
-241
+236
 00:12:28,980 --> 00:12:29,900
 But we'll come to that. 
 
-242
+237
 00:12:29,910 --> 00:12:31,380
 We'll talk about more of that next class. 
 
-243
+238
 00:12:31,950 --> 00:12:35,860
 And then the other interesting part effect is going to be these, 
 
-244
+239
 00:12:37,130 --> 00:12:38,650
 what they would be called intermediate data. 
 
-245
+240
 00:12:38,660 --> 00:12:43,140
 And this is the output of the operators that we execute in a query plan
 
-246
+241
 00:12:43,370 --> 00:12:47,760
 that we then need to send along to the next operator in the query plan. 
 
-247
+242
 00:12:48,900 --> 00:12:50,890
 This actually can be a lot of data. 
 
-248
+243
 00:12:50,900 --> 00:12:52,090
 And in the sense of paper, 
 
-249
+244
 00:12:52,100 --> 00:12:56,290
 they talk about how the amount of intermediate data that a query
 
-250
+245
 00:12:56,300 --> 00:13:00,000
 would generate has no little to no correlation to the amount
 
-251
+246
 00:13:00,010 --> 00:13:01,520
 of data persistent data reading. 
 
-252
+247
 00:13:01,800 --> 00:13:03,710
 Being like the table can be really, really small,
 
-253
+248
 00:13:03,720 --> 00:13:05,710
 but then they still end up producing a lot of intermediate data
 
-254
+249
 00:13:05,720 --> 00:13:07,870
 because of some computation that they're doing, 
 
-255
+250
 00:13:08,330 --> 00:13:10,720
 or could also be, it's not correlated to the execution time.
 
-256
+251
 00:13:10,730 --> 00:13:12,560
 So if a query takes a long time to run, 
 
-257
+252
 00:13:12,570 --> 00:13:15,760
 that doesn't necessarily mean they have to generate a lot of intermediate data. 
 
-258
+253
 00:13:17,610 --> 00:13:25,590
 This animated data is interesting because it's it's you need to move
 
-259
+254
 00:13:25,600 --> 00:13:26,630
 along as fast as possible, 
 
-260
+255
 00:13:26,640 --> 00:13:28,910
 but you don't need necessarily need to worry about durability, 
 
-261
+256
 00:13:29,520 --> 00:13:31,510
 fault tolerance in persisting it. 
 
-262
+257
 00:13:31,520 --> 00:13:33,790
 Because as soon as you finish the query, 
 
-263
+258
 00:13:34,750 --> 00:13:37,700
 the next stage going from up to the next immediately throw it away. 
 
-264
+259
 00:13:38,220 --> 00:13:38,350
 Right? 
 
-265
+260
 00:13:38,360 --> 00:13:43,180
 So that the paper talks about how this sort of trade off between deciding
 
-266
+261
 00:13:43,390 --> 00:13:45,020
 what the spelling disk processing data, 
 
-267
+262
 00:13:45,030 --> 00:13:45,980
 intermediate data. 
 
-268
+263
 00:13:46,180 --> 00:13:49,800
 And it was often the case you wanna keep intermediate data in memory as you
 
-269
+264
 00:13:49,810 --> 00:13:50,400
 move it along. 
 
-270
+265
 00:13:55,280 --> 00:13:59,320
 So we need to talk about what the sort of system architecture would look
 
-271
+266
 00:13:59,330 --> 00:14:01,560
-like in a modern outlap system. 
+like in a modern olap system. 
 
-272
+267
 00:14:02,250 --> 00:14:06,450
 And there's a couple ways to think about this is, but the end of the day,
 
-273
+268
 00:14:11,000 --> 00:14:13,440
 there's how it's going to move data. 
 
-274
+269
 00:14:14,110 --> 00:14:19,100
 There are mood persistent data to or to start beginning the execution
 
-275
+270
 00:14:19,110 --> 00:14:20,220
 on the persistent data, 
 
-276
+271
 00:14:20,230 --> 00:14:21,340
 like start scanning it. 
 
-277
+272
 00:14:21,350 --> 00:14:23,860
 And it will determine also where it's located. 
 
-278
+273
 00:14:25,740 --> 00:14:26,930
 Again, in the interclass,
 
-279
+274
 00:14:26,940 --> 00:14:30,930
 we talk about this sort of shared nothing and shared disk or just push
 
-280
+275
 00:14:30,940 --> 00:14:31,570
 the query the data, 
 
-281
+276
 00:14:31,900 --> 00:14:33,050
 pull data, the query.
 
-282
+277
 00:14:33,060 --> 00:14:36,280
 We talk of these things as being very these music exclusive, 
 
-283
+278
 00:14:36,290 --> 00:14:37,280
 but it's actually not the case, 
 
-284
+279
 00:14:37,290 --> 00:14:43,080
 especially in a modern platforms where systems don't clean divide
 
-285
+280
 00:14:43,090 --> 00:14:44,120
 along these lines. 
 
-286
+281
 00:14:44,130 --> 00:14:45,840
 They actually do a little bit of everything. 
 
-287
+282
 00:14:47,370 --> 00:14:51,240
 We can understand the tradeoffs and the applications of these approaches. 
 
-288
+283
 00:14:52,580 --> 00:14:53,730
 The first thing is to say, again,
 
-289
+284
 00:14:53,740 --> 00:14:56,550
 if we want to start reading processing data, 
 
-290
+285
 00:14:56,890 --> 00:14:59,160
 how should we begin that process? 
 
-291
+286
 00:15:00,090 --> 00:15:01,960
 And then as we move from one stage, 
 
-292
+287
 00:15:01,970 --> 00:15:03,480
 the next we have two operators. 
 
-293
+288
 00:15:03,780 --> 00:15:05,050
 How do we transfer? 
 
-294
+289
 00:15:05,060 --> 00:15:08,490
 Or what do we transfer for the intermediate results? 
 
-295
+290
 00:15:09,530 --> 00:15:09,880
 First, 
 
-296
+291
 00:15:09,890 --> 00:15:12,160
 just talking about how do we begin the execution of things
 
-297
+292
 00:15:12,170 --> 00:15:14,040
 or or the movement of data. 
 
-298
+293
 00:15:14,050 --> 00:15:14,920
 The two choices, again,
 
-299
+294
 00:15:14,930 --> 00:15:17,780
 are pushing the query to the data or pulling the data, the query.
 
-300
+295
 00:15:19,610 --> 00:15:21,080
 Again, these ideas aren't new.
 
-301
+296
 00:15:21,090 --> 00:15:25,320
 They go back to a lot of the work that was done in the late 80s, early 90s,
 
-302
+297
 00:15:25,330 --> 00:15:28,360
 and some of the first like parallel distributed data system architectures. 
 
-303
+298
 00:15:28,600 --> 00:15:32,430
 And the tradeoffs of how to understand these things, I think,
 
-304
+299
 00:15:32,440 --> 00:15:33,710
 of change in modern times, 
 
-305
+300
 00:15:33,720 --> 00:15:36,250
 just because of honestly, 
 
-306
+301
 00:15:36,700 --> 00:15:37,890
 how much harbor has gotten better, 
 
-307
+302
 00:15:37,900 --> 00:15:42,180
 especially the the proliferation of cloud services, 
 
-308
+303
 00:15:42,430 --> 00:15:46,950
 like object stores where maybe things in the past like shared nothing
 
-309
+304
 00:15:46,960 --> 00:15:50,310
 and was the dominant architecture that we would assume that was
 
-310
+305
 00:15:50,320 --> 00:15:50,950
 the best approach. 
 
-311
+306
 00:15:50,960 --> 00:15:52,630
 And you see, it was always logical,
 
-312
+307
 00:15:52,640 --> 00:15:55,830
 always out to push the data, the query,
 
-313
+308
 00:15:55,840 --> 00:15:57,590
 to push the computation where the data is located. 
 
-314
+309
 00:15:57,600 --> 00:16:00,590
 But now that's not always the case in the cloud. 
 
-315
+310
 00:16:01,920 --> 00:16:02,710
 The first thing is, again,
 
-316
+311
 00:16:03,000 --> 00:16:07,680
 how we want to initiate the process of executing portions of a query
 
-317
+312
 00:16:08,130 --> 00:16:09,720
 on a database or on data. 
 
-318
+313
 00:16:10,560 --> 00:16:13,470
 The first approach is you pushing the query to the data. 
 
-319
+314
 00:16:13,480 --> 00:16:19,490
 And this means that we want to move as much computation as we can to
 
-320
+315
 00:16:19,500 --> 00:16:23,230
 the location of where data is located. 
 
-321
+316
 00:16:23,880 --> 00:16:31,710
 The thought process here is that the cost of executing some
 
-322
+317
 00:16:31,720 --> 00:16:34,830
 portion of a query where the data is located was always gonna be
 
-323
+318
 00:16:34,840 --> 00:16:39,290
 much cheaper than the cost of transferring the data
 
-324
+319
 00:16:39,700 --> 00:16:40,850
 to some other compute node. 
 
-325
+320
 00:16:41,180 --> 00:16:41,810
 Again, think about it.
 
-326
+321
 00:16:41,820 --> 00:16:42,610
 I have a disk. 
 
-327
+322
 00:16:42,800 --> 00:16:45,190
 On one node, I have a computation another.
 
-328
+323
 00:16:45,200 --> 00:16:49,030
 I'd rather send the query to the data where on the disk has the disk
 
-329
+324
 00:16:49,040 --> 00:16:49,830
 where it's located, 
 
-330
+325
 00:16:50,170 --> 00:16:51,490
 then have to transfer it out. 
 
-331
+326
 00:16:52,080 --> 00:16:54,030
 Because the network, the net cost is so high.
 
-332
+327
 00:16:54,040 --> 00:16:58,360
 The alternative is to pull the data of the query. 
 
-333
+328
 00:16:59,140 --> 00:17:01,720
 This is where you are, 
 
-334
+329
 00:17:02,460 --> 00:17:03,610
 where the query is. 
 
-335
+330
 00:17:03,620 --> 00:17:05,490
 You leave it at that computational resource, 
 
-336
+331
 00:17:06,260 --> 00:17:08,290
 and then the data needs access to the operator, 
 
-337
+332
 00:17:08,300 --> 00:17:09,770
 the data that needs opportunities access. 
 
-338
+333
 00:17:10,200 --> 00:17:12,150
 You transferred over to that node. 
 
-339
+334
 00:17:14,040 --> 00:17:18,390
 This could be necessary in a situation where you can't run any queries. 
 
-340
+335
 00:17:18,400 --> 00:17:20,950
 You can't do any computation where the day is located. 
 
-341
+336
 00:17:21,410 --> 00:17:24,160
 If I have aa remote file system where I can't run anything, 
 
-342
+337
 00:17:24,170 --> 00:17:27,280
 I I can only do gets and sets and delete, 
 
-343
+338
 00:17:27,680 --> 00:17:29,430
 you'd have to do pull data the query. 
 
-344
+339
 00:17:31,400 --> 00:17:31,790
 As I said, 
 
-345
+340
 00:17:31,800 --> 00:17:36,550
 the harbor has gotten much better in recent years where this isn't
 
-346
+341
 00:17:36,560 --> 00:17:41,520
 always the best design choice upholding the query because now again, 
 
-347
+342
 00:17:41,530 --> 00:17:45,480
 the network on in cloud systems is pretty fat. 
 
-348
+343
 00:17:47,220 --> 00:17:48,440
 The other interesting also, too,
 
-349
+344
 00:17:48,450 --> 00:17:52,740
 is saying these are always usually exclusive anymore because there are
 
-350
+345
 00:17:52,750 --> 00:17:56,130
 some there are some cloud object
 
-351
+346
 00:17:56,140 --> 00:18:01,920
 stores where you can actually push some computation to to the data, 
 
-352
+347
 00:18:01,930 --> 00:18:03,920
 even though you wouldn't think you would be able to do it. 
 
-353
+348
 00:18:03,930 --> 00:18:05,680
 So on s three, 
 
-354
+349
 00:18:05,690 --> 00:18:09,040
 they have this select operator select operation, 
 
-355
+350
 00:18:09,280 --> 00:18:12,070
 where you can do something that sort of looks like pseudo sequel. 
 
-356
+351
 00:18:15,040 --> 00:18:20,800
 So where clause and you can send that to as an s three command to do
 
-357
+352
 00:18:20,810 --> 00:18:23,400
 some initial filtering directly in s three, 
 
-358
+353
 00:18:23,410 --> 00:18:28,010
-so that you're only now trenching the data that would satisfy your wear clothes. 
+so that you're only now trenching the data that would satisfy your where clause. 
 
-359
+354
 00:18:28,020 --> 00:18:30,350
 So again, the idea is that I do a select state,
 
-360
+355
 00:18:30,360 --> 00:18:33,720
-but I can maybe send portion of the where clause to s three, 
+but I can maybe send portion of the where clause to s3, 
 
-361
+356
 00:18:33,730 --> 00:18:37,640
 s three knows how to negatively understand csv file, 
 
-362
+357
 00:18:37,650 --> 00:18:39,200
 jason or public files, 
 
-363
+358
 00:18:39,700 --> 00:18:44,740
 and then do that filter and only send back the results that within the rows
 
-364
+359
 00:18:44,750 --> 00:18:45,660
 that satisfy it. 
 
-365
+360
 00:18:46,690 --> 00:18:47,760
 That's actually pretty powerful now, 
 
-366
+361
 00:18:47,770 --> 00:18:49,880
 because that's basically pushing the data query, 
 
-367
+362
 00:18:50,330 --> 00:18:51,540
 but not all of the query, 
 
-368
+363
 00:18:51,550 --> 00:18:55,260
 but at least enough where you could do get a big way in doing some filtering. 
 
-369
+364
 00:18:57,340 --> 00:18:58,250
 Am amazon? 
 
-370
+365
 00:18:59,300 --> 00:18:59,730
 Sorry, 
 
-371
+366
 00:18:59,740 --> 00:19:04,090
 microsoft azure blob storage has something pretty similar where you can do. 
 
-372
+367
 00:19:05,390 --> 00:19:08,270
-You can do something again that looks like sequel to do some initial filtering. 
+You can do something again that looks like sql to do some initial filtering. 
 
-373
+368
 00:19:08,280 --> 00:19:10,110
 I don't know what file formats they support, 
 
-374
+369
 00:19:10,120 --> 00:19:12,180
 but the basic idea is the same thing. 
 
-375
+370
 00:19:13,110 --> 00:19:19,400
-So again, just going forward were or gonna be using pool query,
+So again, just going forward were or gonna be using pull query,
 
-376
+371
 00:19:19,410 --> 00:19:24,030
-pool data to the query for the lower portions of the query plan, 
+pull data to the query for the lower portions of the query plan, 
 
-377
+372
 00:19:24,040 --> 00:19:25,790
 like the access methods of scanning the tables. 
 
-378
+373
 00:19:26,320 --> 00:19:28,890
 But then we're probably gonna really push the, 
 
-379
+374
 00:19:30,180 --> 00:19:31,870
 but and as we go from the intermediate phases, 
 
-380
+375
 00:19:31,880 --> 00:19:34,030
 it's also probably pushing data query as well. 
 
-381
+376
 00:19:37,580 --> 00:19:40,010
 Now we want to talk about the two high level approaches
 
-382
+377
 00:19:40,020 --> 00:19:41,490
 for better distributed system. 
 
-383
+378
 00:19:41,500 --> 00:19:42,370
 Again, these aren't.
 
-384
+379
 00:19:43,900 --> 00:19:45,130
 This one is actually pretty, 
 
-385
+380
 00:19:46,980 --> 00:19:51,120
 this is pretty rigid or how this is a clean dichotomy for systems. 
 
-386
+381
 00:19:51,130 --> 00:19:51,390
 Today's. 
 
-387
+382
 00:19:51,400 --> 00:19:55,500
 But the the first type of architecture is the more traditional. 
 
-388
+383
 00:19:55,510 --> 00:19:59,020
 One people think of distributed systems is a shared nothing system. 
 
-389
+384
 00:19:59,250 --> 00:20:03,600
 This is actually aa phrase or term coined by mike stern breaker going
 
-390
+385
 00:20:03,610 --> 00:20:04,800
 back to like the 1980s. 
 
-391
+386
 00:20:04,810 --> 00:20:05,160
 And again, 
 
-392
+387
 00:20:05,170 --> 00:20:09,410
 the idea here was this was presumed to be the better way to build
 
-393
+388
 00:20:09,420 --> 00:20:12,570
 distributed data systems for decades up until
 
-394
+389
 00:20:13,300 --> 00:20:15,520
 maybe10 years ago. 
 
-395
+390
 00:20:15,530 --> 00:20:19,600
 The idea here is that each can have its own on cpu its own memory, 
 
-396
+391
 00:20:19,610 --> 00:20:21,200
 its own locally attached disk. 
 
-397
+392
 00:20:21,210 --> 00:20:21,320
 Right? 
 
-398
+393
 00:20:21,330 --> 00:20:26,440
 Think of like mvme and the only way that nodes can communicate
 
-399
+394
 00:20:26,450 --> 00:20:29,560
 with each other and see other portions of the database is to send messages
 
-400
+395
 00:20:29,570 --> 00:20:30,280
 over the network. 
 
-401
+396
 00:20:31,330 --> 00:20:34,480
 Like if i'm running on one node on the left, 
 
-402
+397
 00:20:34,730 --> 00:20:37,000
 and need access data on the right, I just can't peek into.
 
-403
+398
 00:20:38,050 --> 00:20:38,600
 It's disk. 
 
-404
+399
 00:20:38,610 --> 00:20:40,560
 I gotta go send a message to send me that data. 
 
-405
+400
 00:20:41,450 --> 00:20:45,620
-The database is going to be partitioned to destroying subset across these nodes, 
+The database is going to be partitioned to disjoint subset across these nodes, 
 
-406
+401
 00:20:45,630 --> 00:20:47,100
 sometimes called shards, 
 
-407
+402
 00:20:47,790 --> 00:20:54,010
 where each node will have a right unique portion of the database of tables. 
 
-408
+403
 00:20:54,020 --> 00:20:54,770
 And ideally, 
 
-409
+404
 00:20:54,780 --> 00:20:59,120
 you want to pick a partition key that reduces the amount of data transfer
 
-410
+405
 00:20:59,130 --> 00:20:59,680
 you have to do. 
 
-411
+406
 00:20:59,690 --> 00:21:00,680
 When you do joins. 
 
-412
+407
 00:21:01,130 --> 00:21:02,560
 We'll talk a little bit this next class, 
 
-413
+408
 00:21:02,570 --> 00:21:05,200
 which is historically a very hard problem to do. 
 
-414
+409
 00:21:06,590 --> 00:21:08,270
 But it does make a big difference. 
 
-415
+410
 00:21:08,280 --> 00:21:15,530
 The challenge is going to be now that since the storage is tied to the compute, 
 
-416
+411
 00:21:15,540 --> 00:21:19,860
 I can't easily add either more capacity at the compute side
 
-417
+412
 00:21:19,870 --> 00:21:22,930
 of the storage side without bringing in a whole new node. 
 
-418
+413
 00:21:23,130 --> 00:21:24,160
-Now, if I bring a whole new note,
+Now, if I bring a whole new node,
 
-419
+414
 00:21:24,170 --> 00:21:26,680
 i've got to do re partitioning to move data around, 
 
-420
+415
 00:21:27,330 --> 00:21:28,440
 to balance things out. 
 
-421
+416
 00:21:30,210 --> 00:21:31,920
 Again, we'll discuss the implications this.
 
-422
+417
 00:21:31,930 --> 00:21:33,080
 And so sorry, 
 
-423
+418
 00:21:33,090 --> 00:21:34,480
 each of these are also kind of quantitative. 
 
-424
+419
 00:21:34,490 --> 00:21:36,960
 This is, when I say, I know this, I one of these.
 
-425
+420
 00:21:38,210 --> 00:21:38,750
 The other thing, too,
 
-426
+421
 00:21:38,760 --> 00:21:43,390
 is that because data is considered local like what they locally attached disk, 
 
-427
+422
 00:21:44,570 --> 00:21:48,080
 traditionally, a database system will access the disk using it,
 
-428
+423
 00:21:48,090 --> 00:21:55,860
-like a posits api or nvme like it'll be a sis calls to go read data, 
+like a posix api or nvme like it'll be a syscalls to go read data, 
 
-429
+424
 00:21:56,130 --> 00:21:56,740
 directly disk. 
 
-430
+425
 00:21:57,190 --> 00:22:00,880
 There's the you can do kernel bypass, 
 
-431
+426
 00:22:02,220 --> 00:22:04,550
 which the stories need to play in kit from intel. 
 
-432
+427
 00:22:04,970 --> 00:22:05,810
 That's a nightmare. 
 
-433
+428
 00:22:05,820 --> 00:22:07,330
 We'll talk about that later on. 
 
-434
+429
 00:22:07,340 --> 00:22:08,640
 But in general, 
 
-435
+430
 00:22:08,650 --> 00:22:11,840
-you're using posits to do reason rights to the local desk. 
+you're using posix to do read and writes to the local disk. 
 
-436
+431
 00:22:12,300 --> 00:22:15,730
 If I need to send things over the network to communicate with another node, 
 
-437
+432
 00:22:16,420 --> 00:22:18,740
 make the perfect calls into it as well. 
 
-438
+433
 00:22:20,000 --> 00:22:22,440
 The alternative approach for the shipment is called shared disk. 
 
-439
+434
 00:22:22,450 --> 00:22:24,320
 And with this one now, 
 
-440
+435
 00:22:24,650 --> 00:22:28,760
 is we still have every single database data system node that have
 
-441
+436
 00:22:28,770 --> 00:22:30,360
 their own cpu memory and disk. 
 
-442
+437
 00:22:30,840 --> 00:22:35,590
 But that disk on that each node is gonna be essentially just a cache, 
 
-443
+438
 00:22:36,060 --> 00:22:40,530
 and that the persistent data or the persistent files of the database system
 
-444
+439
 00:22:40,540 --> 00:22:43,370
 is going to be down on this separate storage layer. 
 
-445
+440
 00:22:44,050 --> 00:22:45,640
 At the top here, we'll have the compute layer.
 
-446
+441
 00:22:45,650 --> 00:22:47,480
 This is where we're gonna execute queries. 
 
-447
+442
 00:22:47,850 --> 00:22:51,650
 They can communicate with each other over network of the network, 
 
-448
+443
 00:22:51,660 --> 00:22:55,050
 but that their storage is essentially used for ephemeral data, 
 
-449
+444
 00:22:55,370 --> 00:22:58,040
-either a as a right through cash in case of snowflake
+either a as a wirte through cache in the case of snowflake
 
-450
+445
 00:22:58,050 --> 00:23:01,680
 or a holding area staging area for intermediate data. 
 
-451
+446
 00:23:01,890 --> 00:23:04,360
 But the node is essentially stateless, 
 
-452
+447
 00:23:04,370 --> 00:23:05,440
 meaning if it crashes, 
 
-453
+448
 00:23:05,450 --> 00:23:07,760
 the compute layer of the node is stateless, mean it crashes.
 
-454
+449
 00:23:08,160 --> 00:23:10,670
 We don't lose the database because that's all stored
 
-455
+450
 00:23:10,680 --> 00:23:13,870
-down here in the stories there. 
+down here in the storage layer. 
 
-456
+451
 00:23:13,880 --> 00:23:17,850
 And the the storage essentially looks as one giant disk. 
 
-457
+452
 00:23:18,780 --> 00:23:20,750
 It's not entirely true in an object store, 
 
-458
+453
 00:23:20,760 --> 00:23:28,000
-but because you don't access it through a positive cpi you use a use
+but because you don't access it through a posix api you use a use
 
-459
+454
 00:23:28,010 --> 00:23:29,360
-like aa user space, 
+like a user space, 
 
-460
+455
 00:23:29,370 --> 00:23:33,520
 api that the cloud vendor or the whatever the object store. 
 
-461
+456
 00:23:34,120 --> 00:23:35,680
 If you're un they would provide. 
 
-462
+457
 00:23:37,450 --> 00:23:40,400
-In the reason why this matters instead of using the positive cpi
+In the reason why this matters instead of using the posix api
 
-463
+458
 00:23:40,410 --> 00:23:43,970
-because if it's a positive cpi the database system is not aware of
+because if it's a posix api the database system is not aware of
 
-464
+459
 00:23:47,210 --> 00:23:51,510
 of maybe the the different physical occasions of the data. 
 
-465
+460
 00:23:51,520 --> 00:23:54,240
 I you would have different file pass and so forth like that. 
 
-466
+461
 00:23:54,250 --> 00:23:56,970
 But like the data system, 
 
-467
+462
 00:23:58,530 --> 00:23:59,330
 it would just see, 
 
-468
+463
 00:23:59,340 --> 00:24:03,850
 here's some file system ii can read and write to and maybe not understand
 
-469
+464
 00:24:03,860 --> 00:24:05,850
 or could not push down, 
 
-470
+465
 00:24:06,650 --> 00:24:09,440
 like the selects in the filtering stuff that we talked about before
 
-471
+466
 00:24:09,450 --> 00:24:12,150
-if you're using a of using posits, 
+if you're using a of using posix, 
 
-472
+467
 00:24:12,160 --> 00:24:15,010
 because there's no way to do, hey, read this,
 
-473
+468
 00:24:15,020 --> 00:24:17,860
 but also filter some stuff for me down and storage there. 
 
-474
+469
 00:24:18,380 --> 00:24:19,500
 This to recap everything, 
 
-475
+470
 00:24:19,590 --> 00:24:21,300
 the two choices we share nothing. 
 
-476
+471
 00:24:22,370 --> 00:24:26,490
 And the pros and cons of this that it potentially achieves better performance, 
 
-477
+472
 00:24:26,500 --> 00:24:31,550
 because the each data system node, 
 
-478
+473
 00:24:31,560 --> 00:24:34,110
 if it's accessing only data is local to it, 
 
-479
+474
 00:24:37,440 --> 00:24:40,250
 it'll perform better because there's less data movement
 
-480
+475
 00:24:40,260 --> 00:24:42,890
 potentially between the nodes, 
 
-481
+476
 00:24:42,900 --> 00:24:43,330
 right? 
 
-482
+477
 00:24:43,730 --> 00:24:51,790
 And I said with modern mvmvme drives with pcicpcie five or six. 
 
-483
+478
 00:24:51,800 --> 00:24:53,830
 The lower the lays one is those things pretty fat pipes, 
 
-484
+479
 00:24:53,840 --> 00:24:55,270
 but you can let that you can get. 
 
-485
+480
 00:24:55,280 --> 00:24:58,150
 But and modern networks are pretty good that it is too. 
 
-486
+481
 00:24:58,160 --> 00:25:03,070
 So traditionally it was always gonna be faster to read from local disc
 
-487
+482
 00:25:03,080 --> 00:25:03,790
 than over the network, 
 
-488
+483
 00:25:03,800 --> 00:25:05,430
 but it's not always the case these days. 
 
-489
+484
 00:25:06,490 --> 00:25:10,520
 But the big challenge is going to be harder to scale out capacity, 
 
-490
+485
 00:25:12,460 --> 00:25:14,010
 actually, in both directions up and down.
 
-491
+486
 00:25:14,020 --> 00:25:17,170
-But ii can't add new notes without shuffling data around to sort
+But i can't add new nodes without shuffling data around to sort
 
-492
+487
 00:25:17,180 --> 00:25:18,490
 of re balance things we participate. 
 
-493
+488
 00:25:18,990 --> 00:25:22,630
-I can't take notes away without doing the same thing with coalescing. 
+I can't take node away without doing the same thing with coalescing. 
 
-494
+489
 00:25:24,850 --> 00:25:26,160
-Now with a sheer disc system, 
+Now with a shared disk system, 
 
-495
+490
 00:25:26,410 --> 00:25:29,640
 a a in a modern setting in the cloud, 
 
-496
+491
 00:25:30,000 --> 00:25:32,990
 the great big advantages that would be able to scale out the compute
 
-497
+492
 00:25:33,000 --> 00:25:34,630
 there and stores are independently. 
 
-498
+493
 00:25:34,910 --> 00:25:38,820
 Meaning if i'm by myself being cpu bound on my nodes, 
 
-499
+494
 00:25:38,830 --> 00:25:41,720
 then I can add new compute nodes because they're stateless. 
 
-500
+495
 00:25:41,990 --> 00:25:43,740
 I don't have to do, 
 
-501
+496
 00:25:44,070 --> 00:25:48,620
 I don't have to move a lot of data around to rebound things. 
 
-502
+497
 00:25:48,630 --> 00:25:49,020
 Again, 
 
-503
+498
 00:25:49,030 --> 00:25:53,140
 the snowflake paper talks about how to use consistent hashing to change
 
-504
+499
 00:25:53,150 --> 00:25:56,530
 the assignment of what files are processed from
 
-505
+500
 00:25:57,540 --> 00:26:04,700
 persistent storage layer to the new nodes. 
 
-506
+501
 00:26:06,610 --> 00:26:08,520
 But that's you're warming it up. 
 
-507
+502
 00:26:08,730 --> 00:26:11,100
 And this telling here we got here. 
 
-508
+503
 00:26:11,910 --> 00:26:13,940
 Here's the data you start processing. 
 
-509
+504
 00:26:13,950 --> 00:26:16,660
 It's not you have to always copy things from one note to the other, 
 
-510
+505
 00:26:16,800 --> 00:26:17,550
 which other has, 
 
-511
+506
 00:26:17,800 --> 00:26:21,030
 if you want to do that safely and not have any false positive plus negatives, 
 
-512
+507
 00:26:21,040 --> 00:26:22,230
 requires you to use transactions. 
 
-513
+508
 00:26:22,240 --> 00:26:23,470
 It's a little bit more complicated. 
 
-514
+509
 00:26:26,070 --> 00:26:27,460
 The other nice advantage, too.
 
-515
+510
 00:26:27,950 --> 00:26:33,630
 And this matters a lot in for sort of database systems that want to claim
 
-516
+511
 00:26:33,640 --> 00:26:34,550
 that their service. 
 
-517
+512
 00:26:35,200 --> 00:26:40,050
 I can shut down the compute layer that That portions that i'm not needing, 
 
-518
+513
 00:26:40,060 --> 00:26:43,970
 the knows i'm not needing if i'm not exiting any queries and the data
 
-519
+514
 00:26:44,220 --> 00:26:46,230
 doesn't go away again, 
 
-520
+515
 00:26:46,240 --> 00:26:47,270
 in a shared nothing system, 
 
-521
+516
 00:26:47,280 --> 00:26:49,070
 because the computer is tied to the storage. 
 
-522
+517
 00:26:49,080 --> 00:26:50,070
 If I shut down a computer, 
 
-523
+518
 00:26:50,080 --> 00:26:53,440
 know what that means that that portion of the database that's stored
 
-524
+519
 00:26:53,450 --> 00:26:55,480
 in that node is no longer accessible. 
 
-525
+520
 00:26:56,090 --> 00:26:58,400
 Whereas if I shut down compute nodes in a shared disk system, 
 
-526
+521
 00:26:58,960 --> 00:27:03,100
 then the other remaining nodes can go get data from the share disk. 
 
-527
+522
 00:27:03,110 --> 00:27:03,620
 No problem. 
 
-528
+523
 00:27:05,840 --> 00:27:06,950
 In a service abiding, 
 
-529
+524
 00:27:07,920 --> 00:27:10,550
 this can make a big difference because you can shut down idle things. 
 
-530
+525
 00:27:12,280 --> 00:27:14,990
 Then last one is the disadvantage we talked about. 
 
-531
+526
 00:27:15,490 --> 00:27:18,160
 If I had to go retreat persistent data that isn't cached
 
-532
+527
 00:27:18,170 --> 00:27:19,920
 locally in the computer node, 
 
-533
+528
 00:27:21,650 --> 00:27:25,610
 I I had to pull it from the share, just layer the storage layer.
 
-534
+529
 00:27:25,980 --> 00:27:29,880
 And maybe I can do some early filtering that we talked
 
-535
+530
 00:27:29,890 --> 00:27:32,120
 about from amazon or azure. 
 
-536
+531
 00:27:34,260 --> 00:27:35,960
 But that that's not always the case, 
 
-537
+532
 00:27:35,970 --> 00:27:38,760
 because it depends on what the filter is actually want to do. 
 
-538
+533
 00:27:38,770 --> 00:27:45,420
 Like you can't do another new complex rejects or execute audf on s three, 
 
-539
+534
 00:27:45,430 --> 00:27:45,540
 right? 
 
-540
+535
 00:27:45,550 --> 00:27:47,100
 They're not going to do that. 
 
-541
+536
 00:27:48,710 --> 00:27:49,900
 Our focus going forward. 
 
-542
+537
 00:27:50,160 --> 00:27:52,430
 The rest semester we're gonna focus on shared systems. 
 
-543
+538
 00:27:52,440 --> 00:27:54,590
 Now, for some of the algorithms we'll talk about,
 
-544
+539
 00:27:54,600 --> 00:27:57,270
-it doesn't actually matter like the joint algorithms. 
+it doesn't actually matter like the join algorithms. 
 
-545
+540
 00:27:57,430 --> 00:27:58,110
 They don't know, 
 
-546
+541
 00:27:58,120 --> 00:28:01,110
 don't care whether it's reading from shared disc or share nothing system. 
 
-547
+542
 00:28:01,120 --> 00:28:05,710
 Because at that point of when you're actually computing the join, 
 
-548
+543
 00:28:06,060 --> 00:28:07,650
 you've already scanned the table, right?
 
-549
+544
 00:28:07,660 --> 00:28:08,930
 And fed it into a scan operator. 
 
-550
+545
 00:28:08,940 --> 00:28:10,370
 So it doesn't matter where it came from. 
 
-551
+546
 00:28:11,490 --> 00:28:13,040
 But just in the background minds, 
 
-552
+547
 00:28:13,050 --> 00:28:15,800
 going to be mindful that we shouldn't think about, 
 
-553
+548
 00:28:16,530 --> 00:28:18,800
 if i'm scanning this table or scanning data, 
 
-554
+549
 00:28:20,640 --> 00:28:24,190
-what does it mean to be coming from s three or an object store? 
+what does it mean to be coming from s3 or an object store? 
 
-555
+550
 00:28:24,800 --> 00:28:26,350
 As I said before, traditionally,
 
-556
+551
 00:28:26,360 --> 00:28:29,500
 the in a shared architecture, 
 
-557
+552
 00:28:29,510 --> 00:28:34,120
 it was assumed that the storage layer was was initial. 
 
-558
+553
 00:28:34,130 --> 00:28:36,200
 The stories with me some dedicated
 
-559
+554
 00:28:37,590 --> 00:28:42,030
 on prem appliance or storage device or knobs that expose like a
 
-560
+555
 00:28:42,040 --> 00:28:44,950
 posits api that you could read and write to. 
 
-561
+556
 00:28:46,500 --> 00:28:48,900
 In the more high end systems like rural exeter data, 
 
-562
+557
 00:28:49,230 --> 00:28:51,300
 they do use a storage appliance. 
 
-563
+558
 00:28:52,600 --> 00:28:53,710
 These racks are looking for this. 
 
-564
+559
 00:28:53,720 --> 00:28:54,950
 You have to compute in storage layer, 
 
-565
+560
 00:28:54,960 --> 00:28:58,550
 but the the daily system is aware that it's talking
 
-566
+561
 00:28:58,560 --> 00:29:02,470
-to aaa special storage storage appliance. 
+to a special storage storage appliance. 
 
-567
+562
 00:29:03,230 --> 00:29:04,420
 It goes over fiber channel, 
 
-568
+563
 00:29:04,430 --> 00:29:07,180
 and it's not making positive calls to read data. 
 
-569
+564
 00:29:07,190 --> 00:29:09,700
 It's extending proprietary commands. 
 
-570
+565
 00:29:10,100 --> 00:29:14,560
 They actually can do some predicate push down in these systems. 
 
-571
+566
 00:29:16,290 --> 00:29:18,680
 But the systems, the environment we're gonna focus on, as I said,
 
-572
+567
 00:29:18,690 --> 00:29:19,680
 is the object stores. 
 
-573
+568
 00:29:20,690 --> 00:29:23,000
 Because this is how everyone's building these modern o lab systems
 
-574
+569
 00:29:23,010 --> 00:29:23,760
 around the cloud. 
 
-575
+570
 00:29:24,910 --> 00:29:27,870
 And then I said is that they're infinitely scalable. 
 
-576
+571
 00:29:28,270 --> 00:29:29,170
 Put that in quotes, obviously,
 
-577
+572
 00:29:29,180 --> 00:29:33,150
 but like as long as your credit card has enough money on it, 
 
-578
+573
 00:29:33,240 --> 00:29:34,870
 your account has money on it. 
 
-579
+574
 00:29:34,880 --> 00:29:37,430
 You can keep putting as much data as you want in amazon s three
 
-580
+575
 00:29:37,440 --> 00:29:39,990
 and a local outlet stored for you with pretty high guarantees
 
-581
+576
 00:29:40,120 --> 00:29:40,870
 and durability, 
 
-582
+577
 00:29:41,800 --> 00:29:44,390
 insane for azure in gc ps cloud storage. 
 
-583
+578
 00:29:44,930 --> 00:29:51,880
 So you no longer have to worry about provisioning storage space, 
 
-584
+579
 00:29:51,890 --> 00:29:54,480
 but he would have to do a a in a own premise system. 
 
-585
+580
 00:29:54,730 --> 00:29:58,440
 You just keep throwing more and more data in your stores layer. 
 
-586
+581
 00:30:02,140 --> 00:30:07,680
 And you don't have to scale you scale compute layer separately either. 
 
-587
+582
 00:30:08,070 --> 00:30:10,040
 You just keep putting more data in and things are great. 
 
-588
+583
 00:30:13,250 --> 00:30:15,040
 These object stores what do they actually look like? 
 
-589
+584
 00:30:17,010 --> 00:30:20,520
 They're gonna expose you a pretty simple api we talk about the amazon select, 
 
-590
+585
 00:30:20,530 --> 00:30:21,320
 but in general, 
 
-591
+586
 00:30:21,520 --> 00:30:24,140
 they're going to have three commands put, getting delete.
 
-592
+587
 00:30:25,650 --> 00:30:28,350
 So what happens is you have these, 
 
-593
+588
 00:30:29,330 --> 00:30:31,480
 you have your data that you're ingesting, 
 
-594
+589
 00:30:31,490 --> 00:30:32,960
 put your database. 
 
-595
+590
 00:30:32,970 --> 00:30:37,960
 You're going to break them up into to these large immutable blocks of data, 
 
-596
+591
 00:30:37,970 --> 00:30:38,880
 these files, 
 
-597
+592
 00:30:38,890 --> 00:30:42,000
 and you can do it put in to store it in the object store. 
 
-598
+593
 00:30:42,390 --> 00:30:47,300
 Then you'll have some catalogue that'll keep track of for some file. 
 
-599
+594
 00:30:47,310 --> 00:30:49,780
 Id is found at this location in the object store. 
 
-600
+595
 00:30:50,720 --> 00:30:54,580
 We'll talk more about what these files look like next class. 
 
-601
+596
 00:30:55,550 --> 00:30:56,030
 But in general, 
 
-602
+597
 00:30:56,040 --> 00:31:00,410
 they're going to be some binary format of a column storm and 1 kilometer format. 
 
-603
+598
 00:31:01,340 --> 00:31:05,770
 And it's gonna use a pax layout where within each block, 
 
-604
+599
 00:31:07,570 --> 00:31:10,640
 the attributes of the table will be broken up in a columnar fashion, 
 
-605
+600
 00:31:10,650 --> 00:31:16,240
 but all the attributes for a single logical triple will be found in that block. 
 
-606
+601
 00:31:16,690 --> 00:31:18,120
 This is different than how, 
 
-607
+602
 00:31:18,130 --> 00:31:20,920
 like maybe the vertical store files, store data,
 
-608
+603
 00:31:20,930 --> 00:31:24,280
 where you have a separate file for each column at a table. 
 
-609
+604
 00:31:24,490 --> 00:31:24,780
 With packs, 
 
-610
+605
 00:31:24,790 --> 00:31:28,990
 you basically have all the data within a single attribute in the single file. 
 
-611
+606
 00:31:29,440 --> 00:31:30,230
 There'll be a header. 
 
-612
+607
 00:31:30,240 --> 00:31:31,430
 Sometimes the footer, 
 
-613
+608
 00:31:31,440 --> 00:31:36,950
 like in part k will contain metadata about the offsets when the file
 
-614
+609
 00:31:36,960 --> 00:31:38,150
 for where columns start, 
 
-615
+610
 00:31:38,420 --> 00:31:42,320
 what kind of compression schemes are using for the different columns that
 
-616
+611
 00:31:42,330 --> 00:31:45,190
 can change per profile? 
 
-617
+612
 00:31:45,600 --> 00:31:49,390
 Sometimes there's pre computed indexes to do filtering or zone maps. 
 
-618
+613
 00:31:49,400 --> 00:31:51,890
 Again, these are things will cover later in the semester,
 
-619
+614
 00:31:51,900 --> 00:31:54,310
 but he would store all that information within the file itself. 
 
-620
+615
 00:31:55,640 --> 00:31:58,420
 Now, when you want to start accessing this data in the object store,
 
-621
+616
 00:32:01,120 --> 00:32:04,920
 you would make a request on the other store just to retrieve the header
 
-622
+617
 00:32:05,380 --> 00:32:09,150
 of the of the file block. 
 
-623
+618
 00:32:09,400 --> 00:32:13,700
 And then that'll get all that meta data about where the columns are located
 
-624
+619
 00:32:13,710 --> 00:32:15,580
 and what kind of professional teams are being used. 
 
-625
+620
 00:32:15,590 --> 00:32:20,420
 And then you can then do selective gets just to get the byte ranges
 
-626
+621
 00:32:20,430 --> 00:32:21,500
 of the data you actually need. 
 
-627
+622
 00:32:21,510 --> 00:32:25,950
 So you don't need to bring in the full page or the full block
 
-628
+623
 00:32:26,310 --> 00:32:28,500
 from the object store and then parse it. 
 
-629
+624
 00:32:29,070 --> 00:32:31,780
 You can just bring a little bit in figure out where you need to go to get
 
-630
+625
 00:32:31,790 --> 00:32:32,420
 the rest of it. 
 
-631
+626
 00:32:33,320 --> 00:32:35,110
 Have retrieved this the minimum amount. 
 
-632
+627
 00:32:35,120 --> 00:32:37,270
 Again, that's different than what we talked about doing.
 
-633
+628
 00:32:38,270 --> 00:32:42,860
 Disk io in the interclass where we'd say every pages eight kilobytes
 
-634
+629
 00:32:42,870 --> 00:32:43,380
 or four kilobytes, 
 
-635
+630
 00:32:43,390 --> 00:32:44,500
 you go fetch the whole thing. 
 
-636
+631
 00:32:44,680 --> 00:32:46,320
 Even though you only need a portion of it, 
 
-637
+632
 00:32:46,330 --> 00:32:48,790
 you can be a bit more intelligent here, because the blocks are larger,
 
-638
+633
 00:32:48,800 --> 00:32:50,690
 and you obviously don't want to achieve the whole block. 
 
-639
+634
 00:32:51,880 --> 00:32:53,990
 I think in snowflake, the block size is,
 
-640
+635
 00:32:54,000 --> 00:32:56,390
 I think the lowest is like 50 megs, and maybe goes up to the corner,
 
-641
+636
 00:32:56,400 --> 00:32:57,350
 max or something like that. 
 
-642
+637
 00:32:57,480 --> 00:32:58,390
 I see these aren't small blocks. 
 
-643
+638
 00:32:58,400 --> 00:32:59,030
 These are pretty big. 
 
-644
+639
 00:32:59,040 --> 00:33:03,420
 So you don't need to fetch the whole thing if you don't need it. 
 
-645
+640
 00:33:03,430 --> 00:33:06,620
 So one interesting system I like to bring up is yellow brick. 
 
-646
+641
 00:33:07,040 --> 00:33:09,350
 So this is actually a slide from a talk they gave with us
 
-647
+642
 00:33:09,800 --> 00:33:11,630
 during the pandemic a few years ago, 
 
-648
+643
 00:33:12,440 --> 00:33:16,830
 but it shows this sort of how they're using the object store with s three. 
 
-649
+644
 00:33:17,950 --> 00:33:20,100
 Again, this architecture looks a lot like what i've already showed you.
 
-650
+645
 00:33:20,110 --> 00:33:21,660
 You have these worker nodes, 
 
-651
+646
 00:33:22,230 --> 00:33:25,540
 and they have this locally attached mdmmessd
 
-652
+647
 00:33:26,070 --> 00:33:29,850
 so it's interesting about yellow brick is
 
-653
+648
 00:33:29,860 --> 00:33:33,900
 that they talked about how they tried using amazons, 
 
-654
+649
 00:33:35,020 --> 00:33:36,210
 s three library, 
 
-655
+650
 00:33:36,620 --> 00:33:38,730
 the access library to communicate with us three. 
 
-656
+651
 00:33:39,170 --> 00:33:41,190
 And they found it was super slow. 
 
-657
+652
 00:33:41,200 --> 00:33:44,010
 So they wrote their own library. 
 
-658
+653
 00:33:46,050 --> 00:33:49,560
 They were to get a three x performance using retrieving the same data
 
-659
+654
 00:33:49,570 --> 00:33:52,480
 from s three using their custom library instead of using amazons. 
 
-660
+655
 00:33:53,780 --> 00:33:55,930
 I'm bringing this up just to say that you don't necessarily, 
 
-661
+656
 00:33:55,940 --> 00:33:58,650
 you don't have to use whatever that the cabinet provides you. 
 
-662
+657
 00:33:58,660 --> 00:33:59,810
 For the client side library. 
 
-663
+658
 00:33:59,820 --> 00:34:02,810
 You can write your own thing and potentially get much better performance. 
 
-664
+659
 00:34:02,820 --> 00:34:04,530
 I forget what the secret they used here. 
 
-665
+660
 00:34:04,540 --> 00:34:05,530
 They might be doing. 
 
-666
+661
 00:34:07,070 --> 00:34:09,860
 You may be doing kernel bypass to get through the optic store, 
 
-667
+662
 00:34:09,870 --> 00:34:11,180
 and you can use on the client side. 
 
-668
+663
 00:34:11,190 --> 00:34:13,540
 You can't do it in the server side because amazon controls the server. 
 
-669
+664
 00:34:14,900 --> 00:34:17,330
 But I another cool thing they were doing is that they would communicate
 
-670
+665
 00:34:17,340 --> 00:34:21,860
 between the different nodes using udp with the intel
 
-671
+666
 00:34:21,870 --> 00:34:26,130
 dpdk which is the data plane development kit. 
 
-672
+667
 00:34:26,480 --> 00:34:29,780
 It's a way to do kernel bypass on talking to the nick, which is,
 
-673
+668
 00:34:31,710 --> 00:34:33,500
 she's not easy to use it. 
 
-674
+669
 00:34:33,510 --> 00:34:33,740
 Again. 
 
-675
+670
 00:34:33,750 --> 00:34:34,540
 We'll talk about this later. 
 
-676
+671
 00:34:34,550 --> 00:34:35,260
 All this. 
 
-677
+672
 00:34:35,270 --> 00:34:38,380
 Intel current life passed off is like super tricky and super painful. 
 
-678
+673
 00:34:39,540 --> 00:34:40,890
 We'll cover that throughout the semester. 
 
-679
+674
 00:34:43,010 --> 00:34:46,040
 I there's a bunch of other stuff that we're not gonna talk about today, 
 
-680
+675
 00:34:46,050 --> 00:34:49,720
 but we'll start covering these things over the next throughout the semester. 
 
-681
+676
 00:34:50,080 --> 00:34:51,470
 There's different file formats. 
 
-682
+677
 00:34:51,480 --> 00:34:53,110
 Again, I mentioned the tax layout,
 
-683
+678
 00:34:53,120 --> 00:34:54,950
 but we'll talk about different approaches. 
 
-684
+679
 00:34:56,100 --> 00:34:57,170
 Again, all this is gonna be very,
 
-685
+680
 00:34:57,180 --> 00:34:58,970
 highly depressed because it's kilometer storage. 
 
-686
+681
 00:34:59,360 --> 00:35:00,250
 To talk about next class. 
 
-687
+682
 00:35:00,260 --> 00:35:02,980
 How do you actually decide how to do horizontal partitioning on your tables
 
-688
+683
 00:35:03,480 --> 00:35:06,980
 and split them up based on values? 
 
-689
+684
 00:35:06,990 --> 00:35:11,300
 So you can minimize the data transfer between nodes for inmate results. 
 
-690
+685
 00:35:11,850 --> 00:35:14,820
 Then there's a whole process of how you wanna do ingest new data. 
 
-691
+686
 00:35:15,170 --> 00:35:18,900
 Like a big part of databases are absolutely you want to put data in it. 
 
-692
+687
 00:35:19,890 --> 00:35:24,670
 There are there's fast path instead of running a certain
 
-693
+688
 00:35:24,680 --> 00:35:26,910
 as fast as new bulk loading and get hit
 
-694
+689
 00:35:26,920 --> 00:35:28,790
 into the system quickly as possible. 
 
-695
+690
 00:35:29,640 --> 00:35:31,470
 Obviously, want to get update attention, delete it.
 
-696
+691
 00:35:31,480 --> 00:35:32,390
 How do you handle that? 
 
-697
+692
 00:35:32,400 --> 00:35:33,950
 Even though the files are immutable? 
 
-698
+693
 00:35:34,280 --> 00:35:35,900
 And then we're not gonna talk about too much about this, 
 
-699
+694
 00:35:35,910 --> 00:35:36,620
 but this will come up. 
 
-700
+695
 00:35:36,630 --> 00:35:43,530
 We talk about data lakes, especially with the photon and database later on.
 
-701
+696
 00:35:45,180 --> 00:35:48,320
 But the a in a monaco system, 
 
-702
+697
 00:35:48,330 --> 00:35:52,720
 you also want to support the ability for people to have existing files
 
-703
+698
 00:35:52,730 --> 00:35:54,240
 just sitting in s three. 
 
-704
+699
 00:35:55,300 --> 00:35:58,930
 They can see in a party format without having to first bulk load them
 
-705
+700
 00:35:58,940 --> 00:35:59,570
 to your data system. 
 
-706
+701
 00:35:59,580 --> 00:36:01,810
 You want to be able to operate directly in the files as exist. 
 
-707
+702
 00:36:02,210 --> 00:36:05,400
 How you discover that these files exist? 
 
-708
+703
 00:36:06,010 --> 00:36:07,290
 Then what have you scheduling? 
 
-709
+704
 00:36:07,600 --> 00:36:09,390
 Productivity will spend a little time talking about. 
 
-710
+705
 00:36:09,400 --> 00:36:12,980
 It means that as the query is running, 
 
-711
+706
 00:36:12,990 --> 00:36:17,940
 how do we maybe make changes on the fly to better utilize resources, 
 
-712
+707
 00:36:17,950 --> 00:36:20,060
 maybe under provision or over provision, 
 
-713
+708
 00:36:20,620 --> 00:36:24,490
 the task or the workers and we can scale that and make changes as we go along. 
 
-714
+709
 00:36:24,500 --> 00:36:24,730
 Again. 
 
-715
+710
 00:36:24,940 --> 00:36:26,450
 There's a lot of things we're not covering here. 
 
-716
+711
 00:36:26,920 --> 00:36:27,510
 That are important. 
 
-717
+712
 00:36:27,520 --> 00:36:29,390
 We'll get to later this semester. 
 
-718
+713
 00:36:31,720 --> 00:36:35,560
 Ii talked to this at the beginning when I make an observation here, 
 
-719
+714
 00:36:35,570 --> 00:36:38,160
 that in the snowflake paper, you guys read,
 
-720
+715
 00:36:38,440 --> 00:36:40,150
 even or even though it's about snowflake, 
 
-721
+716
 00:36:40,520 --> 00:36:41,990
 they talk about snowflake does certain things, 
 
-722
+717
 00:36:42,000 --> 00:36:44,310
 but they make some important observations about, 
 
-723
+718
 00:36:44,700 --> 00:36:47,220
 again, what a monolith system looks like.
 
-724
+719
 00:36:47,510 --> 00:36:48,700
 That's why I had you guys read it. 
 
-725
+720
 00:36:49,170 --> 00:36:51,370
 But the thing to.out, 
 
-726
+721
 00:36:51,730 --> 00:36:55,960
 a system like snowflake, like drama, like big query, like yellow brick,
 
-727
+722
 00:36:57,350 --> 00:36:58,840
 like data bricks. 
 
-728
+723
 00:36:58,850 --> 00:37:00,840
 These are monolithic systems, 
 
-729
+724
 00:37:01,210 --> 00:37:05,210
 meaning that they're building all the components that that you need
 
-730
+725
 00:37:05,220 --> 00:37:06,170
 for the data system. 
 
-731
+726
 00:37:11,260 --> 00:37:12,440
 These are monolithic systems, 
 
-732
+727
 00:37:12,450 --> 00:37:14,440
 meaning they're building all the components you need to build. 
 
-733
+728
 00:37:14,450 --> 00:37:16,720
 It is entirely in house with their engineers. 
 
-734
+729
 00:37:18,930 --> 00:37:22,760
 Most of the non academic systems that we'll talk about the semester
 
-735
+730
 00:37:23,210 --> 00:37:25,040
 are going to have pretty much the same architecture, 
 
-736
+731
 00:37:25,050 --> 00:37:25,320
 right? 
 
-737
+732
 00:37:25,330 --> 00:37:27,560
 You have query engine, you have some storage layer,
 
-738
+733
 00:37:28,020 --> 00:37:32,680
 you have an orchestra to move data around xe task, scheduler, some sort,
 
-739
+734
 00:37:33,010 --> 00:37:33,310
 right? 
 
-740
+735
 00:37:33,620 --> 00:37:37,380
 They're all pretty much implementing the same thing. 
 
-741
+736
 00:37:38,530 --> 00:37:43,870
 And that means basically that we have people where they have companies
 
-742
+737
 00:37:43,880 --> 00:37:45,390
 in a lot of money, 
 
-743
+738
 00:37:45,880 --> 00:37:50,130
 writing the same database and software over and over again. 
 
-744
+739
 00:37:50,140 --> 00:37:50,360
 Right? 
 
-745
+740
 00:37:50,370 --> 00:37:52,890
 They're writing the same thing to do the same thing. 
 
-746
+741
 00:37:55,290 --> 00:37:59,450
 And obviously, that's a it's a huge labor effort to do this.
 
-747
+742
 00:37:59,880 --> 00:38:07,720
 And it may not be in the best interest for the database community, 
 
-748
+743
 00:38:07,730 --> 00:38:09,880
 broadly speaking, to do this, right?
 
-749
+744
 00:38:09,890 --> 00:38:11,760
 If everybody's implementing the same sequel parser, 
 
-750
+745
 00:38:13,480 --> 00:38:16,220
 what is that actually that moving us forward? 
 
-751
+746
 00:38:16,230 --> 00:38:16,620
 Right? 
 
-752
+747
 00:38:16,910 --> 00:38:21,280
 We may be better to be better spent doing other more innovative things. 
 
-753
+748
 00:38:21,290 --> 00:38:27,680
 And so there's this interesting development in the last5 years or so, 
 
-754
+749
 00:38:27,690 --> 00:38:30,730
 where you're starting to see various projects
 
-755
+750
 00:38:30,820 --> 00:38:35,630
 of in the own source committee or organizations to
 
-756
+751
 00:38:35,640 --> 00:38:40,160
 build to break out portions of a modern overlap system
 
-757
+752
 00:38:40,430 --> 00:38:43,580
 into standalone components that are open source
 
-758
+753
 00:38:43,590 --> 00:38:45,180
 that other people could build on. 
 
-759
+754
 00:38:45,190 --> 00:38:46,580
 Other people could take advantage of, 
 
-760
+755
 00:38:46,590 --> 00:38:53,820
 and other people could could reuse either I for their own new old lab systems. 
 
-761
+756
 00:38:53,830 --> 00:38:54,220
 Right? 
 
-762
+757
 00:38:55,280 --> 00:38:57,180
 Again, the idea here is that everyone said, everyone,
 
-763
+758
 00:38:57,190 --> 00:38:58,060
 everybody the same thing, 
 
-764
+759
 00:38:58,070 --> 00:39:01,390
 this all redundant parts of the system. 
 
-765
+760
 00:39:02,040 --> 00:39:07,710
 Let's everyone work together on one thing and have that be really, 
 
-766
+761
 00:39:07,720 --> 00:39:09,990
 really good and everyone gets to reap the rewards. 
 
-767
+762
 00:39:10,000 --> 00:39:11,350
 They're sort of like linux, right?
 
-768
+763
 00:39:11,360 --> 00:39:13,690
 Linux is, 
 
-769
+764
 00:39:15,260 --> 00:39:19,790
 but it'd be kind of stupid now or insane outside of research and academia
 
-770
+765
 00:39:19,800 --> 00:39:22,350
 to try to build a new operating system from scratch and to compete
 
-771
+766
 00:39:22,360 --> 00:39:22,910
 with linux, 
 
-772
+767
 00:39:23,730 --> 00:39:25,960
 where the sort of potential wisdom where the mindset is, 
 
-773
+768
 00:39:25,970 --> 00:39:28,040
 everyone spoke about linux is what we're using. 
 
-774
+769
 00:39:28,050 --> 00:39:29,320
 Let's make that really, really good.
 
-775
+770
 00:39:29,720 --> 00:39:32,100
 It's not exactly the same because the os is a major undertaking
 
-776
+771
 00:39:32,110 --> 00:39:34,000
 where these other parts i'm talking about are much smaller. 
 
-777
+772
 00:39:34,010 --> 00:39:36,260
 But the idea is the same thing. 
 
-778
+773
 00:39:36,560 --> 00:39:36,570
 Right? 
 
-779
+774
 00:39:36,580 --> 00:39:42,010
 Instead of having two people build competing parts that do the same thing, 
 
-780
+775
 00:39:42,260 --> 00:39:43,050
 let's work together. 
 
-781
+776
 00:39:43,630 --> 00:39:46,940
 You see this in sort of 4 sort of categories. 
 
-782
+777
 00:39:47,920 --> 00:39:51,540
 And it's you can sort of see how this is tied to the different layers. 
 
-783
+778
 00:39:51,550 --> 00:39:52,820
 I talked about the beginning, right?
 
-784
+779
 00:39:53,290 --> 00:39:55,360
 There's people getting system catalogues, query optimizer,
 
-785
+780
 00:39:55,370 --> 00:39:58,040
 which is the hardest part of the system is file for us to act. 
 
-786
+781
 00:39:58,050 --> 00:40:01,940
 So I want to quickly go through these different components and just sort
 
-787
+782
 00:40:01,950 --> 00:40:03,260
 of talk about the major efforts, 
 
-788
+783
 00:40:03,270 --> 00:40:08,380
 the major projects just can be aware of that as we talked
 
-789
+784
 00:40:08,390 --> 00:40:11,350
 about the semester for these different engines and different systems. 
 
-790
+785
 00:40:11,620 --> 00:40:13,330
 A lot of them aren't going to use these things, 
 
-791
+786
 00:40:14,460 --> 00:40:18,270
 but they'll be potentially open source alternatives for them. 
 
-792
+787
 00:40:20,280 --> 00:40:23,070
 This idea of breaking the system up into reusable components
 
-793
+788
 00:40:23,080 --> 00:40:25,830
 or modular components is not new. 
 
-794
+789
 00:40:26,510 --> 00:40:31,500
 There's this paper by a famous researcher at msr surgery, 
 
-795
+790
 00:40:32,030 --> 00:40:32,860
 where he back. 
 
-796
+791
 00:40:32,870 --> 00:40:35,700
 And I think it's like 19 year, 2000,
 
-797
+792
 00:40:35,710 --> 00:40:39,130
 we talked about what they call risk dial data systems. 
 
-798
+793
 00:40:39,140 --> 00:40:39,290
 Now, 
 
-799
+794
 00:40:39,820 --> 00:40:43,260
 this argument here is built for how to make these different sort
 
-800
+795
 00:40:43,270 --> 00:40:45,380
 of sub components modular, 
 
-801
+796
 00:40:45,390 --> 00:40:46,180
 reusable, 
 
-802
+797
 00:40:48,930 --> 00:40:51,720
 to make it easier to automate the tuning of them, 
 
-803
+798
 00:40:52,050 --> 00:40:53,280
 make of autonomous navy system. 
 
-804
+799
 00:40:53,290 --> 00:40:54,440
 But the idea of, again,
 
-805
+800
 00:40:54,450 --> 00:40:58,210
 breaking the system into these separate layers that can be implemented
 
-806
+801
 00:40:58,220 --> 00:41:02,100
 through some standard pi is basically the person that they were talking
 
-807
+802
 00:41:02,110 --> 00:41:03,220
 about this paper long ago. 
 
-808
+803
 00:41:05,010 --> 00:41:06,600
 The first thing is the system catalogs. 
 
-809
+804
 00:41:08,050 --> 00:41:09,280
 Again, we're talking about this next class,
 
-810
+805
 00:41:09,290 --> 00:41:12,680
 but system catalog basically is the registry where the data system keeps
 
-811
+806
 00:41:12,690 --> 00:41:13,040
 track of, 
 
-812
+807
 00:41:13,390 --> 00:41:14,620
 what the schema looks like. 
 
-813
+808
 00:41:14,630 --> 00:41:15,460
 Potatoes they have, 
 
-814
+809
 00:41:15,470 --> 00:41:21,280
 what calms they have if there's persistent files where they located
 
-815
+810
 00:41:21,290 --> 00:41:22,560
 in the object store on the disk. 
 
-816
+811
 00:41:22,900 --> 00:41:27,910
 And so the way basically works that if you're calling your talent assessment, 
 
-817
+812
 00:41:27,920 --> 00:41:29,390
 insert the data for you, 
 
-818
+813
 00:41:29,400 --> 00:41:30,990
 like an insert query or copy command, 
 
-819
+814
 00:41:31,250 --> 00:41:34,520
 then the data some will maintain its catalogs because it's trading
 
-820
+815
 00:41:34,530 --> 00:41:35,600
 the files as it goes along. 
 
-821
+816
 00:41:36,550 --> 00:41:38,380
 If there's a discovery process, as they said,
 
-822
+817
 00:41:38,390 --> 00:41:40,780
 where there's a bunch of existing three files and the catalogue
 
-823
+818
 00:41:40,790 --> 00:41:43,980
 needs to have an epi needs a way to be told these files that you beware
 
-824
+819
 00:41:43,990 --> 00:41:44,340
 of them. 
 
-825
+820
 00:41:44,850 --> 00:41:49,700
 There's now several projects where people build these sort
 
-826
+821
 00:41:49,710 --> 00:41:52,140
 of cloud catalogs that essentially, 
 
-827
+822
 00:41:52,150 --> 00:41:52,300
 again, 
 
-828
+823
 00:41:52,310 --> 00:41:54,100
 just keep track of what data exists, 
 
-829
+824
 00:41:55,090 --> 00:41:57,720
 what cables and columns are in these files. 
 
-830
+825
 00:41:57,970 --> 00:42:01,000
 Sometimes there's some basic statistics about what's in them, 
 
-831
+826
 00:42:01,010 --> 00:42:02,000
 but as I said before, 
 
-832
+827
 00:42:02,010 --> 00:42:04,760
 oftentimes the statistics are stored in the file themselves. 
 
-833
+828
 00:42:06,040 --> 00:42:09,030
 Probably the most famous one or why the used one is the h catalog. 
 
-834
+829
 00:42:09,040 --> 00:42:10,870
 And this came out of the hive project. 
 
-835
+830
 00:42:11,900 --> 00:42:13,170
 It's a wrapper of the hive, 
 
-836
+831
 00:42:13,180 --> 00:42:14,420
 meta store. 
 
-837
+832
 00:42:14,430 --> 00:42:16,180
 And I know you can use this for spark. 
 
-838
+833
 00:42:16,190 --> 00:42:18,300
 I think there's some other systems that take advantage of it. 
 
-839
+834
 00:42:18,680 --> 00:42:18,870
 Again, 
 
-840
+835
 00:42:18,880 --> 00:42:22,000
 think of it's like a key value store that keeps track
 
-841
+836
 00:42:22,010 --> 00:42:23,720
 of again the database schema. 
 
-842
+837
 00:42:24,030 --> 00:42:25,540
 Google has its data catalogue, 
 
-843
+838
 00:42:25,550 --> 00:42:27,300
 amazon got its blue cattle data club. 
 
-844
+839
 00:42:27,750 --> 00:42:29,060
 They're all doing basically the same thing, 
 
-845
+840
 00:42:29,070 --> 00:42:31,020
 but h catalog is actually the only one. 
 
-846
+841
 00:42:33,140 --> 00:42:34,060
 The next is the query optimizers. 
 
-847
+842
 00:42:34,750 --> 00:42:38,720
 So we'll spend a several classes talking about query optimization, 
 
-848
+843
 00:42:38,730 --> 00:42:43,560
 but think of these are just generic frame works where you can define
 
-849
+844
 00:42:43,570 --> 00:42:47,520
 the heuristic or the cost based search rules to do career acquisition, 
 
-850
+845
 00:42:47,530 --> 00:42:51,440
 how to take a some of them actually keep the parts the sql query for you, 
 
-851
+846
 00:42:51,450 --> 00:42:55,220
 but then it convert it into a a logical plan through transformation rules
 
-852
+847
 00:42:55,230 --> 00:42:58,300
 and then run a cost based search to generate a physical plan. 
 
-853
+848
 00:43:01,450 --> 00:43:02,760
 The hardest part of building data system
 
-854
+849
 00:43:02,770 --> 00:43:05,170
 because there's all these corner cases and sequel is
 
-855
+850
 00:43:05,180 --> 00:43:07,010
 all these optimization rules they can apply. 
 
-856
+851
 00:43:07,810 --> 00:43:11,920
 Deal with correlated sub queries like it gets very messy, very quick.
 
-857
+852
 00:43:13,300 --> 00:43:16,380
 And the ideas that rather than everybody building
 
-858
+853
 00:43:16,390 --> 00:43:17,780
 their own first crappy heuristic optimize, 
 
-859
+854
 00:43:17,790 --> 00:43:18,820
 which everyone does. 
 
-860
+855
 00:43:19,410 --> 00:43:19,760
 In theory, 
 
-861
+856
 00:43:19,770 --> 00:43:24,110
 you could have a cost based search that was pretty powerful out of the box. 
 
-862
+857
 00:43:25,390 --> 00:43:27,700
 The two nodal implications are apache, 
 
-863
+858
 00:43:27,710 --> 00:43:29,140
 calcite and green lump orca. 
 
-864
+859
 00:43:29,670 --> 00:43:34,170
 Calcite is came out of lucy db lucy db a was ai think, 
 
-865
+860
 00:43:34,180 --> 00:43:36,030
 commercial system, 
 
-866
+861
 00:43:36,040 --> 00:43:39,550
 late 2000s that failed. 
 
-867
+862
 00:43:39,560 --> 00:43:40,670
 But for whatever reason, 
 
-868
+863
 00:43:41,360 --> 00:43:43,550
 calcite was pulled out and was reused, 
 
-869
+864
 00:43:44,290 --> 00:43:46,560
 getting as a standalone query optimizer, which is pretty cool.
 
-870
+865
 00:43:46,570 --> 00:43:50,200
 And then the green thumb guys built this thing called orca. 
 
-871
+866
 00:43:50,400 --> 00:43:54,450
 It was designed to be the query optimizer for both green plum, 
 
-872
+867
 00:43:54,770 --> 00:43:57,200
 which is a lab system, as we talked about last class,
 
-873
+868
 00:43:58,030 --> 00:44:00,990
 that vm ware now also vm ware owns. 
 
-874
+869
 00:44:02,600 --> 00:44:04,190
 But they also built for this other thing called hawk, 
 
-875
+870
 00:44:04,200 --> 00:44:07,600
 which is like their version of sequel on top of head do. 
 
-876
+871
 00:44:07,610 --> 00:44:10,120
 And so they try to build a single optimized framework that could be used
 
-877
+872
 00:44:10,130 --> 00:44:10,760
 in both systems. 
 
-878
+873
 00:44:10,770 --> 00:44:12,560
 I hawke is still around. 
 
-879
+874
 00:44:12,570 --> 00:44:13,960
 It's not that people actually use it, 
 
-880
+875
 00:44:13,970 --> 00:44:16,030
 but green plum uses it as well. 
 
-881
+876
 00:44:17,390 --> 00:44:20,860
 The main thing is to think about this green plum is less known than calcite. 
 
-882
+877
 00:44:20,870 --> 00:44:22,260
 It's written in c plus. 
 
-883
+878
 00:44:23,050 --> 00:44:25,360
 Calcite is written in java, 
 
-884
+879
 00:44:25,370 --> 00:44:28,720
 and that's more use that there's more systems using calcite. 
 
-885
+880
 00:44:30,130 --> 00:44:32,320
 I don't know whether which one is more powerful or not like. 
 
-886
+881
 00:44:34,200 --> 00:44:36,470
 They both look roughly equivalent. 
 
-887
+882
 00:44:38,460 --> 00:44:40,450
 Then there's also these source file formats. 
 
-888
+883
 00:44:40,460 --> 00:44:47,180
 And actually a this is a pretty novel idea that is definitely
 
-889
+884
 00:44:48,690 --> 00:44:51,400
 made possible by the amount modern cloud systems. 
 
-890
+885
 00:44:52,050 --> 00:44:56,120
 So historically database systems always use their own proprietary data format, 
 
-891
+886
 00:44:56,410 --> 00:44:56,920
 right? 
 
-892
+887
 00:44:56,930 --> 00:44:59,800
 Seek a light, postgres, my sequel, whatever you name it.
 
-893
+888
 00:45:00,110 --> 00:45:01,660
 Then when they write files to desk, 
 
-894
+889
 00:45:01,670 --> 00:45:03,260
 that's in their proprietary binary format, 
 
-895
+890
 00:45:03,270 --> 00:45:08,820
 like you can't take up progress data files and read them in my single oracle. 
 
-896
+891
 00:45:10,090 --> 00:45:12,420
 Duck tv can read single light files, but it's designed to do that,
 
-897
+892
 00:45:12,430 --> 00:45:13,380
 but you get my point, 
 
-898
+893
 00:45:13,840 --> 00:45:16,960
 the only way to really transfer data or be able to take data
 
-899
+894
 00:45:16,970 --> 00:45:20,960
 from one day system and reuse it or do computations on another day system
 
-900
+895
 00:45:20,970 --> 00:45:23,800
 is if you dump it out as acsb or jason file, 
 
-901
+896
 00:45:23,810 --> 00:45:24,120
 right? 
 
-902
+897
 00:45:27,080 --> 00:45:29,510
 Starting in the last decade, 
 
-903
+898
 00:45:29,520 --> 00:45:30,910
 there was this moment to say, okay,
 
-904
+899
 00:45:31,040 --> 00:45:33,780
 let's actually build these binary file formats. 
 
-905
+900
 00:45:33,790 --> 00:45:34,900
 So we don't have to dump. 
 
-906
+901
 00:45:34,910 --> 00:45:36,860
 It is like text based formats like jason. 
 
-907
+902
 00:45:38,060 --> 00:45:40,810
 Then we can build libraries for these different database systems that
 
-908
+903
 00:45:40,820 --> 00:45:42,570
 can access this stuff very efficiently. 
 
-909
+904
 00:45:43,010 --> 00:45:43,840
 These libraries potentially, 
 
-910
+905
 00:45:43,850 --> 00:45:47,400
 suppose you're an iterator to retreat batches of columns in these files. 
 
-911
+906
 00:45:47,410 --> 00:45:51,660
 You can do some select the scans for like pick which columns you actually want. 
 
-912
+907
 00:45:53,120 --> 00:45:55,710
 And some of them, do they do all the depression stuff for you?
 
-913
+908
 00:45:55,930 --> 00:45:58,200
 But again, they're just like this.
 
-914
+909
 00:45:58,210 --> 00:46:00,240
 The lowest level of the query plan is the access methods. 
 
-915
+910
 00:46:01,580 --> 00:46:06,530
 So these are probably the six most wide users are famous ones. 
 
-916
+911
 00:46:07,720 --> 00:46:09,390
 In 2013, there was parquet,
 
-917
+912
 00:46:09,400 --> 00:46:10,990
 org and carbon data came out. 
 
-918
+913
 00:46:11,240 --> 00:46:13,380
 Parquet is probably the most widely used one. 
 
-919
+914
 00:46:13,390 --> 00:46:17,170
 This is a compressed column on my format from claudia and twitter. 
 
-920
+915
 00:46:20,110 --> 00:46:22,420
 It has more aggressive the compression than work, 
 
-921
+916
 00:46:24,780 --> 00:46:27,410
 whether or not it's fast or not depends on what the data looks like, 
 
-922
+917
 00:46:27,420 --> 00:46:29,130
 depends on how you actually access it. 
 
-923
+918
 00:46:29,140 --> 00:46:31,250
 So I can't say one's better than another, depends on a lot of things.
 
-924
+919
 00:46:31,260 --> 00:46:32,950
 But at a high level, 
 
-925
+920
 00:46:34,200 --> 00:46:37,890
 they're basically equivalent or came out of facebook high project. 
 
-926
+921
 00:46:38,770 --> 00:46:40,360
 Carbon data came out of hawaii. 
 
-927
+922
 00:46:40,370 --> 00:46:42,320
 And as I said, I think in the inter class,
 
-928
+923
 00:46:42,370 --> 00:46:45,120
 i'm working with a former student of mine. 
 
-929
+924
 00:46:45,490 --> 00:46:49,450
 They actually tried using carbon data and all the open source libraries
 
-930
+925
 00:46:49,460 --> 00:46:49,890
 don't compile, 
 
-931
+926
 00:46:49,900 --> 00:46:50,330
 don't work. 
 
-932
+927
 00:46:50,340 --> 00:46:53,640
 So I don't know if anybody else at hawaii that uses the carbon data. 
 
-933
+928
 00:46:54,580 --> 00:46:58,650
 Iceberg is a newer one at a net flicks and we'll see it
 
-934
+929
 00:46:58,660 --> 00:47:02,490
 over this next class where it's a way to do support updates
 
-935
+930
 00:47:02,500 --> 00:47:05,610
 and scheme evolutions over parquet files so that you can do, 
 
-936
+931
 00:47:05,620 --> 00:47:08,490
 they have a delta store, you can do updates and then apply them,
 
-937
+932
 00:47:09,160 --> 00:47:12,270
 do the party files plus read the historical data. 
 
-938
+933
 00:47:12,670 --> 00:47:16,980
 85 is a much older data format from the scientific community. 
 
-939
+934
 00:47:17,540 --> 00:47:18,930
 Come from late 90s. 
 
-940
+935
 00:47:18,940 --> 00:47:20,680
 This is for multidimensional data. 
 
-941
+936
 00:47:22,700 --> 00:47:23,210
 Again, 
 
-942
+937
 00:47:23,220 --> 00:47:29,090
 I don't know of any sort of commercial database system that uses ht five, 
 
-943
+938
 00:47:29,100 --> 00:47:30,010
 htf five. 
 
-944
+939
 00:47:30,020 --> 00:47:32,130
 It's primarily used for, as I said,
 
-945
+940
 00:47:32,140 --> 00:47:35,960
 for scientific calculations, scientific instruments,
 
-946
+941
 00:47:35,970 --> 00:47:42,720
 and then apache arrow a is a memory kilometer format that's designed to be
 
-947
+942
 00:47:42,730 --> 00:47:43,960
 the exchange format for
 
-948
+943
 00:47:43,970 --> 00:47:49,050
 sort of sharing data between processes and over the network very efficiently. 
 
-949
+944
 00:47:49,660 --> 00:47:50,130
 Again, 
 
-950
+945
 00:47:50,980 --> 00:47:52,470
 think of like it looks something like parquet, 
 
-951
+946
 00:47:52,480 --> 00:47:53,910
 but it's for enemy data. 
 
-952
+947
 00:47:54,980 --> 00:47:55,970
 For our class, this class,
 
-953
+948
 00:47:55,980 --> 00:47:59,210
 we're mostly going to be focusing on things that look like parquet and orcanero. 
 
-954
+949
 00:48:00,340 --> 00:48:02,740
 And then for project project one, 
 
-955
+950
 00:48:02,750 --> 00:48:03,890
 which we'll discuss next class, 
 
-956
+951
 00:48:03,900 --> 00:48:07,300
 will be building a foreign data effort to parts of it, 
 
-957
+952
 00:48:07,310 --> 00:48:09,420
 looks like a parking file without exactly. 
 
-958
+953
 00:48:09,430 --> 00:48:09,980
 Ok. 
 
-959
+954
 00:48:11,540 --> 00:48:15,470
 The last one that's super interesting is the standalone biopsy, 
 
-960
+955
 00:48:15,480 --> 00:48:16,630
 query execution. 
 
-961
+956
 00:48:17,170 --> 00:48:19,120
 This is kind of what the whole point of this class is. 
 
-962
+957
 00:48:19,130 --> 00:48:20,600
 As I showed in the very beginning, 
 
-963
+958
 00:48:20,610 --> 00:48:23,360
 we spend a lot of time talking how to build the execution engine, 
 
-964
+959
 00:48:23,490 --> 00:48:24,780
 how to do vectors execution, 
 
-965
+960
 00:48:24,790 --> 00:48:26,400
 how to do code compilation, 
 
-966
+961
 00:48:26,410 --> 00:48:27,480
 how to do joints. 
 
-967
+962
 00:48:27,820 --> 00:48:32,930
 That's the it's not the hardest part that he's not always the query optimizer, 
 
-968
+963
 00:48:32,940 --> 00:48:34,170
 but this is certain the part that, 
 
-969
+964
 00:48:34,180 --> 00:48:39,700
 like can have a huge impact on performance. 
 
-970
+965
 00:48:40,050 --> 00:48:41,870
 Obviously, degenerate credit for your plan.
 
-971
+966
 00:48:43,040 --> 00:48:43,670
 You're screwed anyway, 
 
-972
+967
 00:48:43,680 --> 00:48:47,510
 but like having this during this rate can make a big difference. 
 
-973
+968
 00:48:47,520 --> 00:48:52,580
 So there's now work being done to build standalone query engines that are vectors. 
 
-974
+969
 00:48:52,590 --> 00:48:54,780
 It is all the modern techniques that we talked about before. 
 
-975
+970
 00:48:55,890 --> 00:48:58,160
 Again, input just a dag of physical operators.
 
-976
+971
 00:48:58,170 --> 00:49:01,080
 They've required something else to do the scheduling and do access, 
 
-977
+972
 00:49:01,090 --> 00:49:02,160
 to get the data, 
 
-978
+973
 00:49:02,170 --> 00:49:03,520
 do illustration and do data around. 
 
-979
+974
 00:49:03,890 --> 00:49:04,760
 But the end of the day, 
 
-980
+975
 00:49:05,530 --> 00:49:08,040
 it's like the kernels are essentially the query operators. 
 
-981
+976
 00:49:08,670 --> 00:49:11,340
 The mixed famous one of this is going to be velox, 
 
-982
+977
 00:49:11,910 --> 00:49:16,450
 which we'll spend time talking about at the end of the semester. 
 
-983
+978
 00:49:16,760 --> 00:49:18,810
 But this is actually very fascinating now, 
 
-984
+979
 00:49:18,820 --> 00:49:26,700
 because vectors query execution is sort of what made snowflake so good, 
 
-985
+980
 00:49:26,710 --> 00:49:27,780
 so unique. 
 
-986
+981
 00:49:28,110 --> 00:49:30,120
 At least it was the starting point of making it so unique. 
 
-987
+982
 00:49:30,570 --> 00:49:31,470
 10 years ago, 
 
-988
+983
 00:49:31,980 --> 00:49:32,290
 right? 
 
-989
+984
 00:49:32,300 --> 00:49:33,250
 That they were building. 
 
-990
+985
 00:49:33,260 --> 00:49:34,450
 One of the first effect rises, 
 
-991
+986
 00:49:35,310 --> 00:49:36,230
 data, use engines.
 
-992
+987
 00:49:37,870 --> 00:49:38,840
 Now it's so complex. 
 
-993
+988
 00:49:39,170 --> 00:49:40,880
 Everybody has vector x execution for those words. 
 
-994
+989
 00:49:40,890 --> 00:49:42,700
 But can you just go? 
 
-995
+990
 00:49:42,710 --> 00:49:43,740
 This was a big deal, 
 
-996
+991
 00:49:43,750 --> 00:49:46,460
 but now facebook is building velox. 
 
-997
+992
 00:49:46,470 --> 00:49:49,700
 There's data fusion from the arrow and influx tv guys. 
 
-998
+993
 00:49:49,920 --> 00:49:52,920
 Intel is so ethnic. 
 
-999
+994
 00:49:54,820 --> 00:49:59,200
 So now this is super interesting because no, 
 
-1000
+995
 00:50:00,300 --> 00:50:04,650
 facebook is gonna spend a lot of time building up this execution engine
 
-1001
+996
 00:50:04,660 --> 00:50:08,130
 that anybody could come along and build a wrap around and make the
 
-1002
+997
 00:50:08,140 --> 00:50:10,610
 next snowflake and not have to worry about writing the execution engine. 
 
-1003
+998
 00:50:12,150 --> 00:50:12,500
 Essentially, 
 
-1004
+999
 00:50:12,510 --> 00:50:14,900
 this becomes a commodity like a vector execution engine using
 
-1005
+1000
 00:50:14,910 --> 00:50:16,220
 the modern techniques of today. 
 
-1006
+1001
 00:50:16,770 --> 00:50:19,320
 It does not differentiate one system for the next. 
 
-1007
+1002
 00:50:19,330 --> 00:50:24,380
 It's now gonna be the communication between the different nodes, 
 
-1008
+1003
 00:50:24,390 --> 00:50:26,060
 sort of the yellow books that we talked before. 
 
-1009
+1004
 00:50:26,470 --> 00:50:27,750
 And then all the query optimizers. 
 
-1010
+1005
 00:50:28,820 --> 00:50:29,260
 Yeah, we're good.
 
-1011
+1006
 00:50:29,550 --> 00:50:30,220
 All right. 
 
-1012
+1007
 00:50:30,550 --> 00:50:31,820
 My boys in there. 
 
-1013
+1008
 00:50:31,830 --> 00:50:33,650
 I got teaching class. 
 
-1014
+1009
 00:50:34,660 --> 00:50:35,410
 I'm teaching class. 
 
-1015
+1010
 00:50:35,420 --> 00:50:36,090
 I wrote like, 
 
-1016
+1011
 00:50:38,060 --> 00:50:39,290
 I is like this other guy. 
 
-1017
+1012
 00:50:39,700 --> 00:50:40,330
 He's almost done. 
 
-1018
+1013
 00:50:41,440 --> 00:50:41,950
 He's coming down. 
 
-1019
+1014
 00:50:42,440 --> 00:50:45,390
 We got from the fbi no, 
 
-1020
+1015
 00:50:46,610 --> 00:50:47,960
 it's like, okay.
 
-1021
+1016
 00:50:48,230 --> 00:50:51,080
 Like, thanks.
 
-1022
+1017
 00:50:54,430 --> 00:50:56,220
 Anyway, so this is super fascinating.
 
-1023
+1018
 00:50:56,570 --> 00:50:57,710
 We spent a lot of time with us. 
 
-1024
+1019
 00:50:57,720 --> 00:50:57,990
 All right. 
 
-1025
+1020
 00:50:58,000 --> 00:50:58,270
 So, 
 
-1026
+1021
 00:51:02,780 --> 00:51:03,010
 right. 
 
-1027
+1022
 00:51:03,020 --> 00:51:06,220
 So the this was supposed to be the high level approach, 
 
-1028
+1023
 00:51:06,230 --> 00:51:09,020
 a high level overview of what the query optimizers look like. 
 
-1029
+1024
 00:51:10,330 --> 00:51:11,490
 Again, as I said,
 
-1030
+1025
 00:51:11,860 --> 00:51:15,530
 the way you on a single node itself, 
 
-1031
+1026
 00:51:15,540 --> 00:51:18,610
 you would build these systems is not where each worker knows
 
-1032
+1027
 00:51:18,620 --> 00:51:20,450
 not different how you build a single data system. 
 
-1033
+1028
 00:51:20,460 --> 00:51:22,970
 It's gonna be that data movement stuff that we talked before. 
 
-1034
+1029
 00:51:22,980 --> 00:51:23,890
 And also, again,
 
-1035
+1030
 00:51:23,900 --> 00:51:26,770
 assuming that we're coming from retrieving data from a cloud based
 
-1036
+1031
 00:51:26,780 --> 00:51:27,940
 expert shared disk. 
 
-1037
+1032
 00:51:27,950 --> 00:51:30,700
 So the rest of the special we focus on how to build
 
-1038
+1033
 00:51:31,280 --> 00:51:35,720
 these different components that we talked about and make them using
 
-1039
+1034
 00:51:35,730 --> 00:51:36,760
 the modern techniques. 
 
-1040
+1035
 00:51:36,770 --> 00:51:37,280
 Right? 
 
-1041
+1036
 00:51:38,790 --> 00:51:40,540
 Next class, we'll talk about storage models.
 
-1042
+1037
 00:51:40,550 --> 00:51:44,340
 We'll talk about how to represent data within the column themselves, 
 
-1043
+1038
 00:51:44,350 --> 00:51:45,060
 the bytes. 
 
-1044
+1039
 00:51:45,260 --> 00:51:48,930
 I do table positioning and then in system catalogs as well. 
 
-1045
+1040
 00:51:48,940 --> 00:51:51,250
 So hopefully I got to deal with these guys, 
 
-1046
+1041
 00:51:51,260 --> 00:51:52,610
 forgot what's going on with him. 
 
-1047
+1042
 00:51:53,860 --> 00:51:55,270
 Hopefully they'll be done soon. 
 
-1048
+1043
 00:51:56,710 --> 00:52:01,940
 And then then i'll film the next class and post that on youtube as well. 
 
-1049
+1044
 00:52:01,950 --> 00:52:03,700
 Later on the next class, 
 
-1050
+1045
 00:52:03,710 --> 00:52:05,020
 we'll talk about project one. 
 
-1051
+1046
 00:52:05,510 --> 00:52:07,000
 Hi, guys have a good night.
 
-1052
+1047
 00:52:07,010 --> 00:52:09,080
 See, you.
 
-1053
+1048
 00:52:09,090 --> 00:52:09,920
 That's my favorite. 
 
-1054
+1049
 00:52:09,930 --> 00:52:10,520
 All that. 
 
-1055
+1050
 00:52:13,220 --> 00:52:13,690
 What is it? 
 
-1056
+1051
 00:52:14,360 --> 00:52:19,990
 It's the st cricket idesi make a mess unless I can do it
 
-1057
+1052
 00:52:20,000 --> 00:52:22,340
 like ago ice cube with the
 
-1058
+1053
 00:52:22,350 --> 00:52:24,740
 g to the e to the t it comes. 
 
-1059
+1054
 00:52:24,750 --> 00:52:25,980
 Do I play the game? 
 
-1060
+1055
 00:52:25,990 --> 00:52:26,940
 Where's no roof? 
 
-1061
+1056
 00:52:27,150 --> 00:52:30,620
 Tommy saw the custody of a group of sun treat group with the buzzing cap
 
-1062
+1057
 00:52:30,630 --> 00:52:31,340
 on the aisle. 
 
-1063
+1058
 00:52:31,350 --> 00:52:35,260
 For sure, we going to go with a blow to the aisle come on.
 
-1064
+1059
 00:52:35,850 --> 00:52:36,560
 What is it? 
 
-1065
+1060
 00:52:36,570 --> 00:52:38,440
 That's me rolling with that? 
 
-1066
+1061
 00:52:38,450 --> 00:52:42,800
 What's up pork and sap it to see and then ask what a party. 
 
-1067
+1062
 00:52:43,300 --> 00:52:45,930
 By the 12 pack case on the 46 pack, 
 
-1068
+1063
 00:52:45,940 --> 00:52:47,930
 48 gets the real price. 
 
-1069
+1064
 00:52:48,210 --> 00:52:51,080
 I drink fruit, but you are drinking Bob 12 hours.
 
-1070
+1065
 00:52:51,090 --> 00:52:53,080
 They say bill makes you fat, 
 
-1071
+1066
 00:52:53,090 --> 00:52:54,520
 but saying eyes are straight, 
 
-1072
+1067
 00:52:54,530 --> 00:52:56,120
 so it really don't matter. 
