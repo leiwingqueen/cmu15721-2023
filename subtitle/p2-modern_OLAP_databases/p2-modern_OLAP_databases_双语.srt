@@ -2810,7 +2810,7 @@ It goes over fiber channel,
 
 563
 00:29:04,430 --> 00:29:07,180
-and it's not making positive calls to read data. 
+and it's not making posix calls to read data. 
 不会主动调用来读取数据
 
 564
@@ -3050,7 +3050,7 @@ what kind of compression schemes are using for the different columns that
 
 611
 00:31:42,330 --> 00:31:45,190
-can change per profile? 
+can change per file? 
 使用哪种压缩方案
 
 612
@@ -3750,7 +3750,7 @@ of in the own source committee or organizations to
 
 751
 00:38:35,640 --> 00:38:40,160
-build to break out portions of a modern overlap system
+build to break out portions of a modern olap system
 将现代重叠系统的部分分解为独立的组件
 
 752
@@ -3770,7 +3770,7 @@ Other people could take advantage of,
 
 755
 00:38:46,590 --> 00:38:53,820
-and other people could could reuse either I for their own new old lab systems. 
+and other people could could reuse either I for their own new olap systems. 
 其他人可以在他们自己的新旧实验室系统中重复使用
 
 756
@@ -4000,7 +4000,7 @@ breaking the system into these separate layers that can be implemented
 
 801
 00:40:58,220 --> 00:41:02,100
-through some standard pi is basically the person that they were talking
+through some standard api is basically the person that they were talking
 把系统分解成这些可以通过一些标准PI实现的独立层的想法
 
 802
@@ -4330,7 +4330,7 @@ It was designed to be the query optimizer for both green plum,
 
 867
 00:43:54,770 --> 00:43:57,200
-which is a lab system, as we talked about last class,
+which is a olap system, as we talked about last class,
 green plum是一个实验室系统
 
 868
@@ -4345,7 +4345,7 @@ But they also built for this other thing called hawk,
 
 870
 00:44:04,200 --> 00:44:07,600
-which is like their version of sequel on top of head do. 
+which is like their version of sql on top of head do. 
 就像他们在头顶上做的续集
 
 871
@@ -4430,7 +4430,7 @@ right?
 
 887
 00:44:56,930 --> 00:44:59,800
-Seek a light, postgres, my sequel, whatever you name it.
+sql like , postgres, mysql, whatever you name it.
 寻找光明 波斯特格雷斯 我的续集 不管你叫它什么
 
 888
@@ -4465,12 +4465,12 @@ the only way to really transfer data or be able to take data
 
 894
 00:45:16,970 --> 00:45:20,960
-from one day system and reuse it or do computations on another day system
+from one day system and reuse it or do computations on another data system
 系统中获取数据并重复使用它或在另一天的系统中进行计算的
 
 895
 00:45:20,970 --> 00:45:23,800
-is if you dump it out as acsb or jason file, 
+is if you dump it out as csv or json file, 
 唯一方法是将其作为acsb或jason文件转储
 
 896
@@ -4635,7 +4635,7 @@ So I don't know if anybody else at hawaii that uses the carbon data.
 
 928
 00:46:54,580 --> 00:46:58,650
-Iceberg is a newer one at a net flicks and we'll see it
+Iceberg is a newer one at a netflix and we'll see it
 冰山是一个较新的网络电影
 
 929

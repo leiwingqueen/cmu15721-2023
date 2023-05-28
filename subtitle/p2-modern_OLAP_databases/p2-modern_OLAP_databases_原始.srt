@@ -2248,7 +2248,7 @@ It goes over fiber channel,
 
 563
 00:29:04,430 --> 00:29:07,180
-and it's not making positive calls to read data. 
+and it's not making posix calls to read data. 
 
 564
 00:29:07,190 --> 00:29:09,700
@@ -2440,7 +2440,7 @@ what kind of compression schemes are using for the different columns that
 
 611
 00:31:42,330 --> 00:31:45,190
-can change per profile? 
+can change per file? 
 
 612
 00:31:45,600 --> 00:31:49,390
@@ -3000,7 +3000,7 @@ of in the own source committee or organizations to
 
 751
 00:38:35,640 --> 00:38:40,160
-build to break out portions of a modern overlap system
+build to break out portions of a modern olap system
 
 752
 00:38:40,430 --> 00:38:43,580
@@ -3016,7 +3016,7 @@ Other people could take advantage of,
 
 755
 00:38:46,590 --> 00:38:53,820
-and other people could could reuse either I for their own new old lab systems. 
+and other people could could reuse either I for their own new olap systems. 
 
 756
 00:38:53,830 --> 00:38:54,220
@@ -3200,7 +3200,7 @@ breaking the system into these separate layers that can be implemented
 
 801
 00:40:58,220 --> 00:41:02,100
-through some standard pi is basically the person that they were talking
+through some standard api is basically the person that they were talking
 
 802
 00:41:02,110 --> 00:41:03,220
@@ -3464,7 +3464,7 @@ It was designed to be the query optimizer for both green plum,
 
 867
 00:43:54,770 --> 00:43:57,200
-which is a lab system, as we talked about last class,
+which is a olap system, as we talked about last class,
 
 868
 00:43:58,030 --> 00:44:00,990
@@ -3476,7 +3476,7 @@ But they also built for this other thing called hawk,
 
 870
 00:44:04,200 --> 00:44:07,600
-which is like their version of sequel on top of head do. 
+which is like their version of sql on top of head do. 
 
 871
 00:44:07,610 --> 00:44:10,120
@@ -3544,7 +3544,7 @@ right?
 
 887
 00:44:56,930 --> 00:44:59,800
-Seek a light, postgres, my sequel, whatever you name it.
+sql like , postgres, mysql, whatever you name it.
 
 888
 00:45:00,110 --> 00:45:01,660
@@ -3572,11 +3572,11 @@ the only way to really transfer data or be able to take data
 
 894
 00:45:16,970 --> 00:45:20,960
-from one day system and reuse it or do computations on another day system
+from one day system and reuse it or do computations on another data system
 
 895
 00:45:20,970 --> 00:45:23,800
-is if you dump it out as acsb or jason file, 
+is if you dump it out as csv or json file, 
 
 896
 00:45:23,810 --> 00:45:24,120
@@ -3708,7 +3708,7 @@ So I don't know if anybody else at hawaii that uses the carbon data.
 
 928
 00:46:54,580 --> 00:46:58,650
-Iceberg is a newer one at a net flicks and we'll see it
+Iceberg is a newer one at a netflix and we'll see it
 
 929
 00:46:58,660 --> 00:47:02,490
