@@ -1,0 +1,8524 @@
+﻿1
+00:00:04,650 --> 00:00:07,560
+Hey, yo, yo, pack the chrome stuff by like mrs.
+嘿 哟 哟 把铬合金的东西打包 就像夫人一样
+
+2
+00:00:07,570 --> 00:00:09,200
+Jones, liverpool, mathematics.
+琼斯 利物浦 数学
+
+3
+00:00:09,210 --> 00:00:10,720
+We have the devil spoken stone, 
+我们有魔鬼说话的石头
+
+4
+00:00:10,890 --> 00:00:11,960
+upward heads to bed, 
+仰头睡觉
+
+5
+00:00:11,970 --> 00:00:13,680
+make shots and records, sorry,
+投篮和记录 对不起
+
+6
+00:00:13,690 --> 00:00:15,120
+for being out in the last week, 
+上周出去了
+
+7
+00:00:15,370 --> 00:00:16,840
+how to go to seattle for yourself. 
+如何为你自己去西雅图
+
+8
+00:00:17,540 --> 00:00:22,240
+Then my co curve inner low, 
+然后我的CO曲线内低
+
+9
+00:00:22,250 --> 00:00:24,270
+so like I was trying to do much extra stuff. 
+所以就像我试图做很多额外的东西
+
+10
+00:00:24,510 --> 00:00:27,240
+I wasn't around her when she was sick, which is edible my time.
+她生病的时候我不在她身边 这是我的时间
+
+11
+00:00:27,250 --> 00:00:30,390
+So I apologize for not posting this lecture while I was
+所以我很抱歉在我不在的时候没有发布这个讲座
+
+12
+00:00:30,400 --> 00:00:32,350
+gone and also not like updating the schedule. 
+也不喜欢更新时间表
+
+13
+00:00:32,650 --> 00:00:33,640
+As I put some piazza. 
+就像我把一些广场
+
+14
+00:00:34,900 --> 00:00:37,050
+This is basically the class we should have had last wednesday, 
+这基本上是我们上周三应该上的课
+
+15
+00:00:37,400 --> 00:00:38,210
+but we'll start today. 
+但我们今天要开始了
+
+16
+00:00:38,220 --> 00:00:41,550
+And then everything's been shifted up by one. 
+然后所有的东西都被调高了1
+
+17
+00:00:41,560 --> 00:00:43,750
+And then we dropped the materialized view lecture. 
+然后我们放弃了物化视图讲座
+
+18
+00:00:45,160 --> 00:00:45,910
+A lot to cover today. 
+今天要讲的很多
+
+19
+00:00:46,040 --> 00:00:46,950
+Let's jump into this. 
+让我们开始吧
+
+20
+00:00:48,930 --> 00:00:54,800
+Today's lecture is about sort of the talking about the lowest point
+今天的讲座是关于数据库系统的最低点的讨论
+
+21
+00:00:54,810 --> 00:00:55,560
+of the database system, 
+意思是我们如何在数据库中
+
+22
+00:00:55,570 --> 00:01:00,190
+meaning like how we're actually going to represent data in the database, 
+在磁盘上和内存
+
+23
+00:01:00,650 --> 00:01:02,430
+on disk and in memory. 
+中表示数据
+
+24
+00:01:03,080 --> 00:01:07,520
+What are the actual bits of the bytes for representing tuples
+用于表示元组及其属性和值等的字节的
+
+25
+00:01:07,530 --> 00:01:09,200
+and their attributes and their values and so forth? 
+实际位是什么
+
+26
+00:01:09,950 --> 00:01:13,250
+And what the data is going to look like is going to have
+数据的外观将对我们
+
+27
+00:01:13,260 --> 00:01:17,850
+a a very important impact or
+如何设计数据库系统的其余部分产生
+
+28
+00:01:17,860 --> 00:01:20,790
+influence on how we're going to design the rest of the database system. 
+非常重要的影响
+
+29
+00:01:21,720 --> 00:01:23,860
+In particular, we're going to talk about row storage versus column storage,
+特别是 我们将讨论行存储和列存储
+
+30
+00:01:23,870 --> 00:01:25,620
+because that was the paper you guys just assigned reading, 
+因为这是你们刚刚布置阅读的论文
+
+31
+00:01:26,050 --> 00:01:28,520
+just whether it's a row store or a columns or where the data is laid
+无论是行存储还是列存储
+
+32
+00:01:28,530 --> 00:01:31,620
+out in rows or a commentator format that determines
+或者是数据在行中的布局
+
+33
+00:01:31,630 --> 00:01:34,620
+so many different aspects of the system and the different design choices
+或者是评论员格式
+
+34
+00:01:34,630 --> 00:01:35,140
+we can make. 
+这决定了系统的许多不同方面以及我们可以做出的不同设计选择
+
+35
+00:01:35,620 --> 00:01:36,940
+Like how we're going to process two poles, 
+比如我们如何处理两个极点
+
+36
+00:01:36,950 --> 00:01:40,380
+how we're going to move data from one relational operator to the next, 
+我们如何将数据从一个关系运算符移动到下一个运算符
+
+37
+00:01:40,960 --> 00:01:43,780
+how we're going to materialize the intermediate results as we go
+当我们从一个运算符移动到另一个运算符时
+
+38
+00:01:43,790 --> 00:01:45,080
+from one operator to the. 
+我们如何实现中间结果
+
+39
+00:01:45,890 --> 00:01:49,460
+Next what algorithms are going to use like some joins we faster on, 
+接下来 我们将使用什么算法
+
+40
+00:01:49,830 --> 00:01:52,980
+because we're a column store, because our hash has to be much smaller,
+比如我们更快的连接 因为我们是列存储 因为我们的哈希必须更小
+
+41
+00:01:53,990 --> 00:01:57,180
+whether or not we're going to support ingestion updates that one will cover
+我们是否会支持摄取更新
+
+42
+00:01:57,190 --> 00:01:57,900
+a little bit today, 
+今天我们会稍微介绍一下
+
+43
+00:01:57,910 --> 00:01:59,380
+but we won't go too much into this. 
+但我们不会过多地讨论这个问题
+
+44
+00:02:00,230 --> 00:02:03,250
+Actually, not until we talk about data breaks at the end of the semester.
+实际上 直到我们在学期末讨论数据中断
+
+45
+00:02:03,670 --> 00:02:05,200
+For current control, how to support transactions,
+对于当前的控制 如何支持事务
+
+46
+00:02:05,210 --> 00:02:06,600
+we're actually going to ignore all this as well. 
+我们实际上也将忽略所有这些
+
+47
+00:02:06,610 --> 00:02:07,900
+But like think about, 
+但想想看
+
+48
+00:02:08,390 --> 00:02:11,470
+if I need to update data to pull that, split up into columns,
+如果我需要更新数据来提取数据
+
+49
+00:02:11,720 --> 00:02:11,950
+now, 
+将其拆分为列 现在
+
+50
+00:02:11,960 --> 00:02:15,310
+I gotta go acquire latches or locks for a bunch
+我必须为桌面或内存中的
+
+51
+00:02:15,320 --> 00:02:18,580
+of different physical locations in on desk or in memory to do that
+一组不同物理位置获取闩锁或锁来进行更新
+
+52
+00:02:18,590 --> 00:02:18,980
+update. 
+
+
+53
+00:02:19,750 --> 00:02:21,660
+Again, we're going to know that for now.
+再说一次 我们现在就知道了
+
+54
+00:02:21,990 --> 00:02:24,360
+And then query optimization is influenced by all of this. 
+然后查询优化受到所有这些的影响
+
+55
+00:02:24,370 --> 00:02:30,150
+The query optimizer should know has to know what the database is actually doing
+查询优化器应该知道必须知道数据库实际上在做什么
+
+56
+00:02:30,160 --> 00:02:32,190
+to determine what's the best query plan to use. 
+以确定要使用的最佳查询计划
+
+57
+00:02:33,090 --> 00:02:34,760
+Again, just in the back of your mind, as we go along,
+尽管今天我们只讨论最低级别的存储层
+
+58
+00:02:34,770 --> 00:02:37,520
+even though today we're only talking about the lowest levels of the storage
+但在我们继续讨论的过程中
+
+59
+00:02:37,530 --> 00:02:37,880
+layer. 
+您的脑海中还是会出现这样的情况
+
+60
+00:02:39,370 --> 00:02:41,490
+You will see that as we go out throughout the entire semester, 
+你们会看到
+
+61
+00:02:42,210 --> 00:02:44,220
+that a lot of these things will, 
+当我们在整个学期中走出去时
+
+62
+00:02:44,840 --> 00:02:47,430
+the decisions we'll make now will determine how we make
+很多事情都会发生
+
+63
+00:02:47,440 --> 00:02:49,600
+other decisions later on. 
+我们现在所做的决定将决定我们以后如何做出其他决定
+
+64
+00:02:50,540 --> 00:02:51,750
+Another challenge, also, too,
+另一个挑战是
+
+65
+00:02:51,760 --> 00:02:56,950
+is there will be times when they will start talk about certain techniques
+有时他们会开始讨论存储
+
+66
+00:02:56,960 --> 00:02:57,990
+in the storage models, 
+模型
+
+67
+00:02:58,580 --> 00:03:01,030
+where it will. 
+中的某些技术
+
+68
+00:03:01,650 --> 00:03:05,600
+The solution to a hard problem is what we will cover either next class
+难题的解决方案就是我们下节课或下周要
+
+69
+00:03:05,930 --> 00:03:06,680
+or next week. 
+讲的内容
+
+70
+00:03:07,350 --> 00:03:10,350
+In particular, the fixed length data versus the variable length data.
+特别是固定长度数据对可变长度数据
+
+71
+00:03:10,810 --> 00:03:12,320
+The solution is dictionary compression, 
+解决方案是字典压缩
+
+72
+00:03:12,890 --> 00:03:14,000
+which we will cover next week. 
+我们将在下周介绍
+
+73
+00:03:14,650 --> 00:03:16,120
+So the paper talks about these things, 
+所以这篇论文讨论了这些事情
+
+74
+00:03:16,750 --> 00:03:19,590
+but we won't go into too much detail about it just yet, 
+但我们现在还不会讨论太多细节
+
+75
+00:03:19,600 --> 00:03:22,400
+but know that these things are also coming up later on. 
+但我知道这些事情以后也会出现
+
+76
+00:03:23,820 --> 00:03:25,910
+Today, we're going to focus mostly on the storage model.
+今天 我们将主要关注存储模型
+
+77
+00:03:26,240 --> 00:03:28,550
+Again, row store versus column store versus the hybrid store.
+同样 行存储对列存储对混合存储
+
+78
+00:03:29,080 --> 00:03:31,600
+Then we'll talk about how we represent in visual types. 
+然后 我们将讨论如何在视觉类型中表示
+
+79
+00:03:32,120 --> 00:03:35,380
+And then we'll spend a lot of time talking about how to handle partitioning
+然后
+
+80
+00:03:35,750 --> 00:03:36,350
+at a high level. 
+我们将花大量时间讨论如何在较高级别上处理分区
+
+81
+00:03:40,090 --> 00:03:41,030
+First thing, storage models.
+首先 存储模型
+
+82
+00:03:43,660 --> 00:03:49,200
+A storage model is gonna define how the the database systems
+存储模型将定义数据库系统如何在物理上
+
+83
+00:03:49,210 --> 00:03:53,330
+going to physically organize tuples on disk and in memory. 
+组织磁盘和内存中的两极
+
+84
+00:03:53,980 --> 00:03:56,300
+Now, I say the database system is going to organize.
+现在 我说数据库系统将组织
+
+85
+00:03:56,310 --> 00:04:01,330
+This is as if it's responsible for actually laying down the bits in a file. 
+这就好像它负责实际放置文件中的位一样
+
+86
+00:04:01,560 --> 00:04:03,830
+But as we said before, in the modern olap system,
+但正如我们之前所说 在现代自己的实验室系统中
+
+87
+00:04:05,230 --> 00:04:06,580
+in this data like model, 
+在这个类似数据的模型中
+
+88
+00:04:06,590 --> 00:04:10,760
+it could be just much of existing s three buckets that already have csv
+它可能只是现有的三个桶中的一大部分
+
+89
+00:04:10,770 --> 00:04:12,200
+or parquet files in it. 
+其中已经有CS VS或Parquet文件
+
+90
+00:04:12,660 --> 00:04:16,260
+And the data system just knows how to read it for our purposes to assume
+数据系统只知道如何读取它
+
+91
+00:04:16,270 --> 00:04:19,880
+that the database system is the one generating this data. 
+我们的目的是假设数据库系统是生成这些数据的系统
+
+92
+00:04:20,480 --> 00:04:23,040
+But as we know, it isn't always actually the case.
+但正如我们所知 实际情况并非总是如此
+
+93
+00:04:25,380 --> 00:04:26,880
+So there's be three choices. 
+所以有三个选择
+
+94
+00:04:28,080 --> 00:04:29,620
+N-ary stores, the row store,
+n区域存储 行存储
+
+95
+00:04:29,950 --> 00:04:31,860
+decomposition storage model, that's the column store.
+分解存储模式 即列存储
+
+96
+00:04:32,190 --> 00:04:35,340
+And then the last one is the hybrid store, the pax model.
+最后一个是混合动力商店 PAX模式
+
+97
+00:04:35,700 --> 00:04:37,710
+Again, the paper you guys read came out,
+再一次 你们读到的论文
+
+98
+00:04:37,720 --> 00:04:39,070
+I think in 2006, 
+我想是在2006年
+
+99
+00:04:39,380 --> 00:04:41,730
+it is the defendant paper, my opinion, even though it's old,
+它是被告的论文 我认为
+
+100
+00:04:41,740 --> 00:04:42,770
+it still is like the good, 
+尽管它是旧的
+
+101
+00:04:42,780 --> 00:04:45,910
+the best first paper or the best paper that started describes
+但它仍然是好的 最好的第一篇论文或最好的论文
+
+102
+00:04:45,920 --> 00:04:48,590
+exactly the pros and cons of a row store versus column store. 
+开始准确地描述了行商店与列商店的利弊
+
+103
+00:04:50,970 --> 00:04:51,830
+Whatever it's old. 
+不管它是旧的
+
+104
+00:04:54,400 --> 00:04:56,800
+Again, you were one in middle school.
+再说一次 你在中学时就是其中之一
+
+105
+00:04:57,000 --> 00:04:59,350
+Elementary school like, yeah, so it's old, right?
+小学就像 是的 所以它是旧的 对吗
+
+106
+00:05:01,300 --> 00:05:03,010
+It should be dame is already at yale by then. 
+那时达姆应该已经在耶鲁了
+
+107
+00:05:03,380 --> 00:05:04,330
+He wasn't at mit anymore. 
+他已经不在麻省理工学院了
+
+108
+00:05:04,340 --> 00:05:08,800
+But like there is a textbook that they wrote about how to build column store systems. 
+但就像有一本教科书 他们写的关于如何建立冷静的商店系统
+
+109
+00:05:08,810 --> 00:05:10,910
+I obviously didn't want to assign that to you guys, 
+我显然不想把它分配给你们
+
+110
+00:05:10,920 --> 00:05:12,030
+because it's 100 pages. 
+因为它有100页
+
+111
+00:05:12,310 --> 00:05:13,360
+But this is a I think, 
+但我认为这是
+
+112
+00:05:13,370 --> 00:05:14,800
+a good summary of the pros and cons. 
+对利弊的一个很好的总结
+
+113
+00:05:15,980 --> 00:05:19,370
+The thing i'll point out is they mentioned the pax player and they cite it. 
+我要指出的是 他们提到了帕克斯球员 并引用了它
+
+114
+00:05:19,630 --> 00:05:20,790
+They don't actually go into detail, 
+他们实际上并没有详细说明
+
+115
+00:05:20,800 --> 00:05:23,560
+but this is what par k is, is what ork is.
+但这就是par k是什么 就是ork是什么
+
+116
+00:05:23,570 --> 00:05:25,160
+This is what all the modern systems are using. 
+这是所有现代系统都在使用的
+
+117
+00:05:25,670 --> 00:05:25,840
+Right? 
+对的
+
+118
+00:05:25,850 --> 00:05:27,840
+But we'll cover these. 
+但我们会包括这些
+
+119
+00:05:27,850 --> 00:05:30,320
+And then that'll lead into why we want to do the last one. 
+这就是为什么我们要做最后一个
+
+120
+00:05:32,600 --> 00:05:33,620
+And then most systems today, 
+然后今天的大多数系统
+
+121
+00:05:33,630 --> 00:05:35,180
+when they say they're a column store, 
+当他们说他们是一个列存储时
+
+122
+00:05:35,800 --> 00:05:36,600
+chances are this. 
+机会是这样的
+
+123
+00:05:36,610 --> 00:05:37,200
+They're packs. 
+他们是一群人
+
+124
+00:05:39,970 --> 00:05:42,560
+The n-ary storage model, the row store, row store model,
+nre存储模型 row存储 rho存储模型
+
+125
+00:05:43,180 --> 00:05:44,150
+is the database system. 
+是数据库系统
+
+126
+00:05:44,160 --> 00:05:48,090
+I'm going to store most of the attributes for a tuple continues
+我将在单个页面中存储两个极点彼此
+
+127
+00:05:48,100 --> 00:05:50,210
+with each other in a single page. 
+连续的大部分属性
+
+128
+00:05:50,940 --> 00:05:56,820
+The reason I say almost is that in most systems that will support
+我说“几乎”的原因是
+
+129
+00:05:56,830 --> 00:05:58,740
+like very large variable length fields, 
+在大多数系统中 将支持非常大的可变长度字段
+
+130
+00:05:58,750 --> 00:06:00,850
+like a text field of our binary. 
+比如我们的二进制文件的文本字段
+
+131
+00:06:01,210 --> 00:06:02,640
+For anything above a certain size, 
+对于超过特定大小的任何内容
+
+132
+00:06:02,650 --> 00:06:04,800
+they then all float it into auxiliary storage pages. 
+它们都会将其浮动到辅助存储页面中
+
+133
+00:06:05,390 --> 00:06:06,870
+Postgres, they call this toast.
+波斯特格雷斯 他们把这个叫做祝酒词
+
+134
+00:06:07,400 --> 00:06:11,230
+I think, in like oracle or my sequel to come overflow pages.
+我认为 在像甲骨文或我的续集来溢页
+
+135
+00:06:11,640 --> 00:06:11,650
+Right? 
+对的
+
+136
+00:06:12,170 --> 00:06:12,880
+You don't inline them. 
+你不能内联它们
+
+137
+00:06:12,890 --> 00:06:13,920
+So that's what i'm saying almost. 
+所以这就是我所说的
+
+138
+00:06:13,930 --> 00:06:15,800
+But we can ignore blobs for now. 
+但我们现在可以忽略BLOB
+
+139
+00:06:15,810 --> 00:06:19,900
+So the row storage is going to be ideal for lot workloads, 
+因此
+
+140
+00:06:19,910 --> 00:06:22,690
+where most of the transactions are only going to touch
+行存储将是大量工作负载的理想选择
+
+141
+00:06:22,700 --> 00:06:25,250
+single entities or entries in the database. 
+其中大多数事务只会触及数据库中的单个实体或条目
+
+142
+00:06:26,440 --> 00:06:28,550
+And then we very insert or update heavy workloads. 
+然后我们非常插入或更新繁重的工作负载
+
+143
+00:06:28,560 --> 00:06:30,860
+And so by single entities, this means like,
+所以对于单个实体来说 这意味着
+
+144
+00:06:31,500 --> 00:06:34,330
+think there's a table of user accounts and you log in, 
+假设有一个用户帐户表
+
+145
+00:06:35,180 --> 00:06:36,500
+you're using some application, you log in,
+你登录 你正在使用一些应用程序
+
+146
+00:06:36,510 --> 00:06:37,830
+and you only touch your user account, 
+你登录 你只接触
+
+147
+00:06:38,150 --> 00:06:38,860
+maybe millions, 
+你的用户帐户
+
+148
+00:06:38,870 --> 00:06:42,860
+but each individual transaction is only accessing a small number at a time. 
+可能有数百万个 但每个单独的交易一次只访问一小部分
+
+149
+00:06:44,170 --> 00:06:46,670
+And so with this storage model, 
+所以这个存储模型
+
+150
+00:06:47,030 --> 00:06:50,160
+the iterator processing model or the volcano processing model, 
+迭代器处理模型或火山处理模型
+
+151
+00:06:50,550 --> 00:06:51,640
+which will cover in a few weeks. 
+将在几周内介绍
+
+152
+00:06:51,950 --> 00:06:57,150
+This is the ideal processing model for these workloads and for the storage model. 
+这是这些工作负载和存储模型的理想处理模型
+
+153
+00:06:57,520 --> 00:07:00,410
+Because most of the queries accessing a single at a time, 
+因为大多数查询一次访问一个管
+
+154
+00:07:00,420 --> 00:07:01,610
+a single tuple at a time, 
+一次访问一个管
+
+155
+00:07:02,120 --> 00:07:05,290
+the operator can just go grab that one tube and then feed it up
+所以操作符可以直接获取该管
+
+156
+00:07:05,300 --> 00:07:07,440
+to the query plan to the next operator in the query plan. 
+然后将其提供给查询计划中的下一个操作符
+
+157
+00:07:08,900 --> 00:07:10,970
+Most of the data systems that are going to be row stores
+大多数将成为行存储的
+
+158
+00:07:10,980 --> 00:07:17,060
+are typically going to store database page sizes in some constant multiple
+数据系统通常将以harbor提供的页面大小的某个常数倍数来存储数据库
+
+159
+00:07:17,070 --> 00:07:18,260
+of what the harbor provides you, 
+页面大小
+
+160
+00:07:20,150 --> 00:07:24,900
+the largest atomic page size you can get largest page size that harbor
+您可以获得的最大原子页面大小Harbor提供的最大页面大小
+
+161
+00:07:24,910 --> 00:07:26,380
+provides that you can do atomic writes, 
+您可以进行原子写入
+
+162
+00:07:26,980 --> 00:07:27,710
+four kilobytes. 
+4千字节
+
+163
+00:07:28,850 --> 00:07:30,000
+And so most database systems, 
+所以大多数数据库系统
+
+164
+00:07:30,010 --> 00:07:31,480
+when they have their database pages, 
+当它们有自己的数据库页面时
+
+165
+00:07:32,080 --> 00:07:34,750
+it'll be like 4 or 8 or 16 kilobytes, right?
+它会像4或8或16千字节 对吗
+
+166
+00:07:34,760 --> 00:07:36,370
+They won't go really big. 
+他们不会做得很大
+
+167
+00:07:36,720 --> 00:07:40,550
+As we see, we will see in in a column store system.
+正如我们所看到的 我们将在列存储系统中看到
+
+168
+00:07:40,990 --> 00:07:41,110
+Right? 
+对的
+
+169
+00:07:41,120 --> 00:07:42,830
+The reason because if you're doing updates, 
+原因是如果你正在做更新
+
+170
+00:07:43,310 --> 00:07:46,410
+you don't want to try to do a one megabyte update across a bunch
+你不想尝试在一堆四个kli页面上做一个
+
+171
+00:07:46,420 --> 00:07:47,610
+of four kli pages, 
+1兆字节的更新
+
+172
+00:07:47,990 --> 00:07:49,100
+and then crash halfway through. 
+然后中途崩溃
+
+173
+00:07:49,110 --> 00:07:50,580
+And you got to go back and fix things up. 
+你得回去把事情处理好
+
+174
+00:07:50,590 --> 00:07:53,280
+So they try to keep things in smaller period size. 
+所以他们试图把事情保持在较小的周期大小
+
+175
+00:07:55,810 --> 00:07:56,880
+It essentially looks like this. 
+它本质上看起来像这样
+
+176
+00:07:57,010 --> 00:08:01,510
+Say I have a assembled database that has 6 rows and 3 columns, 
+假设我有一个6行3列的组合数据库
+
+177
+00:08:03,320 --> 00:08:05,350
+a in a disk oriented system, 
+在面向磁盘的系统中
+
+178
+00:08:06,230 --> 00:08:07,380
+all of the pages, 
+所有的页面
+
+179
+00:08:07,390 --> 00:08:08,700
+all the data that's going to be, 
+所有的数据
+
+180
+00:08:09,170 --> 00:08:10,550
+but fixed length and variable length, 
+但是固定长度和可变长度
+
+181
+00:08:10,560 --> 00:08:16,180
+we want to pack them together into a single page or does not work. 
+我们想把它们打包到一个页面中 否则不起作用
+
+182
+00:08:18,070 --> 00:08:19,440
+We have our database page here. 
+我们的数据库页面在这里
+
+183
+00:08:19,450 --> 00:08:21,390
+Again, some say it's four kilobytes.
+同样 有人说它是4千字节
+
+184
+00:08:22,220 --> 00:08:23,570
+There's always going to be a header. 
+总是会有头球的
+
+185
+00:08:24,830 --> 00:08:26,220
+Then you have the slot array. 
+然后你就有了插槽阵列
+
+186
+00:08:27,850 --> 00:08:29,320
+Again, this is just a slot of page design.
+再次 这只是一个插槽的页面设计
+
+187
+00:08:29,570 --> 00:08:33,150
+These slots are going to point to locations in the page where you can find
+这些插槽将指向页面中您可以找到给定行的
+
+188
+00:08:33,160 --> 00:08:33,670
+the given row. 
+位置
+
+189
+00:08:34,680 --> 00:08:37,750
+Now, if another part of the system like an index wants a reference,
+现在 如果系统的另一部分（如索引）需要引用
+
+190
+00:08:38,240 --> 00:08:39,720
+a to pull in a row ended architecture, 
+以拉入行端架构
+
+191
+00:08:39,730 --> 00:08:42,810
+you need to use the page number and then the offset within a slot array. 
+则需要使用页码 然后使用插槽阵列中的偏移量
+
+192
+00:08:43,470 --> 00:08:43,810
+In that way, 
+通过这种方式
+
+193
+00:08:43,820 --> 00:08:45,930
+you can move things around in the page without worrying
+您可以在页面中移动内容
+
+194
+00:08:45,940 --> 00:08:47,530
+about having to update your index. 
+而不必担心必须更新索引
+
+195
+00:08:47,910 --> 00:08:49,200
+It's an additional layer of indirection. 
+这是一个额外的间接层
+
+196
+00:08:50,520 --> 00:08:52,350
+Say, I want to assert this first to pull up here.
+说吧 我想先断言这个在这里拉起来
+
+197
+00:08:53,020 --> 00:08:56,570
+I'm going to put it at the end of the page and have the slaughter
+我要把它放在这一页的末尾
+
+198
+00:08:56,580 --> 00:08:57,890
+a now point to the header for this. 
+并让屠杀A现在指向这个标题
+
+199
+00:08:59,050 --> 00:09:02,250
+The way it works is the slot array will grow from the beginning to the end. 
+它的工作方式是插槽阵列从开始到结束都会增长
+
+200
+00:09:02,590 --> 00:09:05,140
+And then all the data will grow from the end to the beginning. 
+然后所有的数据都会从末尾增长到开头
+
+201
+00:09:07,150 --> 00:09:08,870
+Right now, I want to start the next table, and I just, again,
+现在 我想开始下一个表
+
+202
+00:09:08,880 --> 00:09:13,230
+append it to the end here and then update my slot array. 
+我只是 再一次 把它附加到这里的末尾 然后更新我的槽数组
+
+203
+00:09:13,970 --> 00:09:14,360
+All right. 
+好吧
+
+204
+00:09:15,590 --> 00:09:16,650
+I can do this for all the other ones, 
+我可以为所有其他人做这个
+
+205
+00:09:16,660 --> 00:09:17,930
+and you end up with something like this. 
+你最终会得到这样的东西
+
+206
+00:09:20,370 --> 00:09:24,010
+So one thing to point out here is that every single tuple, 
+所以这里要指出的一件事是
+
+207
+00:09:24,510 --> 00:09:26,740
+we're going to have a little header space for it. 
+每两个极点 我们都会有一个小的头部空间
+
+208
+00:09:27,850 --> 00:09:29,090
+In the page. 
+在页面中
+
+209
+00:09:29,100 --> 00:09:32,410
+This will keep track of which values are null. 
+这将跟踪哪些值为空
+
+210
+00:09:32,810 --> 00:09:33,760
+Any other additional metadata. 
+任何其他附加元数据
+
+211
+00:09:33,770 --> 00:09:35,840
+I typically don't put the schema there because that we store
+我通常不会把模式放在那里
+
+212
+00:09:35,850 --> 00:09:37,440
+that in a centralized location of the catalog, 
+因为我们把它存储在目录的集中位置
+
+213
+00:09:37,450 --> 00:09:39,220
+because otherwise, it's it's redundant, right?
+否则 它就是多余的 对吧
+
+214
+00:09:39,530 --> 00:09:41,470
+All the tuple within a single page are for the same table. 
+单个页面中的所有两个极点都用于同一个表
+
+215
+00:09:41,480 --> 00:09:42,970
+So you don't need to store that over and over. 
+所以你不需要一遍又一遍地存储它
+
+216
+00:09:43,950 --> 00:09:47,420
+Again, this header up here may contain like maybe check some for the page,
+同样 这里的标题可能包含检查页面
+
+217
+00:09:47,770 --> 00:09:49,960
+the version of the data system that generated and so forth. 
+生成的数据系统的版本等等
+
+218
+00:09:51,280 --> 00:09:52,730
+But it's a lot for each single tuple. 
+但对于每一个单独的两个极点来说 这是很多的
+
+219
+00:09:52,740 --> 00:09:56,400
+There's a lot of that you're maintaining its own header. 
+有很多你维护自己的头
+
+220
+00:09:58,830 --> 00:10:01,260
+Now, let's say I come along with an overlap query like this, really simple.
+现在 假设我有一个像这样的重叠查询 非常简单
+
+221
+00:10:01,270 --> 00:10:05,780
+I want to scan the entire table and find all compute the sum on column a
+我想扫描整个表
+
+222
+00:10:05,790 --> 00:10:10,020
+and the average on column c for all two poles that are column a is
+并找到所有计算列A的总和和列C的平均值
+
+223
+00:10:10,030 --> 00:10:10,780
+greater than 1,000. 
+列A的所有两个极点都大于1000
+
+224
+00:10:12,380 --> 00:10:14,530
+The way you would process this query without even disgusting what
+你处理这个查询的方式
+
+225
+00:10:14,540 --> 00:10:15,570
+the processing model is, 
+甚至没有恶心的处理模型
+
+226
+00:10:15,580 --> 00:10:16,690
+the way you would execute this query, 
+你执行这个查询的方式
+
+227
+00:10:16,700 --> 00:10:17,890
+which is on the single page, 
+在单个页面上
+
+228
+00:10:18,510 --> 00:10:19,680
+you'd have to jump into it. 
+你必须跳进它
+
+229
+00:10:20,280 --> 00:10:20,550
+First, 
+首先
+
+230
+00:10:20,560 --> 00:10:23,670
+go look at the header for every single entry as you scan along the slot array, 
+当您沿着插槽阵列扫描时
+
+231
+00:10:24,290 --> 00:10:29,000
+find the header, check to see whether the value for column a could be null,
+查看每个入口通道的标头 找到标头 检查列a的值是否可能为空
+
+232
+00:10:29,790 --> 00:10:30,840
+and then do the comparison. 
+然后进行比较
+
+233
+00:10:31,170 --> 00:10:33,070
+So I go fetch this page from disk. 
+所以我从磁盘上取了这一页
+
+234
+00:10:33,420 --> 00:10:35,810
+Now it's in memory, my buffer pool, and i'm doing this.
+现在它在内存中 我的缓冲池 我正在这样做
+
+235
+00:10:35,820 --> 00:10:39,720
+I'm jumping around from 12, 
+我从12跳来跳去
+
+236
+00:10:39,730 --> 00:10:42,260
+go to the next following the slot array to go start processing it. 
+转到插槽阵列后面的下一个 开始处理它
+
+237
+00:10:42,270 --> 00:10:45,530
+And then now if I want to start computing the aggregate, 
+现在 如果我想开始计算聚合
+
+238
+00:10:45,710 --> 00:10:47,910
+then i've got to go back and scan through again and maybe jump
+那么我必须返回并再次扫描
+
+239
+00:10:48,800 --> 00:10:50,120
+through all the c values here. 
+可能会跳过这里所有的c值
+
+240
+00:10:52,960 --> 00:10:54,150
+On modern cpu. 
+在现代CP美国
+
+241
+00:10:54,160 --> 00:10:55,350
+This is actually terrible. 
+这其实很可怕
+
+242
+00:10:56,430 --> 00:10:56,510
+Right? 
+对的
+
+243
+00:10:56,520 --> 00:11:00,990
+Modern cpu are super scalar architectures are designed for optimized for
+现代CP US是超标量体系结构 设计用于优化
+
+244
+00:11:03,100 --> 00:11:05,940
+for things that are very sequential and deterministic. 
+对于那些非常有顺序和确定性的事情
+
+245
+00:11:06,700 --> 00:11:09,090
+Meaning i'm going to scan through the same thing over and over again, 
+这意味着我将一遍又一遍地浏览相同的内容
+
+246
+00:11:09,370 --> 00:11:11,540
+and not worry about arbitrary jumps into memory. 
+而不用担心任意跳转到内存中
+
+247
+00:11:12,510 --> 00:11:14,480
+I I get better cache locality as well. 
+我也得到了更好的现金位置
+
+248
+00:11:15,630 --> 00:11:20,300
+We'll see how to design scan operators and predicates to take advantage
+我们将看到如何设计扫描操作符和谓词
+
+249
+00:11:20,310 --> 00:11:22,980
+of super scalar architectures by removing indirection. 
+以通过消除间接性来利用超标量体系结构
+
+250
+00:11:23,580 --> 00:11:25,980
+But in general, here, i'm jumping to different locations.
+但总的来说 在这里 我跳到了不同的位置
+
+251
+00:11:26,470 --> 00:11:27,080
+And that's going to suck. 
+那会很糟糕的
+
+252
+00:11:27,780 --> 00:11:28,070
+Right? 
+对的
+
+253
+00:11:28,080 --> 00:11:29,310
+For this example, it's a simple.
+对于这个例子 它是一个简单的
+
+254
+00:11:29,320 --> 00:11:30,670
+It's a 1 page who cares? 
+只有一页 谁在乎呢
+
+255
+00:11:31,000 --> 00:11:32,160
+Again, think always in extremes,
+再一次 总是在极端情况下思考
+
+256
+00:11:32,170 --> 00:11:34,120
+if I have 1 billion pages or 1 trillion pages, 
+如果我有10亿页或1万亿页
+
+257
+00:11:34,810 --> 00:11:36,460
+this is not very efficient, right?
+这不是很有效率 对吗
+
+258
+00:11:36,470 --> 00:11:38,000
+Because i'm bringing in data also, too,
+因为我也带来了数据
+
+259
+00:11:38,530 --> 00:11:40,190
+that I I don't need b five. 
+我不需要B5
+
+260
+00:11:40,780 --> 00:11:41,080
+Right? 
+对的
+
+261
+00:11:41,090 --> 00:11:43,770
+So I don't need column b but I had to bring that data into memory. 
+所以我不需要列B 但我必须将该数据带入内存
+
+262
+00:11:43,780 --> 00:11:46,810
+And i've got to skip over it where every tuple has a header. 
+我必须跳过它 因为每根管子都有一个集管
+
+263
+00:11:47,050 --> 00:11:48,080
+And I I got to deal with that. 
+我我得处理这件事
+
+264
+00:11:51,640 --> 00:11:52,910
+The row storage model, again,
+行存储模型 同样
+
+265
+00:11:52,920 --> 00:11:55,950
+it's going to be great for fast updates, inserts, and deletes.
+它将非常适合快速更新 插入和车队
+
+266
+00:11:56,410 --> 00:11:58,210
+It's going to be really good for queries that need the entire triple. 
+对于需要整个三元组的查询来说 这将是非常好的
+
+267
+00:11:58,220 --> 00:11:58,960
+So I have a question. 
+所以我有个问题
+
+268
+00:11:58,970 --> 00:12:02,530
+So it's great for queries that need the entire tuple, 
+因此 它非常适合需要整个tubal的查询
+
+269
+00:12:02,540 --> 00:12:05,130
+because It's all located together in a single page. 
+因为它们都位于一个页面中
+
+270
+00:12:05,140 --> 00:12:07,050
+I go fetch the 1 page and it has everything I need. 
+我去拿了一页 里面有我需要的一切
+
+271
+00:12:07,060 --> 00:12:08,930
+Again, ignoring overflows.
+同样 忽略溢出
+
+272
+00:12:10,830 --> 00:12:12,610
+We're not going to discuss this semester, 
+我们不打算在这学期讨论
+
+273
+00:12:12,620 --> 00:12:14,030
+but it's great for, 
+但它很棒
+
+274
+00:12:14,080 --> 00:12:17,020
+you can use it for index orient storage. 
+你可以把它用于面向索引的存储
+
+275
+00:12:17,400 --> 00:12:17,950
+Like if you store it, 
+就像如果你存储它
+
+276
+00:12:17,960 --> 00:12:21,070
+if you take a  b+ tree like mysql in innodb where the leaf nodes are
+如果你采用ab加树
+
+277
+00:12:21,080 --> 00:12:22,830
+actually the two tuple themselves, 
+就像adb中的my segal
+
+278
+00:12:23,280 --> 00:12:27,180
+you get the clustering effect so that you can do binary search
+其中的叶节点实际上是两个拉节点本身 你可以获得聚类效果
+
+279
+00:12:27,190 --> 00:12:28,940
+on the leaf nodes and get faster performance. 
+这样你就可以在叶节点上进行二分搜索 并获得更快的性能
+
+280
+00:12:29,340 --> 00:12:30,760
+And you try to find certain keys. 
+你试图找到某些钥匙
+
+281
+00:12:31,960 --> 00:12:34,030
+But this class we care about olap systems. 
+但在这门课上 我们关心的是重叠系统
+
+282
+00:12:34,040 --> 00:12:38,730
+So it can be terrible for scaling large portions of the table when he
+因此 当他只做属性的一个子集时
+
+283
+00:12:38,740 --> 00:12:39,970
+only did a subset of the attributes, 
+对表的大部分进行缩放是很糟糕的
+
+284
+00:12:39,980 --> 00:12:43,160
+because the data is going to be sort of jumping. 
+因为数据将会跳跃
+
+285
+00:12:43,170 --> 00:12:45,200
+The location of the economy will be accessing. 
+经济的位置将是进入
+
+286
+00:12:45,770 --> 00:12:47,640
+It's spread out across the single page. 
+它在单页上展开
+
+287
+00:12:48,310 --> 00:12:51,230
+And you're bringing in other attributes that you don't need for the query. 
+并且您正在引入查询不需要的其他属性
+
+288
+00:12:51,240 --> 00:12:54,990
+So it's going to pollute your buffer pool memory. 
+所以它会污染你的缓冲极记忆
+
+289
+00:12:55,730 --> 00:12:58,080
+As we said before, it's bad for memory, locality, and access pattern,
+正如我们之前所说的 这对内存
+
+290
+00:12:58,090 --> 00:12:58,600
+because again, 
+局部性和访问模式都是不利的
+
+291
+00:12:58,610 --> 00:13:01,400
+i'm doing these jumping instead of doing sequential reads. 
+因为我正在进行这些跳跃 而不是进行顺序读取
+
+292
+00:13:02,460 --> 00:13:03,770
+And then we'll discuss this next week, 
+然后我们将在下周
+
+293
+00:13:03,780 --> 00:13:05,210
+but this would be terrible for compression, 
+讨论这个问题
+
+294
+00:13:05,220 --> 00:13:07,890
+because now within a single page, 
+但这对于压缩来说是很糟糕的
+
+295
+00:13:08,430 --> 00:13:13,130
+I have a bunch of different data that comes from different attributes that
+因为现在在一个页面中 我有一堆不同的数据 它们来自不同的属性
+
+296
+00:13:13,140 --> 00:13:15,490
+are all going to have their own different value domains. 
+这些属性都有自己不同的值域
+
+297
+00:13:16,290 --> 00:13:22,660
+I'm not going to exploit repetition or redundant information and compress things. 
+我不打算利用重复或冗余的信息和压缩的东西
+
+298
+00:13:24,240 --> 00:13:26,030
+If you ever try to take like a zip file, 
+如果您尝试使用zip文件或mp4文件
+
+299
+00:13:26,040 --> 00:13:27,230
+or like an mp4 file, 
+如果您尝试运行zip
+
+300
+00:13:27,240 --> 00:13:28,760
+if you try to run zip, when it compress it,
+当它压缩它时 它将是可怕的
+
+301
+00:13:28,770 --> 00:13:33,030
+it's going to be terrible because it's binary data that doesn't have any patterns. 
+因为它是没有任何模式的二进制数据
+
+302
+00:13:33,790 --> 00:13:36,520
+Essentially, if you intermix all the attributes within a single page,
+从本质上讲 如果你在一个页面中混合了所有的属性
+
+303
+00:13:37,240 --> 00:13:40,190
+then you essentially giving this having the same issue. 
+那么你就会给出同样的问题
+
+304
+00:13:43,720 --> 00:13:45,290
+The solution to this, 
+这个问题的解决方案
+
+305
+00:13:45,300 --> 00:13:46,490
+which we all sort of know about, 
+我们都知道
+
+306
+00:13:46,820 --> 00:13:48,450
+let's cover more detail, 
+让我们更详细地介绍一下
+
+307
+00:13:48,730 --> 00:13:52,430
+is do a column store approach or a decomposition storage model. 
+是做一个列存储方法或分解存储模型
+
+308
+00:13:52,910 --> 00:13:53,070
+Right? 
+对的
+
+309
+00:13:53,080 --> 00:13:55,590
+Decomposition storage model is how you would describe it in sort
+分解存储模型是你在学术文献中
+
+310
+00:13:55,600 --> 00:13:57,080
+of the academic literature. 
+描述它的方式
+
+311
+00:13:57,640 --> 00:14:00,310
+Nobody really uses the word dsm people to say column store. 
+没有人真的用DSM这个词来表示列分数
+
+312
+00:14:00,320 --> 00:14:01,180
+But again, 
+但是
+
+313
+00:14:01,190 --> 00:14:04,350
+when they say columns are the usually impacts not the sort
+当他们说列是通常的影响时
+
+314
+00:14:04,360 --> 00:14:06,630
+of the formal definition of what a dsm is. 
+并不是ADSM的正式定义
+
+315
+00:14:08,080 --> 00:14:12,010
+See that here with a dsm is that the database system is going to store
+在这里 对于adsm
+
+316
+00:14:12,020 --> 00:14:15,490
+all the values or a single attribute in a table. 
+数据库系统将在一个表中存储所有的值或单个属性
+
+317
+00:14:16,240 --> 00:14:17,480
+Continuously one after another. 
+一个接着一个
+
+318
+00:14:17,490 --> 00:14:18,920
+Just think of like a giant array. 
+就像一个巨大的阵列
+
+319
+00:14:19,390 --> 00:14:22,340
+Here's all the values of column a there's another giant array for all the columns, 
+这是列a的所有值 还有另一个巨大的数组
+
+320
+00:14:22,350 --> 00:14:26,610
+all the values of column b this is going to be ideal for olap workloads, 
+用于所有列 列b的所有值 这将是实验室工作负载的理想选择
+
+321
+00:14:26,620 --> 00:14:27,810
+where we do read only queries. 
+我们在其中执行只读查询
+
+322
+00:14:28,410 --> 00:14:30,340
+And we only access a subset of the attributes, 
+我们只访问属性的一个子集
+
+323
+00:14:30,350 --> 00:14:32,180
+because now we just go get the array, 
+因为现在我们只需要获取数组
+
+324
+00:14:32,660 --> 00:14:33,660
+the rays of the data that we need, 
+我们需要的数据的射线
+
+325
+00:14:33,670 --> 00:14:36,370
+or the columns of the data that we need and ignore everything else. 
+或者我们需要的数据的列 而忽略其他一切
+
+326
+00:14:38,720 --> 00:14:41,670
+We're going to want to use a batch vector processing model, 
+我们将使用批处理向量处理模型
+
+327
+00:14:43,200 --> 00:14:46,580
+where as I process the queries or I execute the operators, 
+当我处理查询或执行操作符时
+
+328
+00:14:46,860 --> 00:14:48,640
+instead of patching up one tuple at a time, 
+我不是一次修补一个管道
+
+329
+00:14:48,880 --> 00:14:51,310
+i'm going to pass a vector of tuples at a time that it all correspond
+而是一次传递一个管道向量
+
+330
+00:14:51,320 --> 00:14:53,270
+to a single column or a subset of columns. 
+它全部对应于单个列或列的子集
+
+331
+00:14:54,560 --> 00:14:58,550
+Now, i'm not paying that penalty called get next on my operators.
+现在 我不会在我的运营商上支付所谓的“获得下一个”的罚款
+
+332
+00:14:58,910 --> 00:15:01,740
+I'm just moving large chunks of data from 1 operator to the next. 
+我只是将大块数据从一个小时移动到下一个小时
+
+333
+00:15:03,010 --> 00:15:04,360
+So in this world, 
+所以在这个世界上
+
+334
+00:15:04,370 --> 00:15:09,510
+the files are the term file versus page versus chunk versus pro group
+文件是术语文件与页面与块与专业组
+
+335
+00:15:10,020 --> 00:15:11,930
+can be all slightly nebulous. 
+可能都有点模糊
+
+336
+00:15:11,940 --> 00:15:15,100
+But again, assume these are like par k files sitting on s three,
+但同样
+
+337
+00:15:15,610 --> 00:15:18,550
+but file sizes are going to be much larger than you would typically have
+假设这些文件类似于S3上的Par K文件
+
+338
+00:15:18,560 --> 00:15:19,230
+in a row store. 
+但文件大小将比行存储中的通常文件大得多
+
+339
+00:15:21,370 --> 00:15:24,330
+Think of like hundreds of megabytes where the page size is, 
+想象一下页面大小为几百兆字节
+
+340
+00:15:24,340 --> 00:15:27,600
+like tens of megabytes or 22 megabytes or some larger size. 
+比如几十兆字节或22兆字节或更大的大小
+
+341
+00:15:28,670 --> 00:15:30,910
+And then over, even though that we're going to have,
+然后结束 尽管我们将会有
+
+342
+00:15:32,490 --> 00:15:34,380
+maybe store these columns as separate files, 
+也许将这些列存储为单独的文件
+
+343
+00:15:34,820 --> 00:15:38,230
+we still want to organize the two tuple in such a way that we can keep track
+但我们仍然希望以这样一种方式组织这两个加
+
+344
+00:15:38,240 --> 00:15:41,490
+of where they're located by offsets in these files. 
+以便我们可以通过这些文件中的偏移量来跟踪它们的位置
+
+345
+00:15:43,290 --> 00:15:44,490
+Also, what it means in the next slide,
+另外 在下一张幻灯片中 它意味着什么
+
+346
+00:15:47,010 --> 00:15:50,000
+say, here's our data, same tip we have before 3 columns, 6 rows.
+说 这是我们的数据 同样的提示 我们之前有3列 6行
+
+347
+00:15:50,640 --> 00:15:55,130
+What we're going to do is take all the values from column a and just store
+我们要做的是从列A中取出所有的值
+
+348
+00:15:55,140 --> 00:15:57,450
+those continuously a in a single file. 
+并将这些值连续地存储在一个文件中
+
+349
+00:15:58,240 --> 00:15:59,500
+Again, there's only six attributes,
+再说一次 只有六个属性
+
+350
+00:15:59,510 --> 00:16:01,140
+but I can think of it extremes, right?
+但我能想到它的极端 对吧
+
+351
+00:16:01,150 --> 00:16:03,060
+You would have this giant file, 
+你会有这个巨大的文件
+
+352
+00:16:03,370 --> 00:16:04,650
+mybe, a billion entries.
+海军 十亿个条目
+
+353
+00:16:05,450 --> 00:16:07,160
+There's gonna be some header at the top that it says, 
+上面会有一些头 上面写着
+
+354
+00:16:08,640 --> 00:16:11,820
+here's the data that here's about metadata about what's in this file. 
+这是关于元数据的数据 关于这个文件中的内容
+
+355
+00:16:12,160 --> 00:16:14,630
+Again, check sums or what version of the system created it.
+再次检查总和或创建它的系统版本
+
+356
+00:16:15,560 --> 00:16:19,060
+Now you're going to store also a null bit map separately in the header, 
+现在 您还将在标头中单独存储一个空位图
+
+357
+00:16:19,640 --> 00:16:22,020
+instead of storing it in the header per tuple. 
+而不是将其存储在标头协议中
+
+358
+00:16:22,640 --> 00:16:24,580
+And now you used to have this giant bit map at the top and says, 
+现在你在顶部有一个巨大的位图
+
+359
+00:16:24,590 --> 00:16:27,300
+here's for all by10,000 people's in this file. 
+上面写着 这是这个文件中所有10 000个人的
+
+360
+00:16:27,860 --> 00:16:30,460
+Here's the bits that are set to true or set to one. 
+下面是设置为真或设置为1的位
+
+361
+00:16:30,700 --> 00:16:31,940
+If the value for that attribute, 
+如果该属性的值
+
+362
+00:16:31,950 --> 00:16:34,140
+I think the given tuple is null, 
+我认为给定的两个极点为空
+
+363
+00:16:35,950 --> 00:16:36,140
+right? 
+是吧
+
+364
+00:16:36,150 --> 00:16:38,420
+And then you do the same thing for the next column and the same thing
+然后你对下一列做同样的事情
+
+365
+00:16:38,990 --> 00:16:40,260
+for the next column as well. 
+对下一列也做同样的事情
+
+366
+00:16:42,130 --> 00:16:43,640
+In these examples here, 
+在这里的这些例子中
+
+367
+00:16:44,050 --> 00:16:45,160
+and i'll say this multiple times, 
+我将多次提到这一点
+
+368
+00:16:45,490 --> 00:16:48,600
+i'm showing that the header like the metadata about within the file is
+我展示了像文件中的元数据一样的头
+
+369
+00:16:48,610 --> 00:16:49,320
+in the header, 
+在头中
+
+370
+00:16:50,340 --> 00:16:52,250
+a in an immutable file like parquilla orc. 
+一个像parquilla orc这样的不可变文件
+
+371
+00:16:52,260 --> 00:16:53,970
+This is actually in the bottom and the footer. 
+这实际上是在底部和页脚
+
+372
+00:16:55,050 --> 00:16:58,640
+Because the idea is that it's a you construct the file once you don't know
+因为这个想法是 一旦你构造了文件
+
+373
+00:16:58,650 --> 00:17:02,060
+what's going to be in it until you actually process it and create the file, 
+你就不知道里面会有什么 直到你实际处理它并创建文件
+
+374
+00:17:02,380 --> 00:17:04,760
+then you go to pen the metadata in the footer. 
+然后你在页脚中写下元数据
+
+375
+00:17:05,570 --> 00:17:08,600
+Where is it in a row store or a system where you're supporting incremental updates? 
+它在行存储或支持增量更新的系统中处于什么位置
+
+376
+00:17:09,020 --> 00:17:10,500
+That you typically put this in the header. 
+你通常把这个放在标题中
+
+377
+00:17:10,510 --> 00:17:12,980
+So for illustrated purposes, i'm showing the header,
+所以为了说明的目的 我显示了标题
+
+378
+00:17:12,990 --> 00:17:15,420
+but real assessments will put this in the folder or parking, 
+但真正的评估将把它放在文件夹或停车场中
+
+379
+00:17:15,430 --> 00:17:16,540
+or put them in the footer. 
+或者把它们放在文件夹中
+
+380
+00:17:18,320 --> 00:17:18,400
+Right? 
+对的
+
+381
+00:17:18,530 --> 00:17:20,520
+Again, the basic idea here is that for every single attribute,
+同样 这里的基本思想是 对于每一个属性
+
+382
+00:17:20,530 --> 00:17:21,600
+we have a separate file, 
+我们都有一个单独的文件
+
+383
+00:17:22,170 --> 00:17:25,320
+and we dedicated metadata in the top to tell you what's in it. 
+并且我们在顶部提供了元数据来告诉您其中的内容
+
+384
+00:17:27,730 --> 00:17:30,570
+One key difference between a row store and a column store is the way
+行存储和列存储之间的一个关键区别是我们
+
+385
+00:17:30,580 --> 00:17:31,850
+we're going to identify tuples. 
+识别两个球的方式
+
+386
+00:17:32,820 --> 00:17:33,720
+Remember, I said in a row store,
+记住 我说过在行存储中
+
+387
+00:17:33,730 --> 00:17:37,790
+it's going to be the page id and then the slot number offset typically have, 
+它将是页面id 然后是插槽编号偏移
+
+388
+00:17:37,880 --> 00:17:39,390
+I I can't think of any other system, 
+通常有 我想不出任何其他系统
+
+389
+00:17:39,400 --> 00:17:40,830
+every except in memory systems. 
+除了内存系统
+
+390
+00:17:41,220 --> 00:17:43,860
+But this is how every sort of disk based row system is going to work. 
+但这就是每一种基于磁盘的ROW系统的工作方式
+
+391
+00:17:44,830 --> 00:17:48,160
+There may be additional things like there might be a file id and an object number, 
+可能会有额外的东西
+
+392
+00:17:48,590 --> 00:17:50,900
+like oracle and mice and segal server have a bit
+比如可能有一个文件ID和一个对象编号
+
+393
+00:17:50,910 --> 00:17:53,870
+more complicated addressing schemes. 
+比如Oracle和MICE以及Segal Server有更复杂的寻址方案
+
+394
+00:17:53,880 --> 00:17:54,470
+But in general, 
+但通常情况下
+
+395
+00:17:54,480 --> 00:17:58,790
+it comes down to a page number and an offset in the slot array. 
+它可以归结为插槽阵列中的页码和偏移量
+
+396
+00:17:59,800 --> 00:18:00,840
+In a column store, 
+在列存储中
+
+397
+00:18:00,850 --> 00:18:05,330
+we're going to instead use is the offset within the column itself. 
+我们将改为使用列本身中的偏移量
+
+398
+00:18:06,800 --> 00:18:08,450
+So I say I have 1,000 tuples 
+所以我说我有1002根杆子
+
+399
+00:18:08,770 --> 00:18:11,490
+Ii know how to jump to the header, 
+我知道如何跳转到标题
+
+400
+00:18:11,500 --> 00:18:13,610
+the location of where our column starts. 
+即列开始的位置
+
+401
+00:18:13,620 --> 00:18:16,090
+I know the size of every single attribute. 
+我知道每一个属性的大小
+
+402
+00:18:16,570 --> 00:18:17,450
+They all have to be fixed length. 
+它们都必须是固定长度的
+
+403
+00:18:17,460 --> 00:18:18,370
+I'll explain why in a second. 
+我马上就会解释为什么
+
+404
+00:18:18,780 --> 00:18:19,370
+This is why. 
+这就是为什么
+
+405
+00:18:19,690 --> 00:18:20,830
+But all the attributes will be, 
+但所有属性的值都
+
+406
+00:18:20,840 --> 00:18:21,950
+the values will be fixed length. 
+是固定长度的
+
+407
+00:18:22,510 --> 00:18:24,140
+I know if I want the 500 tuples, 
+我知道如果我想要5002池
+
+408
+00:18:24,450 --> 00:18:26,410
+I take the size of the attribute times 500. 
+我把属性的大小乘以500
+
+409
+00:18:26,900 --> 00:18:29,530
+And then I jumped into that giant array of the column. 
+然后我跳进了那个巨大的列阵
+
+410
+00:18:29,540 --> 00:18:31,680
+And that's how I find the data that i'm looking for. 
+这就是我如何找到我正在寻找的数据
+
+411
+00:18:33,140 --> 00:18:34,290
+I could do that for any column. 
+我可以为任何专栏这样做
+
+412
+00:18:34,300 --> 00:18:38,130
+So I know I if I jump into column a if the 500 tuple, 
+所以我知道如果我跳到a列 如果500个三元组
+
+413
+00:18:38,530 --> 00:18:41,400
+I can do the same thing in column b and column c this is
+我可以在b列和c列做同样的事情
+
+414
+00:18:41,410 --> 00:18:43,200
+why all the attributes have to be fixed length. 
+这就是为什么所有的属性都必须是固定长度的
+
+415
+00:18:45,160 --> 00:18:47,920
+But we know that every attribute is fixed length, right?
+但是我们知道每个属性都是固定长度的 对吧
+
+416
+00:18:47,930 --> 00:18:49,400
+I have a text field or varchar,
+我有一个bar char
+
+417
+00:18:50,690 --> 00:18:51,800
+binary field, and so forth.
+二进制字段等
+
+418
+00:18:53,890 --> 00:18:57,390
+We're going to need a way to convert them back into fixed length. 
+我们需要一种方法将它们转换回固定长度
+
+419
+00:18:57,940 --> 00:18:59,640
+This is where dictionary compression will come in. 
+这就是字典压缩的用武之地
+
+420
+00:19:01,950 --> 00:19:03,380
+What if there's a null value? 
+如果有一个空值呢
+
+421
+00:19:03,390 --> 00:19:06,610
+The question is where if there's a null value in the middle, 
+问题是如果中间有一个空值
+
+422
+00:19:08,790 --> 00:19:10,310
+this question is, what if there's a null value in the middle?
+这个问题是 如果中间有一个空值呢
+
+423
+00:19:11,170 --> 00:19:16,050
+You would still mean you would still reserve the space for that null
+您仍然意味着您仍然会为要拉取的null或null
+
+424
+00:19:16,060 --> 00:19:17,630
+to pull or the null attribute. 
+属性保留空间
+
+425
+00:19:17,940 --> 00:19:21,160
+And then you mark it in the null bit map when you do a look up now, 
+然后你在空位图中标记它 当你现在查找的时候
+
+426
+00:19:21,170 --> 00:19:22,040
+like you would say, 
+就像你会说的
+
+427
+00:19:23,190 --> 00:19:24,420
+if i'm jumping to your exact tuple, 
+如果我跳到你的电子管
+
+428
+00:19:24,430 --> 00:19:25,660
+or if I wonder what the value is, 
+或者如果我想知道值是什么
+
+429
+00:19:26,020 --> 00:19:28,110
+I could look in the null bit map tells me whether it's null or not. 
+我可以查看空位图 告诉我它是否为空
+
+430
+00:19:28,120 --> 00:19:29,510
+And if it's not, then I go look at it.
+如果不是 我就去看看
+
+431
+00:19:34,350 --> 00:19:34,630
+Right? 
+对的
+
+432
+00:19:35,130 --> 00:19:36,840
+You can just think of this as vertical partitioning. 
+您可以将其视为垂直分区
+
+433
+00:19:37,470 --> 00:19:39,740
+The reason why it's called the decomposition storage model, 
+它之所以被称为分解存储模型
+
+434
+00:19:40,120 --> 00:19:43,610
+because the idea is that you take a regular row store table, 
+是因为这个想法是你拿一个常规的行存储表
+
+435
+00:19:44,010 --> 00:19:47,140
+and you do vertical partitioning such that each column is stored
+然后进行垂直分区
+
+436
+00:19:47,150 --> 00:19:48,700
+in its own 1 column table. 
+这样每一列都存储在它自己的1列表中
+
+437
+00:19:50,370 --> 00:19:51,670
+That's the metaphor people use for this. 
+这就是人们对此的比喻
+
+438
+00:19:53,630 --> 00:19:56,740
+So I said that most, as far as I know,
+我说过
+
+439
+00:19:56,750 --> 00:20:01,410
+every system that I could think of is going to use this fixed length
+据我所知
+
+440
+00:20:01,420 --> 00:20:04,050
+offset to identify individual tuple. 
+我能想到的大多数系统都会使用这个固定长度偏移来识别单独的两个极点
+
+441
+00:20:04,540 --> 00:20:06,880
+We need this for stitching things back together later on, 
+我们需要这个稍后把东西重新缝合在一起
+
+442
+00:20:07,550 --> 00:20:08,570
+as i'm scanning along, 
+因为我正在扫描
+
+443
+00:20:08,580 --> 00:20:10,570
+trying to find a match or something, 
+试图找到匹配的东西
+
+444
+00:20:12,120 --> 00:20:15,550
+maybe I evaluate the first predicate and the second predicate on the next column, 
+也许我在下一列上计算第一个谓词和第二个谓词
+
+445
+00:20:15,560 --> 00:20:18,430
+I need to know what are the triples that match in the first column, 
+我需要知道第一列中匹配的三元组是什么
+
+446
+00:20:18,750 --> 00:20:21,680
+and then go look up their corresponding offsets in the second column. 
+然后在第二列中查找它们相应的偏移量
+
+447
+00:20:22,640 --> 00:20:23,740
+Again, we'll cover this.
+同样 我们将讨论这个问题
+
+448
+00:20:25,220 --> 00:20:26,270
+We'll cover this in a few weeks, 
+我们将在几周内讨论这个问题
+
+449
+00:20:26,280 --> 00:20:28,740
+but that's the basic idea why we're using this fixed length all sets. 
+但这是我们在所有集合中使用这个固定长度的基本思想
+
+450
+00:20:29,180 --> 00:20:32,580
+We always know how to jump to within any column to go, 
+我们总是知道如何跳转到任何列中
+
+451
+00:20:32,590 --> 00:20:35,860
+get all the values we need for any one logical to pull. 
+获得任何一个逻辑所需的所有值
+
+452
+00:20:39,050 --> 00:20:41,560
+As I said, most systems are going to do fixed length all sets.
+正如我所说的 大多数系统都会做固定长度的所有集合
+
+453
+00:20:42,690 --> 00:20:43,800
+In the research literature, 
+在研究文献中
+
+454
+00:20:43,810 --> 00:20:48,610
+there is a discussion about how could spark variable length values. 
+有一个关于如何激发可变长度值的讨论
+
+455
+00:20:49,690 --> 00:20:51,360
+So instead of actually storing, 
+所以
+
+456
+00:20:52,020 --> 00:20:53,370
+keeping all these things be fixed, 
+不是实际存储
+
+457
+00:20:53,380 --> 00:20:55,390
+like you actually embed the, 
+而是保持所有这些东西都是固定的
+
+458
+00:20:55,400 --> 00:20:59,050
+like a tuple id in the value itself. 
+就像你实际上在值本身中嵌入了一个三重ID
+
+459
+00:21:00,140 --> 00:21:02,120
+I think i've got some kind of 32 bit integer. 
+我想我得到了某种32位整数
+
+460
+00:21:02,430 --> 00:21:03,210
+So that way, 
+这样
+
+461
+00:21:04,160 --> 00:21:05,790
+if i'm at this offset here, 
+如果我在这个偏移处
+
+462
+00:21:06,280 --> 00:21:07,680
+and i'm looking at 2.2, 
+我看到的是2.2
+
+463
+00:21:08,030 --> 00:21:12,080
+you have some index or some way to jump into these other columns to get
+你有一些索引或一些方法来跳转到其他列
+
+464
+00:21:12,090 --> 00:21:12,640
+to people to this. 
+让人们看到这个
+
+465
+00:21:13,510 --> 00:21:14,470
+Is a special case. 
+是个特例
+
+466
+00:21:14,480 --> 00:21:16,310
+I don't remember the system actually does this. 
+我不记得系统实际上是这样做的
+
+467
+00:21:17,340 --> 00:21:20,250
+Ii this shows up in that literature in some places, but nobody,
+这在一些地方的文献中出现过
+
+468
+00:21:20,260 --> 00:21:20,730
+as far as I know, 
+但据我所知
+
+469
+00:21:20,740 --> 00:21:22,090
+nobody actually implements it this way, 
+没有人真正以这种方式实现它
+
+470
+00:21:23,410 --> 00:21:26,090
+because there's obviously a huge storage ahead of maintaining this
+因为在维护这个加上索引之前显然有一个巨大的存储
+
+471
+00:21:26,520 --> 00:21:30,210
+plus the index and then jump into the other columns, 
+然后跳到其他列
+
+472
+00:21:30,420 --> 00:21:31,730
+get the value need. 
+获得所需的值
+
+473
+00:21:32,410 --> 00:21:34,630
+Instead, everyone just does these fixed length all sets.
+相反 每个人都只是做这些固定长度的所有集合
+
+474
+00:21:38,190 --> 00:21:39,710
+As I i've already said this, 
+正如我已经说过的
+
+475
+00:21:39,720 --> 00:21:44,830
+but like we need to convert any variable length data into fixed length. 
+但我们需要将任何可变长度的数据转换为固定长度
+
+476
+00:21:45,240 --> 00:21:51,700
+An obvious trick to do would be just to pad out any strings with spaces
+一个明显的技巧是在末尾用空格填充任何字符串
+
+477
+00:21:51,710 --> 00:21:52,900
+at the end to make it fit. 
+以使其适合
+
+478
+00:21:53,190 --> 00:21:54,450
+Like if it's a char 16, 
+就像它是一个16字符
+
+479
+00:21:54,460 --> 00:21:58,800
+but most of the time i'm storing 8 characters, 
+但大多数时候我存储88个字符 把剩下的8个字符去掉 这样
+
+480
+00:21:59,210 --> 00:22:00,260
+pat out the remaining eight, 
+所有内容的长度
+
+481
+00:22:00,660 --> 00:22:01,800
+that way, everything's fixed length.
+都是固定的
+
+482
+00:22:02,390 --> 00:22:03,980
+But this is wasteful. 
+但这是浪费
+
+483
+00:22:03,990 --> 00:22:05,740
+And it's expensive because now you're copying data. 
+而且它的成本很高 因为现在您正在复制数据
+
+484
+00:22:05,750 --> 00:22:07,800
+That's actually you're looking in data, 
+这实际上是你在数据中寻找
+
+485
+00:22:07,810 --> 00:22:09,040
+examining data that's wasteful. 
+检查浪费的数据
+
+486
+00:22:09,050 --> 00:22:10,490
+And you now use string detection. 
+现在使用字符串检测
+
+487
+00:22:10,500 --> 00:22:12,710
+You've got to look for the offsets or look for the padding. 
+你必须寻找偏移或者寻找填充
+
+488
+00:22:13,550 --> 00:22:15,690
+Instead, everyone's going to do the dictionary compression stuff.
+相反 每个人都会做字典压缩的事情
+
+489
+00:22:16,280 --> 00:22:18,550
+And the idea is that were to take anything that's variable length
+这个想法是
+
+490
+00:22:19,100 --> 00:22:21,540
+and convert it down into a fixed length integer. 
+我们把任何可变长度的东西转换成一个固定长度的整数
+
+491
+00:22:22,180 --> 00:22:23,480
+Usually 32 bits. 
+通常为32位
+
+492
+00:22:25,370 --> 00:22:26,690
+Again, we'll discuss how to do this,
+同样 我们将讨论如何做到这一点
+
+493
+00:22:26,700 --> 00:22:32,570
+but basically think of a there's 50 states in the united states. 
+但基本上认为在美国有50个州
+
+494
+00:22:33,590 --> 00:22:36,580
+Instead of storing the string for all 50 states over and over again, 
+它的长度是可变的
+
+495
+00:22:36,590 --> 00:22:37,720
+it's a variable length. 
+而不是一遍又一遍地存储所有50个状态的字符串
+
+496
+00:22:37,730 --> 00:22:40,040
+I just convert the state into a number, the email.
+我只是把状态转换成一个数字 电子邮件
+
+497
+00:22:40,450 --> 00:22:41,120
+I store the number. 
+我储存号码
+
+498
+00:22:42,210 --> 00:22:43,410
+That's a very high explanation, 
+这是一个非常高的解释
+
+499
+00:22:43,420 --> 00:22:44,450
+but that's basically dictionary. 
+但这基本上是字典
+
+500
+00:22:44,460 --> 00:22:48,310
+Compression is going to do for us. 
+压缩将为我们所用
+
+501
+00:22:48,320 --> 00:22:48,690
+All right. 
+好吧
+
+502
+00:22:48,700 --> 00:22:50,400
+So I said that con source is not new. 
+所以我说Con Source并不新鲜
+
+503
+00:22:51,520 --> 00:22:55,330
+The original idea was actually proposed way back in the 1970s, 
+最初的想法实际上是在20世纪70年代由瑞典军方
+
+504
+00:22:55,740 --> 00:22:58,540
+from the swedish military in a system called cantor. 
+在一个名为康托的系统中提出的
+
+505
+00:22:59,740 --> 00:23:00,650
+It's in the research literature. 
+它在研究文献中
+
+506
+00:23:00,660 --> 00:23:04,560
+I don't think it's gone went beyond what were the prototypes that they
+我不认为它已经超越了他们正在做的原型
+
+507
+00:23:04,570 --> 00:23:04,840
+were doing. 
+
+
+508
+00:23:04,850 --> 00:23:05,960
+And it wasn't a database system. 
+它不是一个数据库系统
+
+509
+00:23:06,210 --> 00:23:09,780
+It was a it's actually a like a file system, 
+它实际上是一种文件系统 存储方法
+
+510
+00:23:09,790 --> 00:23:12,140
+storage approach, like an object store, almost.
+就像对象存储一样
+
+511
+00:23:13,500 --> 00:23:16,570
+But the paper clearly defines like we sort things of columns and things
+但这篇论文清楚地定义了 就像我们对列的东西进行排序一样
+
+512
+00:23:16,580 --> 00:23:16,970
+are faster. 
+而且速度更快
+
+513
+00:23:18,050 --> 00:23:21,250
+In the 1980s is when they actually proposed on the academic side that
+在20世纪80年代
+
+514
+00:23:21,260 --> 00:23:25,090
+formalized the decomposition storage model. 
+他们实际上在学术方面提出了形式化的分解存储模型
+
+515
+00:23:25,810 --> 00:23:26,630
+It was out there. 
+它就在外面
+
+516
+00:23:26,640 --> 00:23:28,990
+People really didn't pay attention too much. 
+人们真的没有注意太多
+
+517
+00:23:30,270 --> 00:23:31,470
+In the 1990s, 
+在20世纪90年代
+
+518
+00:23:31,480 --> 00:23:36,170
+sybase came out with this thing called sybaseIQ which is in memory, 
+sigh base推出了一款名为psi base iq的产品 它位于内存中
+
+519
+00:23:37,080 --> 00:23:38,450
+sort of query accelerator, 
+类似于查询加速器
+
+520
+00:23:38,680 --> 00:23:39,820
+will be the fractured mirror approach. 
+将成为断裂镜像方法
+
+521
+00:23:39,830 --> 00:23:40,660
+We'll see in a second. 
+我们马上就知道了
+
+522
+00:23:41,010 --> 00:23:44,270
+Basically, they would take the regular side base row store,
+基本上 他们会采用常规的侧基行存储
+
+523
+00:23:44,660 --> 00:23:48,130
+and they would suck data out and then covered it into a column store. 
+然后将数据吸出 然后将其覆盖到列存储中
+
+524
+00:23:48,550 --> 00:23:49,220
+Your query showed up, 
+当你的查询出现时
+
+525
+00:23:49,230 --> 00:23:53,240
+they would try to figure out how much can I run on the column store. 
+他们会试图计算出我可以在列存储上运行多少
+
+526
+00:23:55,020 --> 00:23:56,990
+The 2000s of when this really took off, 
+在2000年代 当它真正起飞的时候
+
+527
+00:23:57,220 --> 00:23:58,310
+the packs paper came out, 
+纸包出现了
+
+528
+00:23:58,320 --> 00:23:59,630
+I think in 2001, 
+我想是在2001年
+
+529
+00:24:01,200 --> 00:24:05,630
+there was ac store project at mit it was a bunch of startups in this space. 
+在麻省理工学院有一个AC商店项目 它是这个领域的一群创业公司
+
+530
+00:24:05,980 --> 00:24:09,060
+Vertica, vector wise and mode adb vector wise,
+vertica vector wise和mode adb vector wise
+
+531
+00:24:09,070 --> 00:24:12,980
+we're going to see a lot later on the semester because they're the ones
+我们将在本学期晚些时候看到很多
+
+532
+00:24:12,990 --> 00:24:16,220
+that sort of invented the vector rise execution model processing model. 
+因为他们发明了vector rise执行模型处理模型
+
+533
+00:24:17,550 --> 00:24:22,240
+And they did a lot of the early work and using cindy to accelerate operators. 
+他们做了很多早期的工作 并使用Cindy来加速操作员
+
+534
+00:24:22,670 --> 00:24:22,930
+Again, 
+再一次
+
+535
+00:24:23,220 --> 00:24:27,340
+the guy that created vector wise then became this was the co founder of snowflake. 
+创造Vector Wise的人成为了Snowflake的联合创始人
+
+536
+00:24:27,350 --> 00:24:31,160
+I think a lot of ideas were developed in vector wise that made it into snowflake. 
+我认为很多想法都是在矢量方面发展起来的 这使得它变成了雪花
+
+537
+00:24:32,030 --> 00:24:34,450
+And then by 2010s or 2020s, pretty much,
+然后到2010年代或2020年代 差不多
+
+538
+00:24:35,660 --> 00:24:37,720
+everyone is a column store. 
+每个人都是一个专栏商店
+
+539
+00:24:37,730 --> 00:24:37,920
+Now, 
+现在
+
+540
+00:24:38,540 --> 00:24:40,240
+like this is clearly the better way to go. 
+这显然是更好的方式
+
+541
+00:24:40,470 --> 00:24:41,770
+I can't think of any analytical. 
+我想不出任何分析
+
+542
+00:24:43,420 --> 00:24:45,930
+There are some systems that are claiming to do real time analytics. 
+有一些系统声称可以进行实时分析
+
+543
+00:24:46,980 --> 00:24:50,000
+And they are sort of doing a row store approach, 
+他们正在做一种行存储方法
+
+544
+00:24:50,010 --> 00:24:53,770
+but they'll build column oriented indexes. 
+但他们将构建面向列的索引
+
+545
+00:24:54,910 --> 00:24:55,410
+what's that? 
+那是什么
+
+546
+00:24:56,730 --> 00:24:57,880
+Yeah, we should remember that anyway.
+是啊 我们应该记住这一点
+
+547
+00:25:00,040 --> 00:25:01,070
+This is the old duct, db log.
+这是旧管道 DB日志
+
+548
+00:25:01,080 --> 00:25:01,830
+We would update that. 
+我们会更新的
+
+549
+00:25:03,390 --> 00:25:03,720
+Anything else? 
+还要别的吗
+
+550
+00:25:03,730 --> 00:25:04,360
+Add a date on this? 
+在这上面加个日期
+
+551
+00:25:05,090 --> 00:25:08,250
+I paul is still there, 
+我保罗还在那里
+
+552
+00:25:08,260 --> 00:25:11,270
+but anyway, 
+但无论如何
+
+553
+00:25:12,230 --> 00:25:13,120
+no query engine. 
+没有查询引擎
+
+554
+00:25:14,670 --> 00:25:17,300
+But I it knows how to operate on parking a data. 
+但我知道如何操作停车数据
+
+555
+00:25:19,260 --> 00:25:19,490
+So like, 
+就像 它实际上是来自数据库
+
+556
+00:25:19,500 --> 00:25:24,330
+is it actually a comes from database in that it can generate kilometer files? 
+因为它可以生成公里文件
+
+557
+00:25:24,650 --> 00:25:25,480
+I think it does ingestion. 
+我认为它确实会摄入
+
+558
+00:25:25,490 --> 00:25:26,530
+It's on the critical path, 
+它在关键路径上
+
+559
+00:25:26,540 --> 00:25:29,320
+but it's certainly designed around assuming that it's operating
+但它肯定是围绕着假设它在列式数据上
+
+560
+00:25:29,330 --> 00:25:30,320
+on columnar data. 
+操作而设计的
+
+561
+00:25:31,410 --> 00:25:33,720
+It would be fair to say it is a column data system. 
+公平地说 它是一个列数据系统
+
+562
+00:25:38,860 --> 00:25:39,770
+What are the pros and cons of this? 
+这样做的利弊是什么
+
+563
+00:25:40,380 --> 00:25:40,770
+Again, 
+同样
+
+564
+00:25:40,780 --> 00:25:45,020
+the the obvious advantage is that we're basically getting projection pushed
+明显的优势是
+
+565
+00:25:45,030 --> 00:25:45,740
+down for free, 
+我们基本上可以免费获得下推的投影
+
+566
+00:25:45,750 --> 00:25:50,470
+because we only bring in the data we need for the query, 
+因为我们只引入查询所需的数据
+
+567
+00:25:50,480 --> 00:25:52,750
+only the attributes of the columns that we need. 
+只引入所需的列的属性
+
+568
+00:25:54,300 --> 00:25:56,880
+We're going to get faster query processing because we'll be able to take
+我们将获得更快的查询处理
+
+569
+00:25:56,890 --> 00:25:59,850
+advantage of the increased locality and better cache data usage
+因为我们将能够利用我们正在访问的数据的增加的局部性和更好的强制转换使用
+
+570
+00:25:59,860 --> 00:26:01,010
+of the data we're accessing, 
+因为游戏通过列进行分割
+
+571
+00:26:01,020 --> 00:26:04,160
+because of ripping through columns and only accessing the columns
+并且只访问我们实际需要的列
+
+572
+00:26:04,170 --> 00:26:08,430
+that we actually need and not having to jump around over stuff we don't. 
+而不必跳过我们不需要的内容
+
+573
+00:26:09,450 --> 00:26:09,870
+Then again, 
+然后
+
+574
+00:26:10,080 --> 00:26:14,160
+we'll get better compression because all the values within a column, 
+我们将再次获得更好的压缩
+
+575
+00:26:14,170 --> 00:26:14,720
+for the most part, 
+因为在大多数情况下
+
+576
+00:26:14,730 --> 00:26:16,000
+could be very similar to each other. 
+列中的所有值可能彼此非常相似
+
+577
+00:26:16,010 --> 00:26:17,780
+I just think of like. 
+我只是想到喜欢
+
+578
+00:26:18,550 --> 00:26:20,020
+And they can think time stamps, right?
+他们能想到时间戳 对吧
+
+579
+00:26:20,530 --> 00:26:22,480
+Some event stream, the time stamps,
+一些事件流 时间戳 有1
+
+580
+00:26:22,490 --> 00:26:23,680
+there are 1 second all for each other. 
+秒钟都是彼此的
+
+581
+00:26:23,690 --> 00:26:26,820
+So that means that there would be a lot of redundant data from one tick
+因此 这意味着从一个分笔成交点到下一个分笔成交点会有大量冗余数据
+
+582
+00:26:26,830 --> 00:26:30,060
+to the next and we can exploit that and get better compression. 
+我们可以利用这一点并获得更好的压缩
+
+583
+00:26:31,580 --> 00:26:33,970
+The downside that's going to be slow for point queries, 
+缺点是点查询的速度会很慢
+
+584
+00:26:34,860 --> 00:26:36,450
+things have to go grab a single tuple. 
+事情必须抓住一个单独的两个极点
+
+585
+00:26:37,180 --> 00:26:39,050
+Anytime you can do insert updates and delete, 
+任何时候你都可以插入更新和删除
+
+586
+00:26:39,060 --> 00:26:40,410
+assume your system supports that, 
+假设你的系统支持
+
+587
+00:26:40,420 --> 00:26:41,450
+not all of them do. 
+但并不是所有的系统都支持
+
+588
+00:26:42,080 --> 00:26:45,490
+Now we've got to take tuple that come in from the application
+现在 我们必须将来自应用程序的两个极点作为行存储
+
+589
+00:26:45,500 --> 00:26:48,900
+as a row store and then split it up and store it in separate columns. 
+然后将其拆分并存储在单独的列中
+
+590
+00:26:49,290 --> 00:26:53,060
+Or now we've got to take the columns and the separated data and put
+或者现在我们必须将列和分离的数据重新组合在一起
+
+591
+00:26:53,070 --> 00:26:53,540
+it back together, 
+将其重新缝合在一起
+
+592
+00:26:53,550 --> 00:26:54,380
+stitch it back together, 
+并将
+
+593
+00:26:54,730 --> 00:26:55,970
+return that to the client. 
+其返回给客户端
+
+594
+00:26:56,580 --> 00:26:57,980
+And any time with the reorganize things, 
+任何时候重新整理东西
+
+595
+00:26:57,990 --> 00:26:59,420
+then that's always expensive. 
+都是昂贵的
+
+596
+00:27:00,150 --> 00:27:01,430
+Like we won't go in this too much, 
+就像我们不会去这个太多
+
+597
+00:27:01,440 --> 00:27:02,670
+but there are some systems. 
+但有一些系统
+
+598
+00:27:03,120 --> 00:27:05,090
+They would sort all the data in your columns. 
+它们将对列中的所有数据进行排序
+
+599
+00:27:05,730 --> 00:27:06,000
+Now, 
+现在
+
+600
+00:27:06,010 --> 00:27:10,240
+anytime I insert something that maybe lands in the middle of my sort order, 
+每当我插入一些可能落在我的排序顺序中间的东西时 我都必须移动这些东西
+
+601
+00:27:10,250 --> 00:27:14,870
+i've got to move things around to make space work that gets expensive. 
+以使空间工作变得昂贵
+
+602
+00:27:17,190 --> 00:27:17,440
+Right? 
+对的
+
+603
+00:27:17,450 --> 00:27:20,390
+So this sounds great. 
+这听起来很棒
+
+604
+00:27:20,400 --> 00:27:21,990
+So the dsm seems like what we want to use, 
+因此 dsm似乎是我们想
+
+605
+00:27:22,000 --> 00:27:23,150
+except that we know, 
+要使用的
+
+606
+00:27:23,360 --> 00:27:25,510
+as i've already said, in the last slide, like,
+但我们知道 正如我在上一张幻灯片中已经说过的
+
+607
+00:27:26,010 --> 00:27:29,390
+is a penalty we're paying for having the extreme case of everything
+这是我们为将所有内容
+
+608
+00:27:29,400 --> 00:27:31,030
+separated from everything else like restoring
+与其他内容分离的极端情况
+
+609
+00:27:31,040 --> 00:27:32,550
+the columns and completely separate files. 
+（如恢复列和完全分离的文件）而付出的代价
+
+610
+00:27:33,480 --> 00:27:37,440
+Because most queries in olap setting aren't going to be going
+因为实验室设置中的这些查询不会只
+
+611
+00:27:37,450 --> 00:27:38,960
+only accessing a single column. 
+访问单个列
+
+612
+00:27:40,670 --> 00:27:40,890
+Right? 
+对的
+
+613
+00:27:40,900 --> 00:27:44,800
+Very rarely you're going to say like select id from table foo
+你很少会说从表foo中选择id
+
+614
+00:27:44,810 --> 00:27:46,200
+where id equals something right? 
+其中id等于什么 对吗
+
+615
+00:27:46,210 --> 00:27:47,770
+Like or id greater than this. 
+Like或ID大于此值
+
+616
+00:27:47,780 --> 00:27:50,410
+It's very rare that the olap query, 
+很少有o lab查询只
+
+617
+00:27:50,890 --> 00:27:52,490
+but only look at a single column in isolation. 
+孤立地查看单个列
+
+618
+00:27:53,700 --> 00:27:55,340
+So that means at some point, as we execute the query,
+因此 这意味着在某一点上
+
+619
+00:27:55,350 --> 00:27:56,390
+we're going to have to go back, 
+当我们执行查询时
+
+620
+00:27:57,320 --> 00:27:59,380
+get the other attributes for all the tuple that are matching our predicates
+我们必须返回 在我们从一个操作符到下一个操作符时
+
+621
+00:27:59,570 --> 00:28:02,090
+as we're going from one operator to the next and then stitch
+获取与我们的谓词匹配的所有管道的其他属性
+
+622
+00:28:02,100 --> 00:28:03,050
+the tube back together. 
+然后将管道重新缝合在一起
+
+623
+00:28:04,080 --> 00:28:04,920
+The paper you guys read, 
+你们读的论文
+
+624
+00:28:04,930 --> 00:28:07,390
+they discussed this as you want to do this as late as possible. 
+他们讨论了这个问题 因为你想尽可能晚地做这件事
+
+625
+00:28:07,770 --> 00:28:09,200
+This is the late materialization technique. 
+这就是晚期物化术
+
+626
+00:28:09,570 --> 00:28:11,630
+But you still need someone, you still need to do this.
+但你仍然需要一个人 你仍然需要这样做
+
+627
+00:28:14,090 --> 00:28:18,150
+The idea is that we want to get the benefits of the columnar storage
+我们的想法是 由于压缩执行的原因
+
+628
+00:28:18,650 --> 00:28:20,150
+for compression execution reasons. 
+我们希望获得列式存储的好处
+
+629
+00:28:20,600 --> 00:28:25,720
+But then we also want to be able to take advantage of having data
+但我们也希望能够利用彼此相关
+
+630
+00:28:25,730 --> 00:28:26,640
+that's related to each other, 
+彼此接近的
+
+631
+00:28:26,650 --> 00:28:27,560
+close to each other. 
+数据
+
+632
+00:28:28,450 --> 00:28:29,840
+Maybe not exactly the same page, 
+也许不是完全相同的页面
+
+633
+00:28:29,850 --> 00:28:31,230
+but at least nearby, 
+但至少在附近
+
+634
+00:28:31,760 --> 00:28:34,730
+so that we can not have to do a bunch of more random io to go put
+这样我们就不必做一堆更随机的io来
+
+635
+00:28:34,740 --> 00:28:35,530
+things back together. 
+把东西放回一起
+
+636
+00:28:36,830 --> 00:28:39,500
+We want to column our scheme that gets, again, the separation,
+我们想把我们的方案列出来
+
+637
+00:28:39,830 --> 00:28:41,160
+but had things at least be, 
+再一次得到分离
+
+638
+00:28:41,480 --> 00:28:42,550
+again, relatively close to each other.
+但至少让事物彼此相对接近
+
+639
+00:28:43,900 --> 00:28:44,850
+So this is what pax is. 
+这就是税收
+
+640
+00:28:45,110 --> 00:28:46,960
+Pakistan sort partition attributes across. 
+巴基斯坦排序分区属性跨越
+
+641
+00:28:48,120 --> 00:28:49,470
+This came out in 2002. 
+这本书是2002年出版的
+
+642
+00:28:50,260 --> 00:28:52,790
+This was invented here at cmu by natasha alamoky, 
+这是娜塔莎·阿拉莫基在卡内基梅隆大学发明的
+
+643
+00:28:52,800 --> 00:28:56,140
+who used to be the data professor at cmu and then she left to go
+她曾是卡内基梅隆大学的数据教授
+
+644
+00:28:56,150 --> 00:28:58,270
+to epfl in switzerland. 
+后来她去了瑞士的洛桑联邦理工学院
+
+645
+00:28:58,930 --> 00:29:02,960
+I'm here because she left not entirely all of it. 
+我在这里是因为她没有完全离开
+
+646
+00:29:04,630 --> 00:29:06,930
+What's the reason why the last time this class was taught before? 
+上一次教这门课的原因是什么
+
+647
+00:29:06,940 --> 00:29:10,700
+I revived at 7:21 was like 2006 because of her. 
+因为她 我在7:21复活了 就像2006年一样
+
+648
+00:29:12,330 --> 00:29:12,730
+She's great. 
+她很棒
+
+649
+00:29:13,060 --> 00:29:14,460
+So, again, as I said,
+所以 再一次
+
+650
+00:29:14,470 --> 00:29:15,660
+this is gonna be this. 
+正如我所说的 这将是这个
+
+651
+00:29:15,670 --> 00:29:17,540
+We still call this a column hour storage format. 
+我们仍然称之为列小时存储格式
+
+652
+00:29:17,860 --> 00:29:18,750
+This is what parquet is. 
+这就是镶木地板
+
+653
+00:29:18,760 --> 00:29:19,650
+This is what orc is. 
+这就是兽人
+
+654
+00:29:19,950 --> 00:29:21,550
+This is what basically carbon data is. 
+这就是碳数据的基本内容
+
+655
+00:29:21,990 --> 00:29:22,740
+This is what most people say. 
+这是大多数人的说法
+
+656
+00:29:22,750 --> 00:29:24,820
+When they have a columnar database, it's actually pax.
+当他们有一个公里数据库时 它实际上是打包的
+
+657
+00:29:25,710 --> 00:29:27,530
+But this outside academia, 
+但这在学术界之外
+
+658
+00:29:27,540 --> 00:29:28,690
+maybe it's less well known. 
+可能不太为人所知
+
+659
+00:29:30,410 --> 00:29:31,110
+So the idea here, again,
+所以这里的想法
+
+660
+00:29:31,120 --> 00:29:33,710
+the goal is that we want to have the faster processing benefits
+再一次
+
+661
+00:29:33,720 --> 00:29:34,750
+of column storage, 
+目标是我们想要拥有千米存储的更快处理优势
+
+662
+00:29:35,040 --> 00:29:38,060
+but they maintain the spatial locality of having data that's close to each other. 
+但它们保持了数据彼此靠近的空间局部性
+
+663
+00:29:38,930 --> 00:29:39,830
+They're related to each other. 
+他们彼此有关系
+
+664
+00:29:39,840 --> 00:29:43,070
+And that's part of the same tuple physically close to each other. 
+这是同一输卵管的一部分 物理上彼此靠近
+
+665
+00:29:44,880 --> 00:29:47,380
+So the idea looks like this now that we're not going to break things
+所以这个想法看起来是这样的
+
+666
+00:29:47,390 --> 00:29:49,330
+up into separate files, 
+现在我们不会把东西分成单独的文件
+
+667
+00:29:49,340 --> 00:29:50,010
+separate pages, 
+单独的页面
+
+668
+00:29:50,020 --> 00:29:51,370
+assume that there's a single file. 
+假设只有一个文件
+
+669
+00:29:52,780 --> 00:29:55,450
+First we're going to do, we're going to horizontally partition the rows.
+首先 我们要做的是 我们要对行进行水平划分
+
+670
+00:29:56,370 --> 00:29:58,000
+Could be on some key. 
+可能在某个钥匙上
+
+671
+00:29:58,010 --> 00:30:01,770
+Some attribute could just be the insertion order within they arrived
+某些属性可能只是它们到达系统时的插入
+
+672
+00:30:01,780 --> 00:30:02,370
+in the system. 
+顺序
+
+673
+00:30:02,710 --> 00:30:03,620
+It doesn't matter for now. 
+现在不重要了
+
+674
+00:30:04,490 --> 00:30:09,720
+And so we're going to take all of the data that's been maybe the first23 rows. 
+因此 我们将获取可能是前23行的所有数据
+
+675
+00:30:10,210 --> 00:30:13,490
+I'm going to put them together where all the attributes for the first comma
+我将把它们放在一起
+
+676
+00:30:13,500 --> 00:30:13,990
+are contiguous, 
+其中第一个逗号的所有属性都是连续的
+
+677
+00:30:14,000 --> 00:30:16,360
+all the attributes of the second column are contiguous. 
+第二列的所有属性都是连续的
+
+678
+00:30:16,370 --> 00:30:17,400
+And then the last one as well. 
+最后一个也是
+
+679
+00:30:17,410 --> 00:30:19,640
+I'm going to call this a row group. 
+我要把这个叫做AA排组
+
+680
+00:30:20,530 --> 00:30:22,670
+Every rogue group's going to have its own header that says things
+每个恶意组都会有自己的标题
+
+681
+00:30:22,680 --> 00:30:24,970
+about like what compression scheme they're using, 
+比如他们使用的压缩方案
+
+682
+00:30:24,980 --> 00:30:29,110
+where to find the offsets for these different columns. 
+在哪里找到这些不同列的偏移量
+
+683
+00:30:30,070 --> 00:30:32,460
+Again, don't think about row group as a single page.
+再次强调 不要将规则组视为单个页面
+
+684
+00:30:33,630 --> 00:30:33,750
+Right? 
+对的
+
+685
+00:30:34,680 --> 00:30:36,870
+In this world, these files are usually quite large.
+在这个世界上 这些文件通常相当大
+
+686
+00:30:37,770 --> 00:30:37,930
+Right? 
+对的
+
+687
+00:30:37,940 --> 00:30:41,210
+So the row group could be like 100M. 
+所以盗贼可能有100个弹夹
+
+688
+00:30:41,610 --> 00:30:43,470
+Then a in a row group, 
+然后
+
+689
+00:30:43,480 --> 00:30:46,590
+you have the data for a single column that could be broken
+在行组中
+
+690
+00:30:46,600 --> 00:30:47,670
+up into multiple pages. 
+您可以将单列的数据分解为多个页面
+
+691
+00:30:47,910 --> 00:30:49,660
+Or I think Parquet goes some chunks, 
+或者我认为山羊皮可以做成一些大块
+
+692
+00:30:51,890 --> 00:30:52,000
+right? 
+是吧
+
+693
+00:30:52,010 --> 00:30:56,000
+And you do the same thing for now for the next row group. 
+你现在为下一个小组做同样的事情
+
+694
+00:30:56,010 --> 00:30:56,700
+All right? 
+好吧
+
+695
+00:30:57,750 --> 00:30:59,260
+Then again, as I said before,
+正如我之前所说
+
+696
+00:31:00,900 --> 00:31:02,970
+in mutable file formats like parquet, 
+在可变文件格式（如Parquet）中
+
+697
+00:31:03,290 --> 00:31:04,670
+the header would actually be in the footer, 
+页眉实际上位于页脚中
+
+698
+00:31:04,910 --> 00:31:06,290
+but this is going to contain information about it. 
+但这将包含有关它的信息
+
+699
+00:31:06,300 --> 00:31:07,480
+Here's the location of the row groups. 
+这是行组的位置
+
+700
+00:31:07,990 --> 00:31:09,490
+Here's just maybe check some for the file, 
+这里可能只是检查一些文件
+
+701
+00:31:10,060 --> 00:31:11,830
+any other global metadata. 
+任何其他全局元数据
+
+702
+00:31:12,410 --> 00:31:14,930
+But the metadata about what's actually in the tuples themselves. 
+而是关于元组本身实际内容的元数据
+
+703
+00:31:14,940 --> 00:31:15,770
+They activates themselves. 
+他们激活自己
+
+704
+00:31:16,220 --> 00:31:17,680
+That'll be tied to the row group. 
+这将与流氓集团有关
+
+705
+00:31:18,330 --> 00:31:18,680
+Yes. 
+是的
+
+706
+00:31:19,860 --> 00:31:21,330
+By playing it up into the row group, 
+通过将其添加到行组中
+
+707
+00:31:21,340 --> 00:31:23,250
+we still maintain the column and factors. 
+我们仍然保留列和因子
+
+708
+00:31:23,260 --> 00:31:24,890
+But how do we maintain the row advantage? 
+但我们如何保持排面优势呢
+
+709
+00:31:24,900 --> 00:31:27,490
+If the row group is split across multiple pages? 
+如果行组被拆分为多个页面
+
+710
+00:31:28,170 --> 00:31:29,120
+This question is, 
+这个问题是
+
+711
+00:31:32,100 --> 00:31:35,500
+I how do I still get the benefit of locality? 
+我怎么还能得到本地的好处
+
+712
+00:31:35,510 --> 00:31:39,880
+If the if the columns may be contiguous? 
+如果列可以是连续的
+
+713
+00:31:40,360 --> 00:31:43,180
+But within a single tuple, 
+但在单个块茎中
+
+714
+00:31:43,950 --> 00:31:46,770
+the columns themselves are are still separated, 
+柱子本身仍然是分离的
+
+715
+00:31:47,030 --> 00:31:48,250
+because it's still close enough. 
+因为它仍然足够接近
+
+716
+00:31:49,460 --> 00:31:49,530
+Right? 
+对的
+
+717
+00:31:49,540 --> 00:31:51,570
+It's not like completely two separate files, 
+它不像两个完全独立的文件
+
+718
+00:31:54,410 --> 00:31:56,600
+permit the optimal size for a group. 
+允许组的最佳大小
+
+719
+00:31:57,330 --> 00:31:59,730
+Her question is, has someone determined the optimal size of a row group?
+她的问题是 是否有人确定了行组的最佳大小
+
+720
+00:32:00,380 --> 00:32:01,250
+It's funny to mention this. 
+提到这件事很有趣
+
+721
+00:32:02,520 --> 00:32:03,980
+My former student huang chen, 
+我以前的学生黄晨
+
+722
+00:32:03,990 --> 00:32:06,300
+who I co advise with dave anderson. 
+我和戴夫·安德森共同指导他
+
+723
+00:32:06,740 --> 00:32:07,690
+He's now xinhua. 
+他现在是新华社的
+
+724
+00:32:08,300 --> 00:32:12,340
+We are actually working on the survey now looking at parquet and Orc
+实际上 我们现在正在进行调查 研究拼花地板和组织
+
+725
+00:32:12,350 --> 00:32:13,780
+and understanding the pros and cons. 
+并了解其利弊
+
+726
+00:32:14,430 --> 00:32:18,020
+We have found that in the modern systems with modern network hardware, 
+我们发现 在拥有现代网络硬件的现代系统中
+
+727
+00:32:18,330 --> 00:32:20,840
+like the speeds, the defaults are actually terrible,
+比如速度 默认设置实际上是可怕的
+
+728
+00:32:22,040 --> 00:32:23,090
+but the defaults are actually too small, 
+但实际上缺省值太小
+
+729
+00:32:26,150 --> 00:32:30,340
+because again, these fall formats were designed 2011, 2012, thirteen.
+因为同样 这些秋季格式是在2011年 2012年 13年设计的
+
+730
+00:32:30,780 --> 00:32:31,860
+The networks have gotten way faster. 
+网络变得更快了
+
+731
+00:32:32,810 --> 00:32:33,090
+Right? 
+对的
+
+732
+00:32:33,100 --> 00:32:34,370
+Cpu have gotten that much faster, 
+CP用户的速度要快得多
+
+733
+00:32:34,380 --> 00:32:36,290
+but the network and disk have gotten way faster. 
+但网络和磁盘的速度要快得多
+
+734
+00:32:37,720 --> 00:32:40,430
+So we won't talk about this class like, 
+所以我们不会讨论这个类
+
+735
+00:32:40,830 --> 00:32:42,640
+you can also then take this pax file. 
+你也可以用这个PAX文件
+
+736
+00:32:43,940 --> 00:32:47,620
+It'll run snappy or z standard compression on it. 
+它将在其上运行Snappy或Z标准压缩
+
+737
+00:32:48,200 --> 00:32:49,900
+It turns out, again, your disc is really fast.
+事实再次证明 你的光盘真的很快
+
+738
+00:32:49,910 --> 00:32:53,420
+You don't want to do that because the cpu cost of decompressing, 
+你不想这样做 因为解压缩的cpu成本
+
+739
+00:32:53,430 --> 00:32:58,100
+it is not worth the benefit because you can suck it in way faster than you
+这是不值得的好处 因为你可以以比以前更快的方式吸收它
+
+740
+00:32:58,110 --> 00:32:58,420
+used to. 
+
+
+741
+00:32:59,400 --> 00:33:02,070
+So this is not maybe the best way to do this. 
+所以这可能不是最好的方法
+
+742
+00:33:02,080 --> 00:33:04,140
+Well, however, this is the best way to do this.
+然而 这是最好的方法
+
+743
+00:33:04,590 --> 00:33:08,020
+There's a lot of studies on this term that you get the benefit of the cash locality. 
+有很多关于这个术语的研究 你可以得到现金位置的好处
+
+744
+00:33:08,480 --> 00:33:10,000
+And as all the things that i'm saying before, 
+正如我之前所说的
+
+745
+00:33:10,230 --> 00:33:11,710
+but exactly what these parameters are, 
+但这些参数到底是什么
+
+746
+00:33:11,720 --> 00:33:14,360
+how long these strides should be, chunk sizes,
+这些步幅应该是多长
+
+747
+00:33:15,330 --> 00:33:16,900
+all that depends a lot of things. 
+块大小 所有这些都取决于很多事情
+
+748
+00:33:19,100 --> 00:33:21,180
+Parquet is also more heavy weight with compression. 
+实木复合地板的重量也更重 具有压缩性
+
+749
+00:33:21,190 --> 00:33:25,240
+I think they have the compression scheme is way more complicated than orc. 
+我认为他们的压缩方案比ORC复杂得多
+
+750
+00:33:26,340 --> 00:33:28,520
+Sometimes simplicity, this is better.
+有时简单 这样更好
+
+751
+00:33:32,660 --> 00:33:34,310
+I think i've said everything here, right?
+我想我已经说了这里的一切 对不对
+
+752
+00:33:35,080 --> 00:33:35,340
+Again, 
+同样
+
+753
+00:33:35,890 --> 00:33:37,230
+every row group has some metadata. 
+每个流氓都有一些元数据
+
+754
+00:33:39,430 --> 00:33:41,020
+We're not going to go discuss exactly. 
+我们不会去讨论确切的
+
+755
+00:33:41,030 --> 00:33:43,500
+Here's how parquet does works. 
+下面是拼花地板的工作原理
+
+756
+00:33:45,180 --> 00:33:45,530
+But if you go, 
+但如果你去的话
+
+757
+00:33:46,300 --> 00:33:48,730
+there's a bunch of talks where they basically describe the same thing
+有很多演讲基本上都描述了我在这里
+
+758
+00:33:48,740 --> 00:33:49,450
+i'm describing here. 
+描述的东西
+
+759
+00:33:50,020 --> 00:33:51,170
+This is from data bricks of how, 
+这是来自地狱的数据砖块
+
+760
+00:33:51,940 --> 00:33:52,690
+what part k looks like. 
+K部分的样子
+
+761
+00:33:53,010 --> 00:33:54,080
+Right here we go the rogue group, 
+就在这里 我们去了流氓集团
+
+762
+00:33:54,090 --> 00:33:55,440
+and they says default 128. 
+他们说默认128
+
+763
+00:33:55,870 --> 00:33:57,190
+And the page size is one megabyte. 
+页面大小为1兆字节
+
+764
+00:33:57,430 --> 00:33:58,080
+Is that the best? 
+那是最好的吗
+
+765
+00:33:59,030 --> 00:33:59,560
+It depends. 
+视情况而定
+
+766
+00:34:01,010 --> 00:34:01,910
+But for faster however now, 
+但对于现在更快的哈佛来说
+
+767
+00:34:04,650 --> 00:34:04,890
+right? 
+是吧
+
+768
+00:34:05,300 --> 00:34:09,060
+We're not going to discuss the buffer pool side of this in class or this semester, 
+我们不会在课堂上或本学期讨论缓冲池方面的内容
+
+769
+00:34:09,070 --> 00:34:11,150
+because we're just going to use all the same stuff we talked
+因为我们将在一天结束时使用我们在天使
+
+770
+00:34:11,160 --> 00:34:12,580
+about in the angel class at the end of the day, 
+课上讨论的所有内容
+
+771
+00:34:12,590 --> 00:34:14,050
+like there's stuff on disk. 
+比如磁盘上的内容
+
+772
+00:34:14,680 --> 00:34:15,710
+You've got to go bring it into memory. 
+你得去把它带进记忆
+
+773
+00:34:16,830 --> 00:34:17,730
+You don't want to use m map, 
+你不想用m图
+
+774
+00:34:18,300 --> 00:34:19,220
+said multiple times, right?
+说了很多次 对吗
+
+775
+00:34:19,230 --> 00:34:20,780
+We want to manage this stuff ourselves. 
+我们想自己管理这些东西
+
+776
+00:34:23,550 --> 00:34:25,850
+Underneath the cover is like, what is if we mallock something?
+在封面下面是这样的 如果我们马洛克的东西是什么
+
+777
+00:34:25,860 --> 00:34:28,770
+What is actually is that I it is anonymous m map, 
+实际上是I 它是匿名的M映射
+
+778
+00:34:30,360 --> 00:34:32,570
+but we're not letting the os aside what gets evicted. 
+但我们不会把被驱逐的操作系统放在一边
+
+779
+00:34:32,580 --> 00:34:37,050
+So all the things about like lruk or arc or preventing from issues
+所以所有关于lruk或arc或防止连续洪水问题的
+
+780
+00:34:37,060 --> 00:34:37,890
+of sequential flooding. 
+事情
+
+781
+00:34:38,290 --> 00:34:39,180
+All that still applies here. 
+所有这些在这里仍然适用
+
+782
+00:34:39,190 --> 00:34:44,070
+The thing I do want to talk about is because we are in an olap setting, 
+我想说的是 因为我们是在一个o实验室环境中
+
+783
+00:34:44,080 --> 00:34:47,070
+and we are trying to bring in larger page sizes than we would in a row store. 
+我们正在尝试引入比行存储中更大的页面大小
+
+784
+00:34:48,040 --> 00:34:50,420
+What does that actually look like underneath the covers at the harbor level? 
+在港口层面的掩护下 它实际上看起来像什么
+
+785
+00:34:52,120 --> 00:34:52,470
+Right? 
+对的
+
+786
+00:34:53,820 --> 00:34:55,570
+What's the default size in hardware? 
+硬件的默认大小是多少
+
+787
+00:34:55,860 --> 00:34:59,710
+And sorry, what's the default memory page size in linux 4 kilobytes?
+对不起 Linux中灯光的默认内存页面大小是多少
+
+788
+00:35:00,240 --> 00:35:00,620
+Why? 
+为什么
+
+789
+00:35:05,470 --> 00:35:07,800
+Because that's what intel decided for x 86 and 1985. 
+因为这是英特尔为X86和1985所做的决定
+
+790
+00:35:08,310 --> 00:35:08,620
+Right? 
+对的
+
+791
+00:35:09,770 --> 00:35:11,760
+There's been attempts to try to have larger page sizes. 
+有人试图扩大薪酬规模
+
+792
+00:35:12,510 --> 00:35:15,450
+I think arm tried to do this with 64 kilobyte page sizes, 
+我认为ARM试图用64千字节的页面大小来做这件事
+
+793
+00:35:15,460 --> 00:35:17,990
+but then it broke a bunch of stuff that was assuming four kilobytes. 
+但后来它破坏了一堆假设为4千字节的东西
+
+794
+00:35:18,000 --> 00:35:19,790
+So they had to roll back in linux. 
+所以他们不得不在Linux中回滚
+
+795
+00:35:22,510 --> 00:35:25,540
+The reason why this is bad because if we're now reading really large files, 
+这之所以不好 是因为如果我们现在读取非常大的文件
+
+796
+00:35:25,550 --> 00:35:27,060
+really large chunks of data, 
+非常大的数据块
+
+797
+00:35:27,340 --> 00:35:29,330
+we're going to rip through that as quickly as possible. 
+我们将尽可能快地处理它
+
+798
+00:35:29,890 --> 00:35:32,510
+Then having the operating system, 
+然后让操作系统和硬件跟踪这些小的4千字节的页面
+
+799
+00:35:32,520 --> 00:35:34,390
+the hardware keep track of these little four kilobyte, 
+即使数据块或读取可能是100兆字节
+
+800
+00:35:35,030 --> 00:35:37,670
+sort of pages, even though the block of data or reading might be,
+这将是昂贵的
+
+801
+00:35:37,680 --> 00:35:40,790
+100 megabytes is going to be expensive, 
+因为在TLB中
+
+802
+00:35:40,800 --> 00:35:45,130
+because in the tlb the translation look left side buffer inside on the hardware. 
+转换在硬件内部的左侧缓冲区中查找
+
+803
+00:35:45,500 --> 00:35:46,770
+It only has so many entries. 
+它只有这么多条目
+
+804
+00:35:48,090 --> 00:35:49,730
+So to bring, I think,
+所以 我认为
+
+805
+00:35:50,440 --> 00:35:52,190
+the fastest, smallest cache,
+为了带来最快 最小的缓存
+
+806
+00:35:53,010 --> 00:35:53,490
+at the first level, 
+在第一级 我认为你的tlb有7272个条目
+
+807
+00:35:53,500 --> 00:36:02,470
+I think you have seventy two seventy two entries for your tlb so it's really hard to bring all that in and update your tlb if you're going at four kilobyte page size, 
+所以如果你在4千字节的页面大小上 很难把所有这些都带进来并更新你的tlb
+
+808
+00:36:07,930 --> 00:36:10,770
+next slide and give me a sec this. 
+下一张幻灯片 给我点时间
+
+809
+00:36:11,020 --> 00:36:13,510
+He said, can't you always configure this machine to use huge pages?
+他说：“你不能总是把这台机器配置为使用巨大的页面吗？”
+
+810
+00:36:14,010 --> 00:36:14,510
+Yes, this is where we're going.
+是的 这就是我们要去的地方
+
+811
+00:36:17,720 --> 00:36:22,090
+But he ruined it, right?
+但他毁了它 对不对
+
+812
+00:36:22,310 --> 00:36:22,930
+So huge pages. 
+如此巨大的页面
+
+813
+00:36:24,520 --> 00:36:26,680
+So instead of allocating 4KB pages, 
+所以不是像页面那样分配分支
+
+814
+00:36:27,700 --> 00:36:29,410
+you can turn on huge pages in linux. 
+你可以在Linux中打开巨大的页面
+
+815
+00:36:29,880 --> 00:36:31,870
+And you can get larger page sizes. 
+你可以得到更大的工资规模
+
+816
+00:36:31,880 --> 00:36:34,390
+I think it starts with 2MB and you go up to 1GB. 
+我认为它从两本杂志开始 然后你上升到一场演出
+
+817
+00:36:34,400 --> 00:36:37,150
+And so when this first came out, 
+所以当它第一次出现的时候
+
+818
+00:36:37,440 --> 00:36:39,040
+this was tao does this huge improvement? 
+这是道做的巨大改进吗
+
+819
+00:36:39,050 --> 00:36:41,360
+Because as I said, we have larger memory machines.
+因为正如我所说 我们有更大的内存机器
+
+820
+00:36:41,370 --> 00:36:42,560
+We're reading large data sets. 
+我们正在读取大型数据集
+
+821
+00:36:43,840 --> 00:36:45,110
+This is mean way more efficient. 
+这是我更有效率的方式
+
+822
+00:36:46,170 --> 00:36:49,680
+So the way it works is that you would allocate memory just like you
+因此 它的工作方式是 您将分配内存
+
+823
+00:36:49,690 --> 00:36:51,820
+normally would with transparent, 
+就像您通常使用透明的大型
+
+824
+00:36:51,830 --> 00:36:52,420
+huge pages. 
+页面一样
+
+825
+00:36:52,850 --> 00:36:56,470
+And then underneath the covers linux to try to identify these pages
+然后在封面下面 linux试图识别这些页面
+
+826
+00:36:56,480 --> 00:36:58,870
+can be combined together into larger page sizes. 
+可以将它们组合成更大的页面大小
+
+827
+00:37:02,130 --> 00:37:05,300
+Then you have fewer entries in your tlb right? 
+那么TLB中的条目就会减少 对吗
+
+828
+00:37:06,840 --> 00:37:10,370
+The the way it works is that the pages that be contiguous sort of identify, 
+它的工作方式是 连续的页面可以识别
+
+829
+00:37:10,380 --> 00:37:11,210
+i've mallocked, 
+我已经锁定了
+
+830
+00:37:11,710 --> 00:37:14,370
+these continuous pages that are physically close to each other. 
+这些连续的页面在物理上彼此接近
+
+831
+00:37:14,740 --> 00:37:16,810
+I can just combine them together and then use
+我可以将它们组合在一起
+
+832
+00:37:16,820 --> 00:37:19,250
+a single reference or tlb entry for them. 
+然后为它们使用单个引用或TLB条目
+
+833
+00:37:21,940 --> 00:37:24,650
+The the os is going to try to do this in the background. 
+操作系统将尝试在后台执行此操作
+
+834
+00:37:26,230 --> 00:37:28,800
+So it wants to keep things compact, right?
+所以它想保持紧凑 对吧
+
+835
+00:37:29,250 --> 00:37:31,270
+Once reduce fragmentation. 
+一次减少碎片
+
+836
+00:37:31,280 --> 00:37:35,490
+So it's going to look for maybe pages that could maybe split up to larger
+因此 它将寻找可能可以拆分为较大或较小页面大小的页面
+
+837
+00:37:35,500 --> 00:37:39,000
+to smaller page sizes and to combine them together and reorganize. 
+并将它们组合在一起并重新组织
+
+838
+00:37:39,680 --> 00:37:40,100
+Right? 
+对的
+
+839
+00:37:40,680 --> 00:37:43,550
+The downside of this is that when this is happening, 
+这样做的缺点是 当这种情况发生时 这是一个内核线程
+
+840
+00:37:43,560 --> 00:37:49,320
+this is now a kernel thread that's going to block the database system
+当它试图访问这些页面之一时
+
+841
+00:37:49,330 --> 00:37:50,680
+when it tries to access one of these pages, 
+如果它开始移动东西
+
+842
+00:37:50,690 --> 00:37:51,880
+if it's starting to move things around. 
+它将阻塞数据库系统
+
+843
+00:37:52,560 --> 00:37:54,600
+Because, again, there's virtual memory that's mapping.
+因为 再一次 有映射的虚拟内存
+
+844
+00:37:54,610 --> 00:37:56,680
+There's mapping from virtual memory to physical memory. 
+存在从虚拟内存到物理内存的映射
+
+845
+00:37:57,510 --> 00:37:59,740
+It can prevent you from accessing virtual memory. 
+它可以阻止您访问虚拟内存
+
+846
+00:38:00,030 --> 00:38:03,240
+If it's changing where that physical memory is actually backed from, 
+如果它改变了物理内存的实际备份位置
+
+847
+00:38:06,230 --> 00:38:08,560
+what that virtual memory is backed by, like, what region of memory.
+虚拟内存是由什么支持的 比如 内存的哪个区域
+
+848
+00:38:11,940 --> 00:38:13,890
+When transparent, huge pages first came out,
+当透明的 巨大的页面第一次出现时
+
+849
+00:38:14,460 --> 00:38:17,010
+all the data systems basically would tell you turn this off. 
+所有的数据系统基本上都会告诉你把它关掉
+
+850
+00:38:17,020 --> 00:38:18,130
+This is a terrible idea. 
+这是一个可怕的想法
+
+851
+00:38:18,570 --> 00:38:21,050
+It's all in the documentation and all these links here to go look at it. 
+所有这些都在文档中 所有这些链接都可以在这里查看
+
+852
+00:38:21,500 --> 00:38:23,000
+Everybody tells you to turn this off, 
+每个人都告诉你把这个关掉
+
+853
+00:38:23,630 --> 00:38:23,690
+right? 
+对吗
+
+854
+00:38:23,700 --> 00:38:25,920
+Because the performance everhead of random stalls, 
+因为性能总是随机停止
+
+855
+00:38:25,930 --> 00:38:28,780
+because the os starts come back in your memory. 
+因为操作系统开始回到你的内存中
+
+856
+00:38:29,160 --> 00:38:29,470
+Terrible. 
+可怕的
+
+857
+00:38:29,480 --> 00:38:33,010
+The only system that i'm aware of, 
+我唯一知道的系统
+
+858
+00:38:33,020 --> 00:38:34,170
+at least I can find, 
+至少我能找到
+
+859
+00:38:35,110 --> 00:38:37,100
+and more recent search is vertical. 
+最近的搜索是垂直的
+
+860
+00:38:37,110 --> 00:38:38,460
+They tell you you can turn this on, 
+他们告诉你
+
+861
+00:38:38,470 --> 00:38:41,730
+but only for some new version of redhat or centOS
+你可以打开这个 但只有一些新版本的红帽或发送到西方
+
+862
+00:38:41,740 --> 00:38:43,370
+where somehow it's been fixed. 
+不知何故 它被修复
+
+863
+00:38:44,560 --> 00:38:45,670
+So historically, 
+所以从历史上看
+
+864
+00:38:45,910 --> 00:38:48,390
+database systems, even though we're especially in olap systems,
+数据库系统 即使我们在ofm系统中
+
+865
+00:38:48,660 --> 00:38:50,440
+even though we're reading larger page sizes, 
+即使我们正在读取更大的页面大小
+
+866
+00:38:50,450 --> 00:38:51,840
+are larger blocks of data, 
+也是更大的数据块
+
+867
+00:38:54,170 --> 00:38:58,650
+they don't want you to use the huge page mechanisms in the database system, 
+他们不希望你在数据库系统中使用庞大的页面机制
+
+868
+00:38:58,660 --> 00:39:02,680
+because the because of all these penalties for the os is doing stuff
+因为所有这些对操作系统的惩罚都是在做我们不想做的事情
+
+869
+00:39:02,690 --> 00:39:03,840
+that we don't want to do, 
+或者系统不
+
+870
+00:39:03,850 --> 00:39:04,920
+or the system is not aware of. 
+知道的事情
+
+871
+00:39:06,790 --> 00:39:08,300
+So more recently, though,
+所以最近
+
+872
+00:39:08,310 --> 00:39:12,460
+there is research that seems to suggest that having a version of maloc that
+有研究似乎表明 有一个版本的malac
+
+873
+00:39:12,470 --> 00:39:16,160
+is aware of these huge pages and trying to allocate for
+知道这些巨大的页面
+
+874
+00:39:16,170 --> 00:39:20,700
+them can actually make a huge difference. 
+并试图为它们分配 实际上可以产生巨大的差异
+
+875
+00:39:21,250 --> 00:39:22,560
+Google has a paper from 20, 
+google有一篇来自20
+
+876
+00:39:22,570 --> 00:39:26,920
+21 where they turn on huge pages in tc malloc as their version of malloc, 
+21的论文 其中他们在tc malik中打开了巨大的页面 作为他们的malik版本
+
+877
+00:39:27,430 --> 00:39:29,790
+and across their entire data center for all the workloads, 
+在整个数据中心的所有工作负载中
+
+878
+00:39:29,800 --> 00:39:30,950
+they saw a 7% improvement. 
+他们看到了7%的改进
+
+879
+00:39:32,120 --> 00:39:34,550
+And then for specific explicitly for spanner, 
+然后对于specific explicit for spanner
+
+880
+00:39:35,000 --> 00:39:36,640
+there's a transaction system, not an of system.
+有一个事务系统 而不是一个of系统
+
+881
+00:39:37,080 --> 00:39:39,430
+They solve almost a 6.5% improvement. 
+他们解决了几乎6.5%的改进
+
+882
+00:39:40,430 --> 00:39:42,250
+So it seems like this would be a big win. 
+所以看起来这将是一个巨大的胜利
+
+883
+00:39:42,580 --> 00:39:45,770
+The current research literature suggests that it is not, at least sorry,
+目前的研究文献表明 它不是
+
+884
+00:39:45,780 --> 00:39:46,410
+it's not research. 
+至少抱歉 它不是研究
+
+885
+00:39:46,420 --> 00:39:49,210
+It's the basically all the blog articles, 
+这基本上是所有的博客文章
+
+886
+00:39:49,220 --> 00:39:52,210
+a much a bunch of bench reggae i've done for existing database systems, 
+我为现有的数据库系统所做的一大堆长凳雷鬼
+
+887
+00:39:52,630 --> 00:39:54,570
+seems to suggest huge pages aren't the way to go, 
+似乎表明巨大的页面不是要走的路
+
+888
+00:39:55,990 --> 00:39:58,420
+but the google paper suggests that it's worth reconsidering. 
+但谷歌的论文表明 这值得重新考虑
+
+889
+00:39:58,800 --> 00:40:01,540
+There's a blog article written actually last week by a friend of mine, 
+上周我的一个朋友写了一篇博客文章
+
+890
+00:40:03,090 --> 00:40:06,200
+where he basically says this is something we need to reconsider
+他基本上说这是我们需要在连续数据库中重新
+
+891
+00:40:06,210 --> 00:40:06,980
+in column databases. 
+考虑的事情
+
+892
+00:40:07,480 --> 00:40:09,690
+Because clearly this is what we should be using, right?
+因为很明显这是我们应该使用的 对吧
+
+893
+00:40:09,700 --> 00:40:10,570
+This is a no brainer. 
+这是一个没有大脑的人
+
+894
+00:40:11,480 --> 00:40:17,490
+But as far no database system can do this negatively and read the benefits
+但到目前为止 还没有数据库系统可以消极地做到这一点 并从中受益
+
+895
+00:40:17,500 --> 00:40:17,810
+of it. 
+
+
+896
+00:40:18,990 --> 00:40:22,460
+I think you can turn this on in jvm think you turn this on and go. 
+我认为你可以在GVMI中打开它 我认为你可以打开它 然后继续
+
+897
+00:40:23,100 --> 00:40:23,570
+But again, 
+但是
+
+898
+00:40:23,580 --> 00:40:26,250
+ii haven't seen anything that suggests like all the olap as we talked
+我还没有看到任何像我们谈到的所有旧的失误一样的建议
+
+899
+00:40:26,260 --> 00:40:27,250
+about for you get the benefit. 
+因为你得到了好处
+
+900
+00:40:27,260 --> 00:40:27,650
+Yes. 
+是的
+
+901
+00:40:30,070 --> 00:40:32,270
+Don't enable large pages, but then now enable it.
+不要启用大页面 但现在要启用它
+
+902
+00:40:32,280 --> 00:40:39,100
+His question is what has changed in the last couple of years that that
+他的问题是 在过去的几年里发生了什么变化
+
+903
+00:40:39,110 --> 00:40:41,260
+suggests that you could turn this on before you could. 
+这表明你可以在你之前打开它
+
+904
+00:40:41,630 --> 00:40:44,880
+Because the background compaction stuff is now less aggressive, 
+因为背景压缩的东西现在不那么激进了
+
+905
+00:40:45,690 --> 00:40:52,740
+and it stalls less is going to interview this. 
+它停止得更少了 所以要采访这个
+
+906
+00:40:53,130 --> 00:40:55,220
+How the question is, how difficult is it to implement this?
+问题是 实现这一点有多难
+
+907
+00:40:55,780 --> 00:40:58,580
+I you call m advise and use huge pages, 
+我你打电话给我建议并使用巨大的页面
+
+908
+00:40:58,590 --> 00:41:01,330
+and it is that enough? 
+这就够了吗
+
+909
+00:41:01,340 --> 00:41:03,890
+No, but that's how easy it is to do.
+不 但这很容易做到
+
+910
+00:41:05,290 --> 00:41:05,740
+But like I said, 
+但正如我所说的
+
+911
+00:41:05,750 --> 00:41:08,260
+the data needs to be aware that maybe it's using huge pages
+数据需要知道它可能正在使用巨大的页面
+
+912
+00:41:08,270 --> 00:41:13,700
+and maybe configured its memory allocations
+并可能配置其内存分配
+
+913
+00:41:13,710 --> 00:41:17,370
+to be aware that i'm allocating 2 megabytes to block that can be
+以了解我正在分配2兆字节的块
+
+914
+00:41:17,380 --> 00:41:18,730
+contiguous to something like that. 
+这些块可以与类似的东西相连
+
+915
+00:41:18,960 --> 00:41:21,110
+Instead of like 4KB 8 chunks over and over again. 
+而不是一遍又一遍地吃4公斤8块
+
+916
+00:41:23,620 --> 00:41:24,010
+Yes. 
+是的
+
+917
+00:41:24,340 --> 00:41:25,610
+I don't know if you can answer this question. 
+我不知道你是否能回答这个问题
+
+918
+00:41:25,620 --> 00:41:26,490
+It's the current question. 
+这是当前的问题
+
+919
+00:41:26,500 --> 00:41:30,370
+What's the point of implementing huge pages like just from an os perspective? 
+从操作系统的角度来看 实现巨大的页面有什么意义呢
+
+920
+00:41:30,810 --> 00:41:31,560
+The question is, 
+问题是
+
+921
+00:41:31,570 --> 00:41:34,040
+what is the point of implementing huge pages from an os perspective? 
+从操作系统的角度来看 实现大型页面的意义何在
+
+922
+00:41:34,610 --> 00:41:36,410
+I the benefit is obvious, right?
+我的好处很明显 对吧
+
+923
+00:41:38,430 --> 00:41:40,590
+It's tlb.tlb is like super small, 
+它的TLB到B就像超级小
+
+924
+00:41:42,810 --> 00:41:46,310
+like it's like l one, l 2, 03, actually, it is l 128.
+就像它是L1 L2 03 实际上 它是L128
+
+925
+00:41:46,850 --> 00:41:47,400
+What's that? 
+那是什么
+
+926
+00:41:47,760 --> 00:41:48,600
+It's a brain dead question. 
+这是一个愚蠢的问题
+
+927
+00:41:48,610 --> 00:41:49,040
+Ignored me. 
+不理我
+
+928
+00:41:49,650 --> 00:41:50,780
+No, it's not a great question.
+不 这不是个好问题
+
+929
+00:41:50,790 --> 00:41:53,060
+It's like the question is like, why do we want this?
+问题是 我们为什么想要这个
+
+930
+00:41:53,820 --> 00:41:55,330
+Because again, in an olap system,
+因为在O Lab系统中
+
+931
+00:41:55,340 --> 00:41:58,290
+we're reading terabytes of data potentially for a single query, 
+我们可能会为单个查询读取数TB的数据
+
+932
+00:42:01,310 --> 00:42:02,710
+for the general onwatch masses, 
+对于一般的onwatch群众
+
+933
+00:42:03,460 --> 00:42:07,120
+for like, wait for random programs or javascript programs.
+对于类似的 等待随机程序或javascript程序
+
+934
+00:42:07,130 --> 00:42:09,820
+No, that's an honest question.
+不 那是个诚实的问题
+
+935
+00:42:11,790 --> 00:42:12,080
+No, 
+不
+
+936
+00:42:12,090 --> 00:42:15,790
+just like regularly feel like what is get regularly what
+就像定期感觉什么是定期得到什么
+
+937
+00:42:16,630 --> 00:42:21,950
+like so like just abbey your database user again, 
+就像你的数据库用户一样
+
+938
+00:42:21,960 --> 00:42:22,430
+likes, 
+
+
+939
+00:42:22,440 --> 00:42:30,430
+ii don't know if you have to allocate memory and
+我不知道你是否必须分配内存
+
+940
+00:42:30,940 --> 00:42:34,110
+the memory you need to allocate is going to be contiguous. 
+你需要分配的内存将是连续的
+
+941
+00:42:35,270 --> 00:42:36,110
+Then you want this. 
+那你想要这个
+
+942
+00:42:36,500 --> 00:42:40,130
+If i'm doing a bunch of small little object allocations and random locations, 
+如果我正在做一堆小的对象分配和随机位置
+
+943
+00:42:40,140 --> 00:42:41,450
+it doesn't help you. 
+它不会帮助你
+
+944
+00:42:42,290 --> 00:42:43,120
+You don't want this. 
+你不想这样的
+
+945
+00:42:45,660 --> 00:42:46,860
+But again, what are we doing databases?
+但是 我们在数据库中做什么呢
+
+946
+00:42:47,170 --> 00:42:49,580
+We're reading a a large chunk of memory. 
+我们正在读取一大块内存
+
+947
+00:42:49,590 --> 00:42:50,860
+Do you read large contiguous data? 
+您是否读取大型连续数据
+
+948
+00:42:52,840 --> 00:42:53,580
+It's not a super question. 
+这不是一个超级问题
+
+949
+00:42:53,590 --> 00:42:54,500
+I it's good to figure. 
+我很高兴能明白
+
+950
+00:42:54,970 --> 00:42:55,780
+Again, this is like it.
+再说一次 这很像
+
+951
+00:42:56,350 --> 00:42:57,170
+It's a good thing. 
+这是件好事
+
+952
+00:42:57,760 --> 00:42:59,600
+This is why you have to think about. 
+这就是为什么你必须考虑
+
+953
+00:43:00,770 --> 00:43:02,360
+You want to think about what the data set looks like, 
+您需要考虑数据集是什么样子
+
+954
+00:43:02,370 --> 00:43:04,060
+what the query looks like, what the workload looks like.
+查询是什么样子 工作负载是什么样子
+
+955
+00:43:05,380 --> 00:43:10,170
+And you can design a system for the olap workload patterns. 
+您可以为重叠工作负载模式设计一个系统
+
+956
+00:43:10,820 --> 00:43:12,080
+You can take advantage of these things. 
+你可以利用这些东西
+
+957
+00:43:12,470 --> 00:43:17,180
+This doesn't make sense in for otv workloads, where you're going again,
+这在otv工作负载中是没有意义的
+
+958
+00:43:17,190 --> 00:43:18,780
+doing random updates on random locations, 
+你又要去那里 在随机位置进行随机更新
+
+959
+00:43:19,860 --> 00:43:20,650
+small amounts of data. 
+少量数据
+
+960
+00:43:26,570 --> 00:43:28,880
+It's a question about what it has changed. 
+这是一个关于它改变了什么的问题
+
+961
+00:43:30,740 --> 00:43:31,340
+It used it again. 
+它又用了
+
+962
+00:43:31,790 --> 00:43:34,140
+If it has to figure out where to go, do compaction in the old days,
+如果它必须弄清楚要去哪里 在过去做压缩
+
+963
+00:43:34,150 --> 00:43:35,100
+it would take seconds. 
+只需要几秒钟
+
+964
+00:43:36,190 --> 00:43:38,620
+And the new one in the newer versions, 
+而新版本中的新版本
+
+965
+00:43:39,250 --> 00:43:42,060
+actually think like version four in the kernel, 
+实际上就像内核中的版本4一样
+
+966
+00:43:42,070 --> 00:43:44,800
+like if it can't find anything right away, then it backs off.
+如果它不能马上找到任何东西 那么它就会后退
+
+967
+00:43:45,610 --> 00:43:48,220
+Whereas before it would like lock, everything stall,
+而在它想锁之前 所有东西都被偷了
+
+968
+00:43:53,340 --> 00:43:54,410
+we actually want to represent data. 
+我们实际上想要表示数据
+
+969
+00:43:55,170 --> 00:43:57,890
+This is basically the same thing we talk about in the injure class. 
+这基本上与我们在受伤课程中讨论的内容相同
+
+970
+00:43:57,900 --> 00:44:00,730
+So there's nothing really dramatically different here. 
+所以这里没有什么显著的不同
+
+971
+00:44:01,310 --> 00:44:04,790
+For for a bunch of prototypes, 
+对于一组原型 整数开始
+
+972
+00:44:05,420 --> 00:44:07,830
+integers begins and floats and reels. 
+浮动和滚动
+
+973
+00:44:08,360 --> 00:44:11,460
+We'll just use what's in the I triple east, 74 standard.
+我们只使用ITriple East中的74标准
+
+974
+00:44:11,780 --> 00:44:14,490
+And this is a standard that defines what the how
+这是一个标准
+
+975
+00:44:14,500 --> 00:44:18,510
+hardware or cpu manufacturers will represent these
+定义了硬件或CPU制造商将如何代表这些
+
+976
+00:44:20,890 --> 00:44:21,820
+low level data types, 
+低级数据类型
+
+977
+00:44:22,130 --> 00:44:22,550
+like integers. 
+如整数
+
+978
+00:44:23,320 --> 00:44:25,870
+You can think of like I allocate a variable in c plus for an integer. 
+你可以想象我在C+中为一个整数分配一个变量
+
+979
+00:44:25,880 --> 00:44:27,880
+It's going to be 32 bits. 
+它将是32位的
+
+980
+00:44:28,320 --> 00:44:29,400
+The hardware defines this. 
+硬件定义了这一点
+
+981
+00:44:29,410 --> 00:44:31,440
+The standard defines how the hardware should actually represent it. 
+该标准定义了硬件应该如何实际表示它
+
+982
+00:44:31,910 --> 00:44:32,910
+And they'll be instructions. 
+它们将是指令
+
+983
+00:44:32,920 --> 00:44:37,550
+And registers should actually store this data accordingly for time stamps, 
+并且寄存器实际上应该相应地存储时间戳的数据
+
+984
+00:44:38,500 --> 00:44:40,390
+depending or not you, whether you want the time zone.
+这取决于您是否需要时区
+
+985
+00:44:40,440 --> 00:44:42,950
+But typically, it's going to be a 32 bit or 64 bit integer.
+但通常 它将是一个32位或64位的整数
+
+986
+00:44:43,320 --> 00:44:47,430
+That would be some number of unit management since the unix epoch is
+这将是一些单元管理 因为unix epoch是
+
+987
+00:44:47,440 --> 00:44:51,270
+the most simplest way to do this for very linked fields, 
+对链接非常多的字段（如条形图或二进制文本和BLOB）执行此
+
+988
+00:44:51,280 --> 00:44:52,870
+like bar charts or binary text and blobs. 
+操作的最简单方法
+
+989
+00:44:53,720 --> 00:44:55,950
+The value is less than 64 bits, so you can just inline it.
+该值小于64位 因此您可以直接内联它
+
+990
+00:44:56,280 --> 00:44:56,910
+Otherwise, again,
+否则 同样
+
+991
+00:44:56,920 --> 00:45:01,720
+you'll have a reference to some other off overflow storage, 
+您将拥有对其他某个溢出存储的引用
+
+992
+00:45:02,470 --> 00:45:04,650
+whether it's in disk or in memory to where to go find it. 
+无论它是在磁盘中还是在内存中 都可以在哪里找到它
+
+993
+00:45:05,100 --> 00:45:05,320
+Again, 
+同样
+
+994
+00:45:05,330 --> 00:45:10,970
+most systems are going to use dictionary compression for watch rs to make
+大多数系统将对手表使用字典压缩
+
+995
+00:45:10,980 --> 00:45:11,650
+things fixed length, 
+以使其固定长度
+
+996
+00:45:13,400 --> 00:45:15,190
+or the address itself to the off load storage. 
+或者将地址本身发送到卸载存储器
+
+997
+00:45:15,200 --> 00:45:16,340
+Overflow storage will be fixing. 
+溢出存储将被修复
+
+998
+00:45:17,880 --> 00:45:21,850
+The one interesting I do want to spend time on is talking about decimals. 
+我想花时间讨论的一个有趣的问题是小数
+
+999
+00:45:23,020 --> 00:45:24,610
+There's basically two approaches, right?
+基本上有两种方法 对吧
+
+1000
+00:45:24,620 --> 00:45:31,160
+You can have variable precision or fixed point precision or and the idea is
+你可以有可变精度或定点精度
+
+1001
+00:45:31,170 --> 00:45:31,480
+that like, 
+这个想法是这样的
+
+1002
+00:45:32,240 --> 00:45:34,900
+do we want to have let the harvard handle the decimals for us? 
+我们想让哈佛为我们处理小数吗
+
+1003
+00:45:34,910 --> 00:45:37,360
+Or do you want the database system manager for us? 
+或者你想要我们的数据库系统管理器
+
+1004
+00:45:38,510 --> 00:45:42,620
+The tradeoff is going to be if we let the hardware manage it as defined
+如果我们让硬件按照32位的74标准或位浮点数
+
+1005
+00:45:42,630 --> 00:45:46,700
+by the 74 standard for either 32 bit or 664 for bit floating number, 
+浮点数的664标准来管理它
+
+1006
+00:45:46,710 --> 00:45:47,420
+floating point number, 
+
+
+1007
+00:45:48,830 --> 00:45:51,360
+is going to be faster because the hallmark can support it natively. 
+将会更快 因为Hallmark本身就可以支持它
+
+1008
+00:45:52,090 --> 00:45:54,760
+There will be instruction that take two floats and add them together. 
+将会有指令将两个浮点数相加
+
+1009
+00:45:55,460 --> 00:45:57,620
+Did noah used to be that case that came out on the 90s
+诺亚曾经是90年代在cp
+
+1010
+00:45:57,630 --> 00:46:00,060
+with floated point units in the cp us? 
+us中使用浮点单位的案例吗
+
+1011
+00:46:00,530 --> 00:46:02,060
+But now every modern cpu hasn't. 
+但现在每一个现代的CPU都没有
+
+1012
+00:46:03,120 --> 00:46:06,200
+But the problem is is going to be that they don't guarantee exact values. 
+但问题是他们不能保证确切的价值
+
+1013
+00:46:08,220 --> 00:46:10,940
+So I wanted to write this in rust for chi, but it didn't have time,
+所以我想在rust for chi中写这个
+
+1014
+00:46:11,310 --> 00:46:14,270
+but it's the same amount of code. 
+但没有时间 但它的代码量是相同的
+
+1015
+00:46:15,380 --> 00:46:17,030
+Right here, we have a simple c program.
+在这里 我们有一个简单的C程序
+
+1016
+00:46:17,040 --> 00:46:18,430
+We take 2 floating point numbers. 
+我们取两个浮点数
+
+1017
+00:46:18,890 --> 00:46:20,230
+We have 0.1 and 0.2. 
+我们有0.1和0.2
+
+1018
+00:46:20,240 --> 00:46:22,120
+We're going to add them together and print it out. 
+我们要把它们加在一起 然后打印出来
+
+1019
+00:46:23,760 --> 00:46:25,380
+And what do you get? 
+你得到了什么
+
+1020
+00:46:25,390 --> 00:46:26,140
+What do you expect? 
+你还能指望什么
+
+1021
+00:46:26,640 --> 00:46:29,580
+0.1+0.2=0.3. 
+0.1+0.2=0.3.
+
+1022
+00:46:32,310 --> 00:46:35,960
+But is this actually what's going on? 
+但这是真的吗
+
+1023
+00:46:35,970 --> 00:46:36,190
+No. 
+不
+
+1024
+00:46:36,200 --> 00:46:40,520
+If I make it print out all the values, right?
+如果我让它打印出所有的值 对吗
+
+1025
+00:46:40,530 --> 00:46:41,240
+I don't round it off. 
+我没有把它四舍五入
+
+1026
+00:46:42,100 --> 00:46:43,290
+And you see you get something like this. 
+你看到你得到了这样的东西
+
+1027
+00:46:43,790 --> 00:46:44,190
+Right? 
+对的
+
+1028
+00:46:45,440 --> 00:46:46,240
+Why is this happening? 
+为什么会这样
+
+1029
+00:46:46,570 --> 00:46:48,950
+Again, because I triple the 754 standard,
+同样 因为我是754标准的三倍
+
+1030
+00:46:49,890 --> 00:46:52,920
+doesn't define how to store exact values for floating point numbers. 
+所以没有定义如何存储浮点数的精确值
+
+1031
+00:46:54,300 --> 00:46:56,610
+If you actually look at what within the bits are being stored, 
+如果你仔细观察比特中存储的内容
+
+1032
+00:46:57,590 --> 00:47:00,340
+you get something like this. 
+你会得到这样的结果
+
+1033
+00:47:03,390 --> 00:47:04,310
+Depends exactly right. 
+取决于完全正确
+
+1034
+00:47:04,320 --> 00:47:06,510
+Again, that's the answer for everything in databases.
+同样 这是数据库中所有问题的答案
+
+1035
+00:47:06,820 --> 00:47:07,760
+Is this going to be fast? 
+这会很快吗
+
+1036
+00:47:07,770 --> 00:47:08,280
+It depends. 
+视情况而定
+
+1037
+00:47:08,290 --> 00:47:09,200
+Is this the right way to do this? 
+这是正确的做法吗
+
+1038
+00:47:09,210 --> 00:47:10,080
+It depends, right?
+这要看情况 对吧
+
+1039
+00:47:11,130 --> 00:47:11,930
+It depends, right?
+这要看情况 对吧
+
+1040
+00:47:12,900 --> 00:47:14,900
+If it's the temperature in my office, 
+如果是我办公室的温度
+
+1041
+00:47:14,910 --> 00:47:17,300
+then you have a sensor every 1 minute. 
+那么你每1分钟就有一个传感器
+
+1042
+00:47:17,760 --> 00:47:18,620
+Then who cares? 
+那谁在乎呢
+
+1043
+00:47:20,280 --> 00:47:21,720
+If it's like a scientific instrument, 
+如果它像一个科学仪器
+
+1044
+00:47:21,730 --> 00:47:23,560
+like trying to land something on mars, 
+像试图在火星上着陆的东西
+
+1045
+00:47:24,290 --> 00:47:26,110
+probably don't want to have these rounding errors, 
+可能不希望有这些舍入误差
+
+1046
+00:47:26,350 --> 00:47:28,160
+because at large scale, it's going to be problematic.
+因为在大尺度上 它将是有问题的
+
+1047
+00:47:30,120 --> 00:47:31,750
+The way to handle this, oops, sorry.
+处理这件事的方法 哦 对不起
+
+1048
+00:47:33,290 --> 00:47:36,170
+The way to handle this is what's called fixed point decision numbers. 
+处理这个问题的方法就是所谓的定点决策数
+
+1049
+00:47:36,960 --> 00:47:39,520
+The idea here is that this is a data type that's implemented
+这里的想法是
+
+1050
+00:47:39,530 --> 00:47:40,620
+in the data system itself, 
+这是一种在数据系统本身中
+
+1051
+00:47:40,630 --> 00:47:41,500
+not in the hardware, 
+实现的数据类型 而不是在硬件中实现的数据类型
+
+1052
+00:47:42,280 --> 00:47:49,680
+where we can manage the exact precision and scale of an integer or sorry of a
+在硬件中 我们可以管理整数或小数的精确精度和小数位数
+
+1053
+00:47:49,690 --> 00:47:52,680
+decimal without any rounding errors. 
+而不会产生任何舍入误差
+
+1054
+00:47:53,630 --> 00:47:57,990
+The segal standard you would define this for 30 bits would be numeric or decimal. 
+您将其定义为30位的Segal标准将是数字或小数
+
+1055
+00:47:58,400 --> 00:48:00,710
+Sometimes some systems that are just alias for each other. 
+有时一些系统只是彼此的别名
+
+1056
+00:48:01,610 --> 00:48:01,810
+Again, 
+又
+
+1057
+00:48:03,530 --> 00:48:06,530
+this data type is implemented differently per database system. 
+此数据类型在每个数据库系统中以不同的方式实现
+
+1058
+00:48:07,260 --> 00:48:08,300
+It's not something that, again,
+再说一次
+
+1059
+00:48:08,310 --> 00:48:10,190
+there's the single standard specifies how to do it. 
+这不是一件有单一标准规定如何去做的事情
+
+1060
+00:48:10,200 --> 00:48:13,760
+The single standard specifies the behavior. 
+单一标准规定了行为
+
+1061
+00:48:13,770 --> 00:48:14,960
+You should have these data types. 
+你应该有这些数据类型
+
+1062
+00:48:15,450 --> 00:48:19,430
+But how you actually implement it is different from one system from the next. 
+但是你如何实际实现它是一个系统和另一个系统不同的
+
+1063
+00:48:19,850 --> 00:48:21,170
+In case of actually, oracle,
+实际上
+
+1064
+00:48:21,180 --> 00:48:27,370
+I don't think you can't actually get the the variable decision, 
+在oracle的情况下 我不认为你实际上不能得到变量决策
+
+1065
+00:48:27,380 --> 00:48:28,210
+the float point numbers. 
+浮点数
+
+1066
+00:48:28,620 --> 00:48:30,240
+But if you say I want to float or real, 
+但如果你说我想要漂浮或真实
+
+1067
+00:48:30,250 --> 00:48:31,280
+you actually get these. 
+你实际上会得到这些
+
+1068
+00:48:31,760 --> 00:48:31,910
+Right? 
+对的
+
+1069
+00:48:31,920 --> 00:48:34,070
+You get the fixed point numbers. 
+你得到了定点数
+
+1070
+00:48:34,680 --> 00:48:40,930
+Because the idea is that the just avoid any problems with rounding errors, 
+因为这个想法是为了避免舍入误差的任何问题
+
+1071
+00:48:41,250 --> 00:48:42,930
+force everyone to use the fixed.1. 
+迫使每个人都使用固定的
+
+1072
+00:48:43,810 --> 00:48:45,840
+They made it fast enough that you can't really tell. 
+他们做得很快 你真的看不出来
+
+1073
+00:48:47,500 --> 00:48:49,770
+There is a way I think you can specify. 
+有一种方法我认为你可以指定
+
+1074
+00:48:49,780 --> 00:48:54,040
+I want exactly the variable length one or the variable precision one. 
+我想要的是可变长度的或可变精度的
+
+1075
+00:48:55,940 --> 00:49:01,840
+The basic idea is that we're going to store some kind of watch are
+其基本思想是
+
+1076
+00:49:02,630 --> 00:49:04,650
+or a bite stream of the value. 
+我们将存储某种类型的表或值的位流
+
+1077
+00:49:04,660 --> 00:49:06,970
+And then we'd have some extra meta data to say where the decimal point is, 
+然后我们会有一些额外的元数据来说明小数点在哪里
+
+1078
+00:49:06,980 --> 00:49:08,010
+what the scale is and so forth. 
+比例是什么等等
+
+1079
+00:49:09,690 --> 00:49:11,200
+If you want to support arbitrary precision, 
+如果你想支持任意精度
+
+1080
+00:49:11,210 --> 00:49:16,940
+meaning like the decimal point can appear in different locations from1
+这意味着像小数点可以出现在不同的位置
+
+1081
+00:49:16,950 --> 00:49:18,700
+value to the next within a single column. 
+从一个值到下一个值
+
+1082
+00:49:19,390 --> 00:49:22,510
+Then there's some extra meta data you gotta store within the tube of cell
+然后有一些额外的元数据
+
+1083
+00:49:22,520 --> 00:49:23,230
+to keep track of that. 
+你必须存储在细胞的管道中来跟踪它
+
+1084
+00:49:23,780 --> 00:49:26,900
+If you don't need to put support that where every single value has
+如果你不需要把支持放在每一个值都在死亡
+
+1085
+00:49:26,910 --> 00:49:27,660
+at the death point, 
+点的地方
+
+1086
+00:49:27,670 --> 00:49:28,230
+exact same location, 
+完全相同的位置
+
+1087
+00:49:28,240 --> 00:49:30,020
+you can go way faster. 
+你可以走得更快
+
+1088
+00:49:31,080 --> 00:49:35,880
+So we had a project on this a few years ago on a library called lid fixing pointing, 
+几年前 我们在图书馆做了一个项目 叫做盖子固定指向
+
+1089
+00:49:36,960 --> 00:49:38,350
+was when we were building a noise page, 
+当我们建立一个噪音页面时
+
+1090
+00:49:38,360 --> 00:49:42,690
+we built our decimal type from inspired by the germans, 
+我们从德国人的启发中建立了我们的十进制类型
+
+1091
+00:49:42,700 --> 00:49:44,250
+which we'll cover later on. 
+我们将在后面介绍
+
+1092
+00:49:44,920 --> 00:49:46,650
+They're people we don't cover that, 
+他们是人
+
+1093
+00:49:46,660 --> 00:49:51,050
+but like in the umbrella in hyper, 
+我们不包括这些 但就像在hyper的雨伞里
+
+1094
+00:49:52,180 --> 00:49:54,870
+the head german there told us how to do this. 
+那里的德国首领告诉我们怎么做
+
+1095
+00:49:55,460 --> 00:49:58,130
+Thomas norman told us how to do this, and he's not the head german,
+托马斯·诺曼告诉我们如何做到这一点
+
+1096
+00:49:58,140 --> 00:49:58,930
+but he's the best german. 
+他不是德国人的领袖 但他是最好的德国人
+
+1097
+00:49:59,410 --> 00:50:01,040
+He told us how to do this, 
+他告诉我们如何做到这一点
+
+1098
+00:50:01,300 --> 00:50:04,470
+but they can't open source of the code and had a student start to implement
+但他们不能开源的代码
+
+1099
+00:50:04,480 --> 00:50:04,680
+it. 
+并有一个学生开始实现它
+
+1100
+00:50:04,690 --> 00:50:06,150
+So we have an implementation of this. 
+所以我们有一个实现
+
+1101
+00:50:06,600 --> 00:50:09,040
+Does I need someone to help work with me to this library up? 
+我需要有人帮忙和我一起去这个图书馆吗
+
+1102
+00:50:09,050 --> 00:50:10,360
+I we could try it out in postgres. 
+我我们可以在波斯特格雷斯试试
+
+1103
+00:50:11,040 --> 00:50:12,790
+So this could be aa potential project. 
+所以这可能是一个潜在的项目
+
+1104
+00:50:13,410 --> 00:50:14,050
+The math works. 
+数学是有效的
+
+1105
+00:50:14,060 --> 00:50:14,970
+It's super hard. 
+这太难了
+
+1106
+00:50:14,980 --> 00:50:17,990
+It's a lot of bit shifting to make it work, 
+这是一个很大的位转移
+
+1107
+00:50:18,390 --> 00:50:19,780
+but the performance is quite good. 
+使其工作 但性能是相当不错的
+
+1108
+00:50:21,470 --> 00:50:22,720
+Let's quickly look at what postgres does. 
+让我们快速了解一下Postgres的功能
+
+1109
+00:50:22,950 --> 00:50:23,900
+This is their numeric type. 
+这是它们的数字类型
+
+1110
+00:50:23,910 --> 00:50:25,140
+This is the actual code of postgres. 
+这是Postgres的实际代码
+
+1111
+00:50:26,120 --> 00:50:26,790
+As you see, 
+正如你所看到的
+
+1112
+00:50:27,320 --> 00:50:28,710
+we're not going to go detail all these things. 
+我们不会去详细说明所有这些事情
+
+1113
+00:50:29,230 --> 00:50:30,130
+Here's a bunch of metadata. 
+这里有一堆元数据
+
+1114
+00:50:30,140 --> 00:50:36,700
+They have to store four integers per value plus this numeric digits array, 
+它们必须为每个值存储四个整数
+
+1115
+00:50:37,000 --> 00:50:40,840
+which is just a alias up to unsigned char. 
+再加上这个数字数组 它只是一个别名 最大为unsigned char
+
+1116
+00:50:43,390 --> 00:50:45,540
+You take whatever the size of this is, which now variable blank.
+你取它的大小 现在变量为空
+
+1117
+00:50:46,500 --> 00:50:49,500
+Then with 16 bytes here, 
+这里有16个字节
+
+1118
+00:50:50,160 --> 00:50:51,290
+just to store one value, 
+只存储一个值
+
+1119
+00:50:52,640 --> 00:50:53,530
+this is pretty heavyweight. 
+这是相当重量级的
+
+1120
+00:50:54,130 --> 00:50:57,380
+Then if you go look at the extra source code here, this is how they do.
+然后如果你去看看额外的源代码 这就是他们是如何做的
+
+1121
+00:50:59,080 --> 00:51:00,450
+This is adding two numerics together. 
+这是将两个数字相加
+
+1122
+00:51:01,010 --> 00:51:02,110
+You've got to check whether one's null, 
+你必须检查一个是空的
+
+1123
+00:51:02,120 --> 00:51:04,850
+got to check whether one's positive or negative. 
+必须检查一个是正的还是负的
+
+1124
+00:51:05,170 --> 00:51:06,250
+Like this giant switch shaping here. 
+就像这个巨大的开关
+
+1125
+00:51:06,560 --> 00:51:08,170
+There's a lot of work you have to do to make sure that you end
+你必须做大量的工作
+
+1126
+00:51:08,180 --> 00:51:08,930
+up with exact values. 
+以确保你最终得到精确的值
+
+1127
+00:51:11,160 --> 00:51:11,780
+It's not a poster thing. 
+这不是海报的事
+
+1128
+00:51:11,790 --> 00:51:12,380
+Here's my sequel. 
+这是我的续集
+
+1129
+00:51:12,390 --> 00:51:13,580
+Basically the same thing, right?
+基本上是一样的 对吧
+
+1130
+00:51:13,590 --> 00:51:14,580
+A bunch of metadata. 
+一堆元数据
+
+1131
+00:51:14,910 --> 00:51:15,330
+Right? 
+对的
+
+1132
+00:51:16,250 --> 00:51:19,720
+You have this decimal digit things and aliens up to this, 
+你有这个十进制数字的东西和外星人
+
+1133
+00:51:19,730 --> 00:51:24,650
+which is just an array of thirty two thirty two32 bit integers. 
+它只是一个323232位整数的数组
+
+1134
+00:51:25,040 --> 00:51:28,210
+And then they have their own and function again. 
+然后它们又有了自己的功能
+
+1135
+00:51:28,220 --> 00:51:28,970
+So think of this. 
+所以想想这个
+
+1136
+00:51:29,240 --> 00:51:30,720
+To add two merits together, 
+为了将两个优点加在一起
+
+1137
+00:51:31,000 --> 00:51:33,850
+i've got to invoke all this code versus a single instruction to take
+我必须调用所有这些代码
+
+1138
+00:51:33,860 --> 00:51:35,860
+a floating point number and add the two together. 
+而不是调用一条指令来获取一个浮点数并将两者相加
+
+1139
+00:51:38,690 --> 00:51:41,360
+Again, you pay the penalty to have exact precision.
+再一次 你要付出代价才能获得精确的精度
+
+1140
+00:51:44,010 --> 00:51:46,400
+And again, if it's your bank account or scientific instruments,
+再说一次 如果是你的银行账户或科学仪器
+
+1141
+00:51:46,410 --> 00:51:46,960
+you would care. 
+你会在意的
+
+1142
+00:51:49,720 --> 00:51:50,580
+Now let's talk about nulls. 
+现在我们来讨论空值
+
+1143
+00:51:52,150 --> 00:51:55,200
+The way basically everyone's going to do it is this one here. 
+基本上每个人都会这样做 就是这里的这个
+
+1144
+00:51:55,210 --> 00:51:55,800
+The second one, 
+第二个
+
+1145
+00:51:56,530 --> 00:52:00,540
+you have a header somewhere that there's a bit map and a bit of set to one. 
+你在某个地方有一个头 有一个位图和一个设置为1的位
+
+1146
+00:52:00,550 --> 00:52:05,260
+If the attribute at that offset in the column is null, 
+如果列中该偏移量处的属性为NULL
+
+1147
+00:52:05,270 --> 00:52:07,070
+it isn't the only way to do it. 
+则这不是唯一的方法
+
+1148
+00:52:07,980 --> 00:52:12,090
+Another approach to do is if you really care about storage space, 
+另一种方法是 如果你真的关心存储空间
+
+1149
+00:52:12,630 --> 00:52:15,910
+is it used actually a special value in the domain of an attribute
+是否在属性域或类型中使用
+
+1150
+00:52:15,920 --> 00:52:21,120
+or the type to represent null that you typically see this
+一个特殊值来表示null
+
+1151
+00:52:21,610 --> 00:52:22,560
+in memory systems, 
+你通常会在内存系统中看到它
+
+1152
+00:52:22,570 --> 00:52:26,620
+because you don't want to maybe pay the penalty or the memory overhead
+因为你不想为维护这个位图而付出
+
+1153
+00:52:26,630 --> 00:52:28,220
+of of maintaining this bit map. 
+代价或内存开销
+
+1154
+00:52:28,350 --> 00:52:28,740
+We just say, 
+我们只是说
+
+1155
+00:52:30,110 --> 00:52:35,540
+in 32, the minimum value in 32 defined by the c that's going to be my null.
+在32中 由C定义的32中的最小值将是我的NULL
+
+1156
+00:52:36,810 --> 00:52:38,280
+You make sure that nobody can insert that value, 
+你要确保没有人可以插入那个值
+
+1157
+00:52:38,290 --> 00:52:40,040
+just make the total possible value. 
+只需输入可能的总值
+
+1158
+00:52:40,050 --> 00:52:42,400
+You could store one once smaller by one. 
+你可以储存一个比一个小的
+
+1159
+00:52:43,980 --> 00:52:45,090
+Votb does this. 
+沃特布这样做
+
+1160
+00:52:45,300 --> 00:52:47,010
+There's a couple of other memory systems that do this. 
+有几个其他的记忆系统可以做到这一点
+
+1161
+00:52:48,940 --> 00:52:51,340
+The dumbest idea is choice three, 
+最愚蠢的想法是选择三
+
+1162
+00:52:52,180 --> 00:52:58,740
+where similar to the two pid you would embed in the we talk about column stores. 
+类似于我们谈论列存储中嵌入的两个PID
+
+1163
+00:52:59,450 --> 00:53:03,640
+You actually embed a flag for every single value that could be
+实际上 您为每一个可能为空的值嵌入了一个标志
+
+1164
+00:53:03,650 --> 00:53:05,200
+null to determine whether it is null. 
+以确定它是否为空
+
+1165
+00:53:07,390 --> 00:53:07,900
+Right? 
+对的
+
+1166
+00:53:09,160 --> 00:53:12,420
+We even though the flag only needs to be a single bit, 
+即使标志只需要是单个位
+
+1167
+00:53:13,000 --> 00:53:14,430
+can't store it as a single bit, 
+我们也不能将其存储为单个位
+
+1168
+00:53:14,440 --> 00:53:16,470
+because you have to worry about a word alignment or cache alignment. 
+因为您必须担心字对齐或缓存对齐
+
+1169
+00:53:17,390 --> 00:53:17,470
+Right? 
+对的
+
+1170
+00:53:17,480 --> 00:53:18,510
+I can't just have. 
+我不能就这样
+
+1171
+00:53:18,890 --> 00:53:20,090
+You can, but it's a bad idea.
+你可以 但这不是个好主意
+
+1172
+00:53:20,380 --> 00:53:21,530
+You don't want to find a data type. 
+你不想找到一个数据类型
+
+1173
+00:53:21,540 --> 00:53:23,750
+That's 33 bits, 
+这是33位
+
+1174
+00:53:23,760 --> 00:53:25,270
+because the harvard isn't set up for that. 
+因为哈佛大学不是为这个设置的
+
+1175
+00:53:26,000 --> 00:53:27,260
+When you go try to read 32 bits, 
+当您尝试读取32位时
+
+1176
+00:53:27,270 --> 00:53:30,020
+you're actually going to read 64 bits even larger, 
+您实际上将读取更大的64位
+
+1177
+00:53:30,030 --> 00:53:31,740
+because it's a cache line, but we can ignore that.
+因为它是一个缓存线 但我们可以忽略它
+
+1178
+00:53:32,600 --> 00:53:34,820
+This is actually as a spoiler. 
+这实际上是一个剧透
+
+1179
+00:53:34,830 --> 00:53:36,940
+You think it's so terrible who would ever actually do this. 
+你认为谁会真的这么做是很可怕的
+
+1180
+00:53:37,550 --> 00:53:38,370
+Mem segal used to. 
+梅姆·西格尔曾经
+
+1181
+00:53:39,090 --> 00:53:40,080
+This is the old documentation. 
+这是旧文档
+
+1182
+00:53:40,090 --> 00:53:41,240
+They've since fixed this. 
+他们已经解决了这个问题
+
+1183
+00:53:41,960 --> 00:53:44,630
+But when you go look at their integer types, 
+但是当你去看他们的整数类型时
+
+1184
+00:53:45,180 --> 00:53:47,340
+they would tell you the size of each type. 
+他们会告诉你每种类型的大小
+
+1185
+00:53:47,900 --> 00:53:49,760
+And they would have the size of it can't be null. 
+它们的大小不能为空
+
+1186
+00:53:50,370 --> 00:53:51,680
+Sorry, the size of it could be null.
+对不起 它的大小可能为空
+
+1187
+00:53:51,950 --> 00:53:52,470
+The size of it. 
+它的大小
+
+1188
+00:53:52,480 --> 00:53:55,320
+If it can't be null for a bullion, 
+如果金条不能为空
+
+1189
+00:53:55,930 --> 00:53:57,620
+which is just1 or zero. 
+就是1或0
+
+1190
+00:53:58,250 --> 00:54:00,030
+If it's not null, then it's 1 byte.
+如果不为空 则为1个字节
+
+1191
+00:54:00,400 --> 00:54:02,130
+But if it could be null, 
+但如果可能为空
+
+1192
+00:54:02,670 --> 00:54:04,890
+then they have to store that as2 bytes. 
+则必须存储AS2字节
+
+1193
+00:54:07,250 --> 00:54:09,450
+Big int, you go from 8 bytes up to 12 bytes.
+大整数 你从8字节到12字节
+
+1194
+00:54:10,310 --> 00:54:13,740
+And they're doing this because they worry about word alignment of the data
+他们这样做是因为他们担心他们正在访问的数据的
+
+1195
+00:54:13,750 --> 00:54:14,500
+that they're accessing. 
+字对齐
+
+1196
+00:54:15,680 --> 00:54:16,880
+That goes back to why, 
+这又回到了为什么
+
+1197
+00:54:16,890 --> 00:54:20,660
+in addition to why we want to have fixed length values so that we can jump
+除了为什么我们想要有固定的长度值
+
+1198
+00:54:20,670 --> 00:54:24,220
+to offsets more easily is also going to ensure that all our data is
+以便我们可以更容易地跳转到偏移
+
+1199
+00:54:24,230 --> 00:54:25,300
+nicely memory aligned, 
+也将确保我们所有的数据都很好地内存对齐
+
+1200
+00:54:26,620 --> 00:54:29,280
+that we don't try to access a two pole that is or a value that
+我们不会尝试访问两个极点
+
+1201
+00:54:29,290 --> 00:54:30,640
+may be spread across two cache lines. 
+也不会访问可能分布在两个缓存线上的值
+
+1202
+00:54:31,050 --> 00:54:33,730
+Because now that has two cache reads instead of one. 
+因为现在有两个缓存读取而不是一个
+
+1203
+00:54:37,220 --> 00:54:38,380
+Don't do this, but it does exist.
+不要这样做 但它确实存在
+
+1204
+00:54:39,120 --> 00:54:41,590
+So I debate whether to show you this, like, hey, here's a stupid idea.
+所以我争论是否要给你看这个 就像 嘿 这是一个愚蠢的想法
+
+1205
+00:54:41,600 --> 00:54:42,110
+Don't do this. 
+别这么做
+
+1206
+00:54:42,120 --> 00:54:42,950
+But now about it. 
+但现在关于它
+
+1207
+00:54:42,960 --> 00:54:43,310
+So like, 
+就像
+
+1208
+00:54:44,150 --> 00:54:44,680
+is that? 
+是吗
+
+1209
+00:54:44,920 --> 00:54:45,720
+Is that a good idea? 
+这是个好主意吗
+
+1210
+00:54:50,110 --> 00:54:51,130
+We've covered calm stores, 
+我们已经覆盖了平静的商店
+
+1211
+00:54:51,140 --> 00:54:52,650
+we've covered the pack stuff. 
+我们已经覆盖了包装的东西
+
+1212
+00:54:53,100 --> 00:54:55,370
+We've covered what the actual bits are going to look like for inner values. 
+我们已经讨论了内部值的实际位是什么样子的
+
+1213
+00:54:56,490 --> 00:54:58,730
+Let's talk a little bit about what how to handle updates. 
+让我们讨论一下如何处理更新
+
+1214
+00:54:58,740 --> 00:54:59,690
+If you want to do that. 
+如果你想这么做
+
+1215
+00:55:03,570 --> 00:55:06,280
+Data is considered hot when it first enters a database system. 
+数据在首次进入数据库系统时被认为是热数据
+
+1216
+00:55:06,290 --> 00:55:08,120
+This is, in general, not just for a lab system,
+一般来说 这不仅仅是一个实验室系统
+
+1217
+00:55:08,130 --> 00:55:10,150
+but think about your in your own life. 
+而是考虑你自己的生活
+
+1218
+00:55:10,160 --> 00:55:11,250
+Like when you go to, 
+就像当你去
+
+1219
+00:55:11,260 --> 00:55:12,940
+I don't know, 
+我不知道
+
+1220
+00:55:13,450 --> 00:55:16,500
+twitter or tick tock, whatever the hottest be real, whatever,
+推特或滴答 无论什么最热门的是真实的 无论什么
+
+1221
+00:55:18,210 --> 00:55:20,010
+only fans, whatever like you go,
+只有球迷 不管你喜欢什么
+
+1222
+00:55:20,020 --> 00:55:21,210
+look at the latest things. 
+都要看最新的东西
+
+1223
+00:55:21,890 --> 00:55:23,690
+You don't go back 8 months, 12 months,
+你不会回到8个月 12个月
+
+1224
+00:55:24,060 --> 00:55:25,370
+24 months and look at those things. 
+24个月去看那些东西
+
+1225
+00:55:25,900 --> 00:55:27,570
+So when data first enters the database, 
+因此 当数据首次进入数据库时
+
+1226
+00:55:27,580 --> 00:55:29,010
+it's more likely to be accessed. 
+它更有可能被访问
+
+1227
+00:55:30,030 --> 00:55:32,540
+It's also more likely to be red and also potentially updated. 
+它也更有可能是红色的 也有可能更新
+
+1228
+00:55:33,550 --> 00:55:33,840
+Right? 
+对的
+
+1229
+00:55:35,390 --> 00:55:37,240
+And then over time, as it,
+然后随着时间的推移
+
+1230
+00:55:38,230 --> 00:55:40,620
+as it grows colder, it's less likely to be accessed.
+当它变得更冷时 它就不太可能被访问
+
+1231
+00:55:40,630 --> 00:55:43,300
+You may only start using for read only queries. 
+您只能从只读查询开始使用
+
+1232
+00:55:44,400 --> 00:55:49,690
+We may want to organize our system in such a way that new data is stored
+我们可能希望以这样一种方式组织我们的系统
+
+1233
+00:55:49,700 --> 00:55:52,280
+in a and a in a way that can
+即新数据以一种可以非常有效地快速访问的
+
+1234
+00:55:52,290 --> 00:55:54,810
+be very efficient for quick access for being for. 
+方式存储在a和a中
+
+1235
+00:55:55,120 --> 00:55:56,570
+Well, to be kind of queries.
+嗯 是一种疑问
+
+1236
+00:55:57,170 --> 00:56:00,510
+Then over time we want to migrate it to aaa coral storage system. 
+然后随着时间的推移 我们希望将其迁移到AAA珊瑚存储系统
+
+1237
+00:56:02,300 --> 00:56:03,950
+This is what sort of the hybrid storage model is. 
+这就是所谓的混合存储模式
+
+1238
+00:56:05,140 --> 00:56:08,280
+The basic idea is that we want to have two execution engines, 
+其基本思想是 我们希望有两个执行引擎
+
+1239
+00:56:08,290 --> 00:56:11,170
+essentially two database systems that are linked together. 
+本质上是两个连接在一起的数据库系统
+
+1240
+00:56:11,500 --> 00:56:15,170
+They maybe store things in a row store for updates, for hot data,
+它们可能将内容存储在行存储中
+
+1241
+00:56:15,180 --> 00:56:17,680
+and then a column store for colder data. 
+用于更新热数据 然后存储在列存储中 用于较冷的数据
+
+1242
+00:56:18,800 --> 00:56:21,100
+Over time as things get cold as the data gets cold. 
+随着时间的推移 事物变冷 数据变冷
+
+1243
+00:56:21,420 --> 00:56:21,510
+Right? 
+对的
+
+1244
+00:56:21,520 --> 00:56:25,580
+Either through the expiration process or by observing the workload patterns
+通过过期过程或观察其上的工作负载模式
+
+1245
+00:56:25,590 --> 00:56:25,940
+on it, 
+然后将其
+
+1246
+00:56:26,290 --> 00:56:27,850
+we then migrate it to the column store. 
+迁移到列存储
+
+1247
+00:56:27,860 --> 00:56:31,500
+And we can do this in a batch in a bached way. 
+我们可以以批量的方式进行
+
+1248
+00:56:31,890 --> 00:56:36,140
+This is why we can then combine a bunch of data together, put it,
+这就是为什么我们可以将一组数据组合在一起
+
+1249
+00:56:36,350 --> 00:56:38,060
+store it in a single file, like a park,
+将其存储在单个文件中
+
+1250
+00:56:38,070 --> 00:56:39,100
+a file or work file, 
+如公园 文件或工作文件
+
+1251
+00:56:39,760 --> 00:56:40,870
+and then do all the compression stuff. 
+然后执行所有压缩操作
+
+1252
+00:56:40,880 --> 00:56:43,310
+We want to do all the together rather than trying to do things incrementally. 
+我们想一起做所有的事情 而不是试图以渐进的方式做事
+
+1253
+00:56:44,900 --> 00:56:47,170
+The two approaches you'll see in your life are fractured mirrors, 
+您将在生活中看到的两种方法
+
+1254
+00:56:47,180 --> 00:56:48,410
+and delta store fractured mirrors. 
+是“破碎的镜像”和“增量存储破碎的镜像”
+
+1255
+00:56:48,420 --> 00:56:49,900
+I think i've already mentioned, 
+我想我已经提到过了
+
+1256
+00:56:49,910 --> 00:56:51,970
+but the delta store approach would be what? 
+但是德尔塔商店的方法是什么
+
+1257
+00:56:53,300 --> 00:56:58,130
+Any system that's supporting data breaks has the lake house term
+任何支持数据中断的系统都有lake house术语或称为delta
+
+1258
+00:56:58,140 --> 00:56:59,970
+or the thing called delta lake. 
+lake的东西
+
+1259
+00:57:00,480 --> 00:57:01,730
+This is essentially what they're doing. 
+这基本上就是他们正在做的事情
+
+1260
+00:57:01,740 --> 00:57:05,690
+The idea is they would have aa separate storage for new updates, 
+我们的想法是 他们将为新的更新提供单独的存储
+
+1261
+00:57:06,040 --> 00:57:10,020
+and then over time and then migrate percolates into the column store. 
+然后随着时间的推移 将过滤迁移到列存储中
+
+1262
+00:57:11,040 --> 00:57:11,360
+So again, 
+所以
+
+1263
+00:57:11,370 --> 00:57:14,280
+we need to go through these high levels just so you're aware of what they are. 
+我们需要通过这些高层次 这样你才能意识到它们是什么
+
+1264
+00:57:15,770 --> 00:57:18,970
+So fractured mirrors come from comes from an idea from2002. 
+所以破碎的镜子来自于2002年的一个想法
+
+1265
+00:57:20,360 --> 00:57:22,430
+And the idea is that we're basically going to store a second copy
+我的想法是
+
+1266
+00:57:22,440 --> 00:57:26,720
+of the database in a calm store that we automatically updated, 
+我们基本上要将数据库的第二个副本存储在一个自动更新的CALM存储中
+
+1267
+00:57:26,810 --> 00:57:27,600
+as I said. 
+正如我所说的
+
+1268
+00:57:28,580 --> 00:57:29,950
+So you have your rose store. 
+所以你有你的玫瑰商店
+
+1269
+00:57:30,240 --> 00:57:31,750
+That's the primary copy of the database. 
+这是数据库的主副本
+
+1270
+00:57:32,140 --> 00:57:37,070
+Then you have this mirror copy in the dsm and if this thing dies, 
+然后你在dsm中有这个镜像副本
+
+1271
+00:57:37,080 --> 00:57:38,430
+this thing crashes goes away. 
+如果这个东西死了 这个东西就会崩溃
+
+1272
+00:57:38,970 --> 00:57:39,330
+Who cares? 
+谁在乎
+
+1273
+00:57:39,340 --> 00:57:42,130
+Because this is considered the source of truth, 
+因为这被认为是真理的来源
+
+1274
+00:57:42,540 --> 00:57:44,690
+the database of record for our database. 
+是我们数据库的记录数据库
+
+1275
+00:57:45,300 --> 00:57:46,130
+We can't lose this. 
+我们不能失去这个
+
+1276
+00:57:46,140 --> 00:57:47,770
+If we lose this, we'll just rebuild it from this.
+如果我们失去了这个 我们会在这个基础上重建它
+
+1277
+00:57:49,370 --> 00:57:50,560
+All your transactions come along. 
+你所有的交易都来了
+
+1278
+00:57:50,570 --> 00:57:52,880
+They're always going to operate directly on the row store data, 
+它们总是直接对行存储数据进行操作
+
+1279
+00:57:52,890 --> 00:57:53,320
+because again, 
+因为同样
+
+1280
+00:57:53,330 --> 00:57:55,760
+that'll be optimized for fast updates. 
+这将针对快速更新进行优化
+
+1281
+00:57:56,570 --> 00:57:59,600
+Then we'll propagate things to the column store. 
+然后 我们将把内容传播到列存储
+
+1282
+00:57:59,980 --> 00:58:03,190
+And we'll assume any analytical query gets applied here. 
+我们假设这里应用了任何分析查询
+
+1283
+00:58:06,120 --> 00:58:09,670
+If someone then updates something that then are copied over here, 
+如果有人更新了一些东西
+
+1284
+00:58:10,110 --> 00:58:11,330
+need a way to keep track of that, 
+然后复制到这里
+
+1285
+00:58:11,340 --> 00:58:15,240
+so that any analytical query knows that it has to go fetch the newer data
+需要一种方法来跟踪它
+
+1286
+00:58:15,930 --> 00:58:16,560
+from the side. 
+以便任何分析查询都知道它必须从侧面获取较新的数据
+
+1287
+00:58:19,780 --> 00:58:20,140
+Right? 
+对的
+
+1288
+00:58:22,070 --> 00:58:24,550
+The delta store is probably the more common approach these days. 
+Delta存储可能是目前更常见的方法
+
+1289
+00:58:25,060 --> 00:58:32,950
+I so I would say this is used in in oracles has a memory combinator accelerator. 
+所以我想说这是在甲骨文中使用的 有一个内存组合子加速器
+
+1290
+00:58:34,600 --> 00:58:35,790
+Sequel servers hard to keep track of. 
+续集服务器很难跟踪
+
+1291
+00:58:35,800 --> 00:58:37,830
+They have a bunch of versions of sequel server. 
+他们有一堆版本的续集服务器
+
+1292
+00:58:38,240 --> 00:58:42,860
+I think they have an olf index or apollo engine that uses this ibm blue
+我认为他们有一个使用ibm blue is或db two blue的olf索引
+
+1293
+00:58:42,870 --> 00:58:43,900
+is or db two blue. 
+或apollo引擎
+
+1294
+00:58:43,910 --> 00:58:45,660
+Is there hamas to accelerate? 
+有哈马斯要加速吗
+
+1295
+00:58:46,060 --> 00:58:48,290
+This approach is more common in systems, 
+这种方法在系统中更为常见
+
+1296
+00:58:49,210 --> 00:58:54,090
+older legacy systems that already have a huge infrastructure and ecosystem
+较旧的遗留系统已经拥有围绕烘焙机的庞大基础设施
+
+1297
+00:58:54,100 --> 00:58:55,210
+around the roaster. 
+和生态系统
+
+1298
+00:58:55,530 --> 00:58:57,680
+And rather than making a whole separate column store system, 
+而不是做一个完整的单独的列存储系统
+
+1299
+00:58:58,020 --> 00:58:58,950
+they graph this thing on. 
+他们把这个东西画在上面
+
+1300
+00:58:58,960 --> 00:59:02,140
+So to get the advantage of the existing tooling and then people still get
+因此 为了获得现有工具的优势
+
+1301
+00:59:02,150 --> 00:59:03,420
+the benefit of a column store. 
+人们仍然可以获得列存储的好处
+
+1302
+00:59:04,110 --> 00:59:07,540
+It's an engineering slash sort of business decision to go with this approach. 
+采用这种方法是一种工程上的商业决策
+
+1303
+00:59:09,780 --> 00:59:15,050
+But the delta store the idea is that again just like before we have the we
+但是德尔塔商店的想法是
+
+1304
+00:59:15,060 --> 00:59:17,720
+have our front end row store, 
+就像之前我们有我们的前端排商店一样
+
+1305
+00:59:18,040 --> 00:59:19,640
+all the updates are going to go in here. 
+所有的更新都将在这里进行
+
+1306
+00:59:20,140 --> 00:59:21,690
+Over time as things get colder, 
+随着时间的推移
+
+1307
+00:59:21,700 --> 00:59:25,780
+they will migrate it to the historical data set and the column store. 
+随着温度的降低 他们会将其迁移到历史数据集和列存储中
+
+1308
+00:59:26,570 --> 00:59:28,060
+A tubal can only exist. 
+输卵管只能存在
+
+1309
+00:59:29,980 --> 00:59:34,030
+The source of truth of the most recent version of a tubal can only exist
+最新版本的输卵管的真理来源只能存在于这两个版本
+
+1310
+00:59:34,240 --> 00:59:35,030
+in one of these two. 
+中的一个
+
+1311
+00:59:36,190 --> 00:59:39,720
+So I I as I propagate it into the column store, 
+因此 当我将它传播到列存储中时
+
+1312
+00:59:39,990 --> 00:59:41,420
+I essentially remove it from the row store, 
+我实际上将它从行存储中删除
+
+1313
+00:59:41,430 --> 00:59:43,820
+because why waste the space if I already have a copy over there. 
+因为如果我已经在那里有一个副本 为什么要浪费空间呢
+
+1314
+00:59:45,240 --> 00:59:46,710
+Now, again, transactions come along,
+现在 再一次
+
+1315
+00:59:46,800 --> 00:59:47,870
+you update, 
+交易来了 你更新
+
+1316
+00:59:48,760 --> 00:59:49,710
+sorry, the row store.
+对不起 行存储
+
+1317
+00:59:50,350 --> 00:59:52,180
+Then any analytical query comes along. 
+那么任何分析查询都会出现
+
+1318
+00:59:52,190 --> 00:59:55,820
+You have to go figure out is the data you want in either one of these
+你必须找出你想要的数据
+
+1319
+00:59:55,830 --> 00:59:57,140
+and then merge the results together. 
+然后把结果合并在一起
+
+1320
+00:59:57,850 --> 00:59:59,640
+Again, if I update the tube that i've already migrated,
+同样 如果我更新我已经迁移的电子管
+
+1321
+00:59:59,650 --> 01:00:02,490
+I need a way to keep track of that and validate it here and make
+我需要一种方法来跟踪它并在这里验证它
+
+1322
+01:00:02,500 --> 01:00:04,980
+sure that I know that i'm reading the laser version over there. 
+并确保我知道我正在阅读那里的激光版本
+
+1323
+01:00:07,200 --> 01:00:10,230
+It's like the underlying assumption here that the analytical queries are
+这就像这里的基本假设
+
+1324
+01:00:10,800 --> 01:00:12,230
+with all the state of theta. 
+即分析查询具有theta的所有状态
+
+1325
+01:00:12,240 --> 01:00:13,630
+Or this question. 
+或者这个问题
+
+1326
+01:00:14,040 --> 01:00:19,080
+It is an underlying assumption here that the analytical queries are ok
+这里有一个基本假设
+
+1327
+01:00:19,090 --> 01:00:20,360
+with old scaled data. 
+即分析查询可以处理旧的缩放数据
+
+1328
+01:00:21,350 --> 01:00:21,990
+No, 
+不
+
+1329
+01:00:26,580 --> 01:00:31,610
+most systems will make a trade off between freshness and timeliness
+大多数系统将在数据的新鲜度和及时性
+
+1330
+01:00:31,620 --> 01:00:34,070
+of the data and performance. 
+与性能之间进行权衡
+
+1331
+01:00:34,580 --> 01:00:37,880
+Like I if I care about having the most latest data, it might look weird.
+就像我 如果我关心最新的数据 它可能看起来很奇怪
+
+1332
+01:00:38,290 --> 01:00:39,990
+Then I got to go looking here. 
+然后我得去看看这里
+
+1333
+01:00:40,630 --> 01:00:41,530
+Same thing with the other approach. 
+另一种方法也是如此
+
+1334
+01:00:43,260 --> 01:00:44,590
+But then I paid that penalty to go, 
+但后来我付出了代价
+
+1335
+01:00:44,890 --> 01:00:46,130
+parse it out of the row store. 
+把它从行存储中解析出来
+
+1336
+01:00:47,140 --> 01:00:48,220
+If I don't care, 
+如果我不在乎
+
+1337
+01:00:48,740 --> 01:00:52,010
+then I maybe I just run over the only on the stable data here. 
+那么我可能只是在这里运行唯一的稳定数据
+
+1338
+01:00:53,600 --> 01:00:55,420
+The napa system from google, 
+谷歌的napa系统
+
+1339
+01:00:55,470 --> 01:00:56,580
+they gave a talk with us last year, 
+他们去年
+
+1340
+01:00:56,590 --> 01:00:59,520
+and there's a paper which we're not going to cover this semester, 
+给我们做了一个演讲
+
+1341
+01:00:59,530 --> 01:01:03,090
+but they make the trade off of performance plus timeiness
+有一篇论文我们这学期不会讨论
+
+1342
+01:01:03,100 --> 01:01:06,500
+or freshness plus cost, 
+但他们权衡了性能加时间或新鲜度加成本
+
+1343
+01:01:07,760 --> 01:01:09,520
+because for internal reasons at google. 
+因为谷歌内部的原因
+
+1344
+01:01:09,800 --> 01:01:11,170
+But it's the same idea. 
+但这是同样的想法
+
+1345
+01:01:11,180 --> 01:01:13,630
+Again, iii I get better performance,
+同样 我获得了更好的性能
+
+1346
+01:01:13,640 --> 01:01:16,570
+but if i'm going to pay for it and potentially also get the, 
+但如果我要为此付出代价
+
+1347
+01:01:16,580 --> 01:01:20,210
+but it's hard to trade it off against having the latest data. 
+也可能获得 但很难将其与最新的数据进行权衡
+
+1348
+01:01:21,300 --> 01:01:24,610
+Because not having to go read this is much
+因为不用去读这些已经很多了
+
+1349
+01:01:32,560 --> 01:01:33,050
+better data is on. 
+更好的数据正在运行
+
+1350
+01:01:34,100 --> 01:01:34,890
+Question is, 
+问题是
+
+1351
+01:01:34,900 --> 01:01:38,450
+does this mean the application have to keep track of where is data? 
+这是否意味着应用程序必须跟踪数据的位置
+
+1352
+01:01:38,460 --> 01:01:39,530
+Is what side of this? 
+这是哪一面
+
+1353
+01:01:39,850 --> 01:01:41,890
+The idea is that the data system, 
+这个想法是数据系统
+
+1354
+01:01:42,320 --> 01:01:44,040
+they consider all the database system, 
+他们考虑所有的数据库系统
+
+1355
+01:01:44,370 --> 01:01:46,780
+whether or not it's two separate products or whatever. 
+不管它是否是两个独立的产品或其他什么
+
+1356
+01:01:47,070 --> 01:01:48,070
+Think of this as the navy system. 
+把这看作是海军系统
+
+1357
+01:01:48,330 --> 01:01:50,890
+It's responsible for keeping track of what is where. 
+它负责跟踪什么在哪里
+
+1358
+01:01:52,990 --> 01:01:55,230
+And for also keeping track of like, when should I move things.
+也可以跟踪 比如 我什么时候应该移动东西
+
+1359
+01:01:55,490 --> 01:01:59,810
+Now, the administrator could define that if the data is order than 5 days,
+现在 管理员可以定义 如果数据超过5天
+
+1360
+01:01:59,820 --> 01:02:00,530
+then move it over, 
+则将其移动 或者在一周内被访问
+
+1361
+01:02:00,760 --> 01:02:02,290
+or has been touched in a week, then move it over.
+则将其移动
+
+1362
+01:02:02,550 --> 01:02:05,860
+There's some systems support those kind of rules to move things. 
+有一些系统支持这种规则来移动东西
+
+1363
+01:02:07,370 --> 01:02:09,830
+But the data system is responsible for facilitating the movement of things
+但是数据系统负责促进你已经
+
+1364
+01:02:09,840 --> 01:02:11,790
+you already fostered. 
+培育的东西的移动
+
+1365
+01:02:13,330 --> 01:02:15,240
+His question is this faster than fractured mirrors? 
+他的问题是 这是否比破碎的镜像更快
+
+1366
+01:02:19,740 --> 01:02:21,060
+You got less space application. 
+你得到了更少的应用空间
+
+1367
+01:02:22,030 --> 01:02:25,540
+This one, you're basically storing 2 copies of the entire database.
+这一次 你基本上是存储整个数据库的2个副本
+
+1368
+01:02:27,480 --> 01:02:29,400
+Now you can compress the hell out of this. 
+现在你可以压缩这个了
+
+1369
+01:02:30,920 --> 01:02:33,710
+But this is basically think of this approach. 
+但这基本上是认为这种方法
+
+1370
+01:02:34,040 --> 01:02:37,850
+It's like an index like this is an auxiliary copy of the database that I
+像这样的索引是数据库的辅助副本
+
+1371
+01:02:37,860 --> 01:02:39,930
+have to maintain and make sure it is in sync with this thing. 
+我必须维护并确保它与这个东西同步
+
+1372
+01:02:40,370 --> 01:02:43,760
+But it's another copy, but this is 12 will only exist in either locations.
+但它是另一个副本 但这是12将只存在于任何一个位置
+
+1373
+01:02:43,770 --> 01:02:44,000
+Now. 
+现在
+
+1374
+01:02:44,580 --> 01:02:46,670
+There may be a period where I update something here. 
+可能有一段时间我会在这里更新一些东西
+
+1375
+01:02:46,890 --> 01:02:47,930
+If the system allows it, 
+如果系统允许的话
+
+1376
+01:02:48,390 --> 01:02:49,540
+I still have the old version here. 
+我这里还有旧版本
+
+1377
+01:02:49,550 --> 01:02:51,860
+And only later once I do compaction or whatever, 
+只有当我做了压缩或其他什么的时候
+
+1378
+01:02:51,870 --> 01:02:53,380
+then it gets burned out. 
+它才会被烧掉
+
+1379
+01:02:55,180 --> 01:02:57,060
+But the matter space at the store, 
+但是商店里的物质空间
+
+1380
+01:02:58,980 --> 01:03:01,930
+it takes more space because you're maintaining 2 copies than this one. 
+它需要更多的空间 因为你要维护两个副本 而不是这个
+
+1381
+01:03:05,250 --> 01:03:10,150
+Have like one row store and one column store. 
+例如具有一个行存储器和一个列存储器
+
+1382
+01:03:10,940 --> 01:03:11,340
+The question, 
+问题是
+
+1383
+01:03:11,430 --> 01:03:13,780
+is there any reason why these both of these methods have 1 row store
+为什么这两种方法都有1行存储
+
+1384
+01:03:13,790 --> 01:03:14,580
+and 1 column store? 
+和1列存储
+
+1385
+01:03:15,540 --> 01:03:20,850
+As opposed to multiple tears or using both like one? 
+而不是多次撕裂或像一次一样同时使用
+
+1386
+01:03:22,340 --> 01:03:26,590
+I guess a could you have a single system that supports like both of us run
+我想你能不能有一个单一的系统来支持我们两个人经营一家平静的
+
+1387
+01:03:26,600 --> 01:03:27,150
+a calm store? 
+商店
+
+1388
+01:03:28,530 --> 01:03:31,720
+No, it's more like this is like delta store, right?
+不 这更像是德尔塔商店 对吗
+
+1389
+01:03:31,810 --> 01:03:35,160
+You like store like historical data like call store and then you store
+你喜欢像存储历史数据一样调用存储
+
+1390
+01:03:35,170 --> 01:03:37,520
+like the delta store data in like a rose store, 
+然后像存储增量存储数据一样存储在玫瑰存储中
+
+1391
+01:03:37,530 --> 01:03:40,680
+but why can't like the delta store data also be stored in the column store? 
+但为什么不能像增量存储数据一样也存储在列存储中呢
+
+1392
+01:03:41,300 --> 01:03:43,930
+The question is why can't you store like, 
+问题是为什么你不能像这样储存
+
+1393
+01:03:44,670 --> 01:03:45,970
+so we're not going to cover this. 
+所以我们不打算讨论这个
+
+1394
+01:03:47,210 --> 01:03:47,280
+No. 
+不
+
+1395
+01:03:47,650 --> 01:03:49,320
+So the question is, 
+所以问题是
+
+1396
+01:03:49,330 --> 01:03:50,800
+why couldn't you have basically asking, 
+为什么你不能问
+
+1397
+01:03:50,810 --> 01:03:52,040
+why could you have a column store? 
+为什么你可以有一个专栏商店
+
+1398
+01:03:52,530 --> 01:03:53,180
+Fast transactions? 
+快速交易
+
+1399
+01:03:54,570 --> 01:03:54,970
+Right? 
+对的
+
+1400
+01:03:55,880 --> 01:03:58,510
+The only system, single store kind of does that,
+唯一的系统 单个商店可以做到这一点
+
+1401
+01:03:58,520 --> 01:04:00,670
+but like the delta store is like the pen log. 
+但就像德尔塔商店一样 就像笔日志
+
+1402
+01:04:00,760 --> 01:04:01,790
+It's sort of the same thing, 
+这是一回事
+
+1403
+01:04:02,280 --> 01:04:04,480
+but it's within a a single system. 
+但它是在一个单一的系统内
+
+1404
+01:04:05,160 --> 01:04:06,830
+And so it's transparent to you. 
+所以它对你来说是透明的
+
+1405
+01:04:07,290 --> 01:04:09,610
+Hyper is the only system I could think of that did. 
+Hyper是我唯一能想到的系统
+
+1406
+01:04:10,510 --> 01:04:11,990
+It did transactions checked into the comma store, 
+它确实将事务签入了逗号存储
+
+1407
+01:04:12,000 --> 01:04:13,430
+but because it's doing multi versioning, 
+但因为它正在进行多版本管理
+
+1408
+01:04:13,440 --> 01:04:15,400
+it's storing delta records. 
+所以它存储的是增量记录
+
+1409
+01:04:16,140 --> 01:04:22,270
+So if I have a bunch of delta as i'm updating for nvcc ted can use a row store. 
+因此 如果我有一堆增量 因为我正在为NVCC更新 Ted可以使用行存储
+
+1410
+01:04:25,800 --> 01:04:28,190
+One other question, like, in both of these cases,
+另一个问题是 在这两种情况下
+
+1411
+01:04:28,200 --> 01:04:29,230
+we're not assuming facts. 
+我们都没有假设事实
+
+1412
+01:04:29,240 --> 01:04:31,430
+And then his question is, in both of these cases,
+然后他的问题是 在这两种情况下
+
+1413
+01:04:31,440 --> 01:04:32,430
+we're not doing taxes anywhere. 
+我们没有在任何地方征税
+
+1414
+01:04:32,610 --> 01:04:34,230
+No, let's assume this is packs.
+不 让我们假设这是包
+
+1415
+01:04:35,380 --> 01:04:38,670
+I say dsm but columns for packs, 
+我说的是DSM 但是是包的列
+
+1416
+01:04:39,880 --> 01:04:41,320
+again, for the purpose is going for this semester.
+再一次 为了这个学期的目的
+
+1417
+01:04:41,330 --> 01:04:43,440
+When I say column store, i'm going to mean packs.
+当我说列商店时 我指的是包
+
+1418
+01:04:44,560 --> 01:04:46,810
+I should put column store here to be more generic. 
+我应该把列存储放在这里 以便更通用
+
+1419
+01:04:51,150 --> 01:04:53,500
+We have 2 minutes left, although still our time.
+我们还有2分钟 虽然还有我们的时间
+
+1420
+01:04:57,840 --> 01:04:58,350
+Shit, never mind.
+妈的 算了
+
+1421
+01:04:58,360 --> 01:04:59,350
+Let's keep going databases. 
+让我们继续使用数据库
+
+1422
+01:04:59,810 --> 01:05:03,880
+Thank you last semester was n again at 10:00 after. 
+谢谢你 上个学期10点之后又是N
+
+1423
+01:05:05,430 --> 01:05:05,730
+Thank you. 
+谢谢
+
+1424
+01:05:10,240 --> 01:05:13,280
+I want to briefly talk about partitioning. 
+我想简单地谈谈分区
+
+1425
+01:05:13,290 --> 01:05:16,340
+We're not going to go details of how to actually partition, meaning like,
+我们不打算讨论如何实际分区的细节
+
+1426
+01:05:16,350 --> 01:05:20,920
+how do I pick the right columns or attributes to split my data on, 
+即如何选择正确的列或属性来分割数据
+
+1427
+01:05:22,350 --> 01:05:24,370
+because that's an np complete problem. 
+因为这是一个NP完全问题
+
+1428
+01:05:25,430 --> 01:05:26,660
+We don't spend too much time on that, 
+我们不会在这上面花太多时间
+
+1429
+01:05:26,870 --> 01:05:30,210
+but in terms of talking at the lowest level, the physical level,
+但在讨论最低级别 即物理级别时
+
+1430
+01:05:30,220 --> 01:05:31,810
+how are we actually going to do partitioning? 
+我们实际上将如何进行分区
+
+1431
+01:05:33,270 --> 01:05:33,940
+The idea here is, again,
+这里的想法是 同样
+
+1432
+01:05:33,950 --> 01:05:37,630
+we want to split the database up across multiple resources so that we
+我们希望将数据库拆分到多个资源中
+
+1433
+01:05:37,640 --> 01:05:39,510
+can take advantage of parallelism. 
+以便我们可以利用并行性
+
+1434
+01:05:42,020 --> 01:05:44,970
+Even though I showed, when we talk about packs, there's a single file,
+即使我展示了 当我们谈论包时
+
+1435
+01:05:44,980 --> 01:05:45,810
+and there's these row groups. 
+只有一个文件 还有这些行组
+
+1436
+01:05:45,820 --> 01:05:47,890
+You can do horizontal partition within the row group. 
+您可以在行组内进行水平分区
+
+1437
+01:05:48,680 --> 01:05:51,840
+There's nothing that says a single machine has to operate on that file. 
+没有说一台机器必须对该文件进行操作
+
+1438
+01:05:52,240 --> 01:05:54,630
+And the entirety of the file, you could split things up further.
+和整个文件 你可以进一步拆分
+
+1439
+01:05:56,450 --> 01:05:58,240
+Most systems don't do that, but like there's nothing.
+大多数系统不会这样做 但就像什么都没有一样
+
+1440
+01:05:58,680 --> 01:05:59,120
+You could, 
+你可以
+
+1441
+01:05:59,130 --> 01:06:02,870
+the idea is basically the same like you could split things across the file. 
+这个想法基本上是一样的 就像你可以在文件中分割东西一样
+
+1442
+01:06:02,880 --> 01:06:04,670
+And then within the file you split up. 
+然后在你分割的文件中
+
+1443
+01:06:05,100 --> 01:06:05,280
+Again, 
+再说一次
+
+1444
+01:06:06,160 --> 01:06:06,930
+we couldn't grow that. 
+我们不能种植它
+
+1445
+01:06:07,810 --> 01:06:08,920
+So in the no segal world, 
+所以在没有西格尔的世界里
+
+1446
+01:06:08,930 --> 01:06:10,440
+they're going to call this sholding. 
+他们会把这叫做Sholding
+
+1447
+01:06:12,460 --> 01:06:14,710
+In the academic world, we would say, partitioning again, the high,
+在学术界 我们会说
+
+1448
+01:06:14,720 --> 01:06:16,220
+basic high in the end. 
+再分高 基本高到底
+
+1449
+01:06:16,230 --> 01:06:18,820
+And then the most they're both talking about horizontal partitioning. 
+然后最重要的是他们都在谈论水平分区
+
+1450
+01:06:20,230 --> 01:06:22,150
+So when we have partitioned data, 
+因此 当我们对数据进行分区时
+
+1451
+01:06:22,910 --> 01:06:23,980
+when we start execute the query, 
+当我们开始执行查询时
+
+1452
+01:06:23,990 --> 01:06:26,620
+we're going to break the query plan up their fragments and run those in parallel. 
+我们将把查询计划分解为它们的片段 并并行运行它们
+
+1453
+01:06:26,630 --> 01:06:27,300
+And at some point, 
+在某些时候
+
+1454
+01:06:27,310 --> 01:06:29,300
+we need to coalesce the results of the different fragments. 
+我们需要合并不同片段的结果
+
+1455
+01:06:29,670 --> 01:06:33,060
+The query fragments are working on to produce a final answer to the user. 
+正在处理查询片段 以便为用户生成最终答案
+
+1456
+01:06:33,880 --> 01:06:33,940
+Right? 
+对的
+
+1457
+01:06:33,950 --> 01:06:35,620
+Someone's writing sends a sql query through, 
+某人的写作通过发送一个SQL查询
+
+1458
+01:06:35,630 --> 01:06:40,240
+like through the snowflake browser tool, 
+比如通过雪花浏览器工具
+
+1459
+01:06:40,250 --> 01:06:41,600
+or like from the command line. 
+或者从命令行
+
+1460
+01:06:42,290 --> 01:06:43,450
+We need to come back with a single result. 
+我们需要带着一个单一的结果回来
+
+1461
+01:06:43,460 --> 01:06:45,050
+So we have to go, even though things are partitioned,
+所以我们必须去
+
+1462
+01:06:45,060 --> 01:06:47,430
+we've got to put it back together. 
+即使东西被分割了 我们也要把它重新组合起来
+
+1463
+01:06:48,870 --> 01:06:50,260
+The database is going to be able to partition up. 
+数据库将能够进行分区
+
+1464
+01:06:50,570 --> 01:06:53,160
+Physically in a shared. 
+物理上在共享中
+
+1465
+01:06:53,170 --> 01:06:56,480
+Nothing says we're actually moving data and separating from each other. 
+没有人说我们实际上在移动数据并彼此分离
+
+1466
+01:06:56,910 --> 01:06:58,820
+Again, not specific to share nothing.
+再次 不具体分享什么
+
+1467
+01:06:58,830 --> 01:07:02,900
+You could do partitioning within different files a in a share of this system. 
+您可以在此系统的共享中对不同的文件进行分区
+
+1468
+01:07:03,590 --> 01:07:05,270
+But we could ignore that for now or logically, 
+但我们现在可以忽略这一点 或者从逻辑上讲
+
+1469
+01:07:05,280 --> 01:07:06,420
+in a shared distant work. 
+在一个共同的遥远的工作中
+
+1470
+01:07:06,430 --> 01:07:11,790
+And it's a single shared location or shared files in a shared disk system. 
+它是共享磁盘系统中的单个共享位置或共享文件
+
+1471
+01:07:12,340 --> 01:07:16,380
+But then we assign different nodes to operate on either separate files
+但是
+
+1472
+01:07:16,390 --> 01:07:18,140
+or different offsets within the file. 
+我们分配不同的节点来操作单独的文件或文件中的不同偏移量
+
+1473
+01:07:18,770 --> 01:07:21,490
+You saw this in the snowflake paper from last week where talked
+你在上周的雪花论文中看到了这一点
+
+1474
+01:07:21,500 --> 01:07:22,850
+about how to use consistent hashing. 
+其中讨论了如何使用一致的哈希
+
+1475
+01:07:23,020 --> 01:07:27,590
+They sign a worker node to one to one file that's out in their storage. 
+他们将工作节点签名为存储中的一对一文件
+
+1476
+01:07:27,980 --> 01:07:28,850
+And then if they add a new node, 
+然后如果他们添加了一个新节点
+
+1477
+01:07:30,120 --> 01:07:32,080
+they do consistent hashing, they're reorganized.
+他们做一致的哈希 他们被重组
+
+1478
+01:07:32,480 --> 01:07:34,240
+Make another node now be responsible for that file. 
+让另一个节点现在负责该文件
+
+1479
+01:07:34,250 --> 01:07:35,480
+But how many reshuffle thing? 
+但是有多少重新洗牌的事情
+
+1480
+01:07:36,420 --> 01:07:37,140
+The idea is the same. 
+想法是一样的
+
+1481
+01:07:37,640 --> 01:07:38,710
+They're doing horizontal partition. 
+他们在做水平分区
+
+1482
+01:07:40,500 --> 01:07:42,690
+What we want to do here is that we want to take a tables, two balls,
+我们在这里要做的是
+
+1483
+01:07:42,700 --> 01:07:45,100
+and we're going to split them up into disjoint subsets, 
+我们要把一个表 两个球
+
+1484
+01:07:46,060 --> 01:07:49,250
+based on some partitioning key or some partitioning column, 
+我们要把它们分成不相交的子集
+
+1485
+01:07:49,970 --> 01:07:53,670
+based on some objective function that we're trying to optimize for. 
+基于一些分区键或一些分区列 基于一些我们试图优化的目标函数
+
+1486
+01:07:54,250 --> 01:07:56,000
+Like, we want to prove joins.
+比如 我们想证明连接
+
+1487
+01:07:56,010 --> 01:07:58,760
+We want to prove data locality for doing scans or something
+我们想证明数据的局部性
+
+1488
+01:07:58,770 --> 01:08:00,060
+for our purposes here. 
+以便进行扫描或其他我们在这里的目的
+
+1489
+01:08:00,070 --> 01:08:00,700
+It doesn't matter. 
+这不重要
+
+1490
+01:08:01,800 --> 01:08:03,980
+Then partitioning scheme is going to say how we're going to divide things up. 
+然后 分区方案将说明我们将如何划分事物
+
+1491
+01:08:04,780 --> 01:08:07,080
+So hash partitioning is the most common one. 
+所以哈希分区是最常见的一种
+
+1492
+01:08:07,540 --> 01:08:08,450
+There's some hash function. 
+有一些哈希函数
+
+1493
+01:08:08,460 --> 01:08:09,730
+You take the attribute, 
+您获取属性
+
+1494
+01:08:10,230 --> 01:08:12,970
+you hash it, and then you modify the number of partitions you have,
+对其进行散列 然后修改您拥有的分区数量
+
+1495
+01:08:12,980 --> 01:08:14,810
+and you sign it to a node that way. 
+并以这种方式将其签名到节点
+
+1496
+01:08:15,750 --> 01:08:15,890
+Range partitioning. 
+范围划分
+
+1497
+01:08:15,900 --> 01:08:17,570
+If the values ahead of time, 
+如果值提前 范围提前
+
+1498
+01:08:18,420 --> 01:08:21,110
+the range ahead of the ranges ahead of time, you can split up that way.
+范围提前 你可以这样分割
+
+1499
+01:08:21,800 --> 01:08:23,420
+And then predicate partitioning, we're not going to talk about,
+然后是谓词划分
+
+1500
+01:08:23,430 --> 01:08:24,180
+but that would be, 
+我们不打算讨论
+
+1501
+01:08:24,190 --> 01:08:26,600
+I could define aware clause to say, 
+但那将是 我可以定义aware子句
+
+1502
+01:08:27,480 --> 01:08:29,630
+determine whether something should be in a partition or not. 
+确定某物是否应该在一个分区中
+
+1503
+01:08:32,160 --> 01:08:33,250
+So the basic idea looks like this. 
+基本思路是这样的
+
+1504
+01:08:33,260 --> 01:08:36,470
+So we have a table and we have4 columns and say, 
+所以我们有一个表 我们有4列
+
+1505
+01:08:36,480 --> 01:08:38,150
+we pick this one as our partitioning key. 
+我们选择这个作为我们的分区键
+
+1506
+01:08:38,550 --> 01:08:39,810
+So if we're doing hash partitioning, 
+因此 如果我们进行哈希分区
+
+1507
+01:08:39,820 --> 01:08:44,310
+we just take the value that's for each people hash. 
+我们只需获取每个人的哈希值
+
+1508
+01:08:44,560 --> 01:08:46,130
+It modify the number of partitions we have. 
+它修改了我们拥有的分区数量
+
+1509
+01:08:46,490 --> 01:08:48,580
+I'm showing these as databases, but it could be files.
+我将这些显示为数据库 但它可能是文件
+
+1510
+01:08:48,590 --> 01:08:50,520
+It could be different nodes. 
+它可能是不同的节点
+
+1511
+01:08:50,530 --> 01:08:51,280
+It doesn't matter. 
+这不重要
+
+1512
+01:08:52,060 --> 01:08:56,490
+Then the value of this hash hashing function after modeling it, 
+然后这个哈希函数的值在建模之后
+
+1513
+01:08:56,860 --> 01:08:58,850
+that determines where the data is going to be located. 
+决定了数据将被放置在哪里
+
+1514
+01:08:59,970 --> 01:09:03,040
+Now, if I come along, and the most obvious example would be,
+现在 如果我来了 最明显的例子是
+
+1515
+01:09:03,490 --> 01:09:08,450
+if I have a a query that wants to do a single look up on 112 pole
+如果我有一个查询 想要根据这个分区键对112个极点进行一次查找
+
+1516
+01:09:08,880 --> 01:09:09,980
+based on this partitioning key, 
+我知道
+
+1517
+01:09:10,290 --> 01:09:11,740
+I know exactly where to go find it. 
+在哪里可以找到它
+
+1518
+01:09:13,270 --> 01:09:13,630
+Right? 
+对的
+
+1519
+01:09:13,930 --> 01:09:15,810
+I don't have to do any data movement. 
+我不需要进行任何数据移动
+
+1520
+01:09:16,440 --> 01:09:19,950
+I don't have to do any reshuffling when we talk about joins and other things. 
+当我们谈论加入和其他事情时 我不需要做任何重新洗牌
+
+1521
+01:09:19,960 --> 01:09:21,430
+That's obviously not always going to be the case, 
+显然
+
+1522
+01:09:21,440 --> 01:09:23,550
+because i'm not always going to guarantee to join on the thing I
+情况并不总是如此
+
+1523
+01:09:23,560 --> 01:09:24,270
+partitioned on. 
+因为我并不总是保证在我划分的东西上加入
+
+1524
+01:09:25,880 --> 01:09:26,510
+Snowflake talks about. 
+雪花谈到
+
+1525
+01:09:26,520 --> 01:09:28,630
+I don't forget what the paper talks about micro partitioning, 
+我不会忘记论文中关于微分区的内容
+
+1526
+01:09:28,640 --> 01:09:30,190
+but we'll see this later in the semester. 
+但我们将在本学期晚些时候看到这一点
+
+1527
+01:09:30,730 --> 01:09:31,780
+Redshift, does this, too.
+红移 也是这样
+
+1528
+01:09:31,790 --> 01:09:34,750
+They try to do some automatic reorganization in the background
+他们尝试在后台根据您将表连接在一起的方式进行一些自动重组
+
+1529
+01:09:35,160 --> 01:09:38,530
+based on how you're joining tables together to maybe try to partition
+以尝试对其进行分区
+
+1530
+01:09:38,540 --> 01:09:39,100
+it so that
+以便
+
+1531
+01:09:40,290 --> 01:09:43,720
+the data from two tables are partitioned on the same joint key. 
+两个表中的数据在相同的连接键上进行分区
+
+1532
+01:09:44,110 --> 01:09:45,770
+The data is local to each other. 
+数据彼此是本地的
+
+1533
+01:09:46,230 --> 01:09:50,850
+But we'll cover this later with logical partitioning. 
+但我们稍后将通过逻辑分区来介绍这一点
+
+1534
+01:09:50,860 --> 01:09:55,670
+It's the snowflake approach where I don't actually move data to a physical node. 
+这是雪花式方法 我实际上并不将数据移动到物理节点
+
+1535
+01:09:56,040 --> 01:09:59,310
+I just say what node is responsible for operating on the data
+我只是说哪个节点负责对数据和共享磁盘
+
+1536
+01:09:59,320 --> 01:10:00,710
+and the shared disk storage. 
+存储进行操作
+
+1537
+01:10:01,430 --> 01:10:02,810
+Again, really simple partitioning.
+同样 非常简单的分区
+
+1538
+01:10:02,820 --> 01:10:03,810
+I'm doing range partitioning. 
+我正在做范围划分
+
+1539
+01:10:03,940 --> 01:10:05,410
+The top guy here gets one and two, 
+上面的节点得到1和2
+
+1540
+01:10:05,420 --> 01:10:07,380
+the bottom node gets three and four. 
+下面的节点得到3和4
+
+1541
+01:10:08,080 --> 01:10:09,550
+Best case scenario have a query shows up, 
+最好的情况是出现了一个查询
+
+1542
+01:10:09,560 --> 01:10:11,510
+and it says I want to get where id goes one. 
+它说我想要获取ID的位置
+
+1543
+01:10:12,040 --> 01:10:13,740
+I it goes to the share dis system. 
+它进入共享DIS系统
+
+1544
+01:10:14,050 --> 01:10:15,180
+And ii know where to route it. 
+我知道把它送到哪里
+
+1545
+01:10:15,510 --> 01:10:17,480
+I know that this thing, this note here,
+我知道这个东西
+
+1546
+01:10:17,490 --> 01:10:20,670
+it can produce the result. 
+这个音符在这里 它可以产生结果
+
+1547
+01:10:20,680 --> 01:10:21,810
+Same thing here, get three.
+同样的事情在这里 得到三
+
+1548
+01:10:21,820 --> 01:10:22,760
+You can move like this. 
+你可以像这样移动
+
+1549
+01:10:23,390 --> 01:10:25,990
+But if I have a query that wants to maybe do get three and two, 
+但是如果我有一个查询
+
+1550
+01:10:26,710 --> 01:10:30,750
+then I can make a decision whether to push the query fragment
+想要得到3和2
+
+1551
+01:10:30,760 --> 01:10:34,580
+up here and then get resolved back or copy the value down. 
+那么我可以决定是否将查询片段推到这里 然后解析回来 或者将值复制下来
+
+1552
+01:10:35,750 --> 01:10:39,360
+It depends on the implementation that push the query to the data, 
+这取决于将查询推送到数据的实现
+
+1553
+01:10:39,920 --> 01:10:40,380
+versus sorry, 
+而不是抱歉
+
+1554
+01:10:42,310 --> 01:10:42,750
+push the data, 
+推送数据
+
+1555
+01:10:42,760 --> 01:10:47,010
+the query versus push the query to the data versus pull the data to the query. 
+查询与将查询推送到数据与将数据拉入查询
+
+1556
+01:10:48,210 --> 01:10:56,460
+That design station that we talked about last class server in the front row. 
+我们在最后一节课上讨论的设计站是前排的服务器
+
+1557
+01:10:56,940 --> 01:10:59,520
+And they are in the front is dismissed where is moved. 
+而他们在前方是被遣散的 哪里是被感动的
+
+1558
+01:11:00,510 --> 01:11:03,150
+Because there's 3 and 21 can go to a one and a two. 
+因为3和21可以变成1和2
+
+1559
+01:11:03,800 --> 01:11:04,510
+This question is, 
+这个问题是
+
+1560
+01:11:05,520 --> 01:11:06,370
+but i'm not showing here. 
+但我不会出现在这里
+
+1561
+01:11:06,690 --> 01:11:08,490
+How does this thing know to go here? 
+这东西怎么知道去这里
+
+1562
+01:11:09,080 --> 01:11:11,820
+Yes, you would have some kind of middleware system in front of this.
+是的 你会在这前面有某种中间件系统
+
+1563
+01:11:11,830 --> 01:11:15,820
+I think snowflake calls it what they had some name. 
+我想雪花给它起了个名字
+
+1564
+01:11:16,070 --> 01:11:18,420
+But like there'll be something up here that you submit the query two, 
+但就像这里会有一些东西 你提交查询2
+
+1565
+01:11:18,430 --> 01:11:20,040
+and then it says it looks in the catalog. 
+然后它说它在目录中查找
+
+1566
+01:11:20,050 --> 01:11:22,350
+It says, I know where three and two is located.
+它说 我知道三和二在哪里
+
+1567
+01:11:22,650 --> 01:11:23,400
+I can make a decision. 
+我可以做决定
+
+1568
+01:11:23,410 --> 01:11:24,360
+Shouldn't I go here or not? 
+我到底该不该去这里
+
+1569
+01:11:25,320 --> 01:11:25,680
+Right? 
+对的
+
+1570
+01:11:30,400 --> 01:11:33,430
+So the statement is you could break the query in two parts, 
+因此 您可以将查询分为两部分
+
+1571
+01:11:33,890 --> 01:11:35,600
+then coalesce the results on that front end node. 
+然后在前端节点上合并结果
+
+1572
+01:11:36,920 --> 01:11:41,030
+Depends on whether that front end node is like a a just a router, 
+这取决于前端节点是否只是一个路由器
+
+1573
+01:11:41,390 --> 01:11:44,890
+or it actually is a worker in itself and can actually do some kind of computation. 
+或者它本身就是一个工作者 可以进行某种计算
+
+1574
+01:11:46,100 --> 01:11:48,500
+Again, for our purposes here, like it doesn't matter yet,
+再一次 为了我们在这里的目的 就像这已经不重要了
+
+1575
+01:11:51,190 --> 01:11:52,940
+which is sort of a physical partition again, 
+这又是一种物理分区
+
+1576
+01:11:52,950 --> 01:11:54,620
+because it's a shared nothing system. 
+因为它是一个无共享的系统
+
+1577
+01:11:54,910 --> 01:11:56,200
+It has its own local disk, 
+它有自己的本地磁盘
+
+1578
+01:11:56,210 --> 01:11:58,510
+and that's where it's charred or partitioned. 
+这就是它烧焦或分区的地方
+
+1579
+01:11:58,520 --> 01:11:59,350
+The data is stored. 
+数据被存储
+
+1580
+01:12:00,080 --> 01:12:01,300
+So when a query shows up, 
+因此 当查询出现时
+
+1581
+01:12:01,680 --> 01:12:03,400
+it knows how to route it accordingly. 
+它知道如何相应地路由它
+
+1582
+01:12:04,820 --> 01:12:06,700
+Again, is the idea of horizontal partitioning.
+再次 是水平分区的想法
+
+1583
+01:12:07,520 --> 01:12:09,900
+It not just applies for otv workloads. 
+它不仅适用于OTV工作负载
+
+1584
+01:12:10,370 --> 01:12:12,910
+We need it for overlap because and the day it's gonna be for the joins
+我们需要它来进行重叠 因为这一天将用于连接
+
+1585
+01:12:12,920 --> 01:12:14,790
+and making sure things are partitioned on the same joint key. 
+并确保在相同的连接键上进行分区
+
+1586
+01:12:17,040 --> 01:12:17,290
+All right? 
+好吧
+
+1587
+01:12:17,610 --> 01:12:18,180
+So to finish up, 
+所以最后
+
+1588
+01:12:19,310 --> 01:12:20,580
+as I said, multiple times,
+正如我多次说过的
+
+1589
+01:12:20,890 --> 01:12:22,780
+every modern ellipse system today, 
+今天的每一个现代椭圆系统
+
+1590
+01:12:23,260 --> 01:12:24,740
+that says there are column store. 
+都说有列存储
+
+1591
+01:12:25,570 --> 01:12:27,120
+They're not a comment store, they're out of business.
+他们不是评论商店 他们已经停业了
+
+1592
+01:12:27,130 --> 01:12:32,290
+I can't imagine anyone area that says that a column store is going to be
+我不能想象有哪个地区的人会说专栏商店将会使用包
+
+1593
+01:12:32,300 --> 01:12:33,010
+using packs. 
+
+
+1594
+01:12:34,370 --> 01:12:38,090
+The key idea about packs is that all the data has to be fixed lines. 
+关于包的关键思想是所有数据都必须是固定行
+
+1595
+01:12:38,100 --> 01:12:39,330
+The key idea in a column store, 
+列存储中的关键思想
+
+1596
+01:12:39,810 --> 01:12:40,630
+especially in impact as well, 
+尤其是在IMPACT中
+
+1597
+01:12:40,640 --> 01:12:43,050
+is that all the data that needs to be fixed length? 
+是所有需要固定长度的数据
+
+1598
+01:12:43,610 --> 01:12:44,500
+And it's not fixed length. 
+而且不是固定长度的
+
+1599
+01:12:44,510 --> 01:12:47,460
+We need to use some method to convert it into a fixed length value, 
+我们需要使用某种方法将其转换为固定长度值
+
+1600
+01:12:47,880 --> 01:12:49,320
+so that we can jump to offsets, 
+这样我们就可以跳转到偏移
+
+1601
+01:12:49,570 --> 01:12:51,720
+just doing simple arithmetic to identify two balls. 
+只需进行简单的算术运算即可识别两个球
+
+1602
+01:12:53,520 --> 01:12:55,590
+The most databases in the real world, 
+现实世界中的大多数数据库
+
+1603
+01:12:56,750 --> 01:12:59,560
+in terms of the number of percentage attributes that they have not the size
+就百分比属性的数量而言
+
+1604
+01:12:59,570 --> 01:13:00,220
+of the data, 
+它们不是数据的大小
+
+1605
+01:13:00,230 --> 01:13:01,100
+but the percentage attributes. 
+而是百分比属性
+
+1606
+01:13:01,510 --> 01:13:03,800
+Most of the time it's going to be integers or numeric values. 
+大多数情况下 它将是整数或数值
+
+1607
+01:13:05,310 --> 01:13:07,620
+Again, we did a survey that shows this is the case,
+同样 我们做了一项调查
+
+1608
+01:13:08,230 --> 01:13:12,290
+but most of the data itself is actually going to be bar charts and strings. 
+显示情况确实如此 但大多数数据本身实际上是条形图和字符串
+
+1609
+01:13:12,920 --> 01:13:13,750
+This makes sense, right?
+这是有道理的 对吧
+
+1610
+01:13:13,760 --> 01:13:15,110
+Like you have your zip code. 
+就像你有你的邮政编码一样
+
+1611
+01:13:15,120 --> 01:13:16,790
+That's a number that's pretty small. 
+这是一个相当小的数字
+
+1612
+01:13:17,370 --> 01:13:20,360
+But then like your name or email address a that's a string that's been much
+但就像你的名字或电子邮件地址一样
+
+1613
+01:13:20,370 --> 01:13:20,720
+larger. 
+这是一个更大的字符串
+
+1614
+01:13:22,070 --> 01:13:25,450
+This is why we have to use a lot of compression or rely on compression
+这就是为什么我们必须使用大量压缩或依赖压缩来获得此
+
+1615
+01:13:25,460 --> 01:13:26,370
+to get this size. 
+大小的原因
+
+1616
+01:13:26,380 --> 01:13:28,290
+The data is down and also convert everything to fixed length. 
+数据已关闭 并将所有内容转换为固定长度
+
+1617
+01:13:28,660 --> 01:13:29,410
+That's super important. 
+那是超级重要的
+
+1618
+01:13:31,170 --> 01:13:33,860
+Another thing that we're even going to talk about we'll talk
+另一件事 我们甚至要讨论我们将在下一节课上讨论的是
+
+1619
+01:13:33,870 --> 01:13:39,220
+about next class is that you guys are sort of spoiled in this modern era
+在这些列存储系统的现代时代
+
+1620
+01:13:39,230 --> 01:13:40,340
+of these column store systems, 
+你们有点被宠坏了
+
+1621
+01:13:40,350 --> 01:13:44,270
+because they're so fast now that you don't have to have
+因为它们现在非常快
+
+1622
+01:13:44,280 --> 01:13:46,190
+a database administrator spend a lot of time, 
+你不需要让数据库管理员花费很多时间
+
+1623
+01:13:46,490 --> 01:13:51,300
+spend any time really working on the actual scheme itself, indeed,
+花任何时间真正处理实际的模式本身
+
+1624
+01:13:51,310 --> 01:13:55,210
+normalizing tables to get it down to like a snowflake schema or star schema. 
+实际上 规范化表格以使其像雪花模式或星型模式一样
+
+1625
+01:13:56,000 --> 01:13:58,520
+You just take your bunch of parquet files. 
+你只要拿着你的一堆镶木地板文件
+
+1626
+01:13:59,020 --> 01:14:01,420
+You stick whatever system that can process them at it, 
+你坚持任何可以处理它们的系统
+
+1627
+01:14:01,680 --> 01:14:04,120
+and is going to rip through the column very quickly and produce results. 
+并将非常迅速地通过列并产生结果
+
+1628
+01:14:04,570 --> 01:14:06,090
+In the old days, like in the 90s,
+在过去的日子里
+
+1629
+01:14:06,100 --> 01:14:07,810
+you'd have to have our dva to sit down like, 
+比如在90年代
+
+1630
+01:14:08,140 --> 01:14:12,450
+let me try to convert things to fat tables and to produce a number of joins
+你必须有我们的dva才能坐下来 让我试着把东西转换成胖桌
+
+1631
+01:14:12,460 --> 01:14:14,050
+and get things down to be is these giant, 
+并产生一些连接 把东西放下来 就是这些巨大的
+
+1632
+01:14:14,060 --> 01:14:15,130
+super wide tables, 
+超宽的桌子
+
+1633
+01:14:15,680 --> 01:14:19,520
+so that the system was fast enough to or could handle your complex queries
+以便系统能够足够快地处理您对此的复杂查询
+
+1634
+01:14:19,530 --> 01:14:19,800
+on that. 
+
+
+1635
+01:14:20,890 --> 01:14:22,390
+So people still do it, 
+所以人们仍然在做
+
+1636
+01:14:22,400 --> 01:14:23,750
+db as can do these things. 
+DB AS可以做这些事情
+
+1637
+01:14:25,450 --> 01:14:27,130
+But a lot of people don't have db as at their companies. 
+但是很多人在他们的公司里没有DB
+
+1638
+01:14:27,140 --> 01:14:30,940
+They didn't have a bunch of files and they shove an oil lab engine at it. 
+他们没有一大堆文件 他们把一个石油实验室的引擎推到那里
+
+1639
+01:14:31,850 --> 01:14:34,570
+That's a pretty big change in how people in the last 10 years
+在过去的10年里
+
+1640
+01:14:34,580 --> 01:14:36,170
+about how people organize data warehouses, 
+人们组织数据仓库的方式发生了很大的变化
+
+1641
+01:14:39,160 --> 01:14:40,230
+you still have to do joints. 
+你还得做关节
+
+1642
+01:14:40,240 --> 01:14:40,430
+Right? 
+对的
+
+1643
+01:14:40,560 --> 01:14:41,230
+Yes. 
+是的
+
+1644
+01:14:42,090 --> 01:14:44,440
+Like why doesn't denormalization provide any certain advantage? 
+比如 为什么非规范化没有提供任何特定的优势
+
+1645
+01:14:44,450 --> 01:14:47,850
+Or it's just not as big an advantage as it was. 
+或者它只是没有以前那么大的优势
+
+1646
+01:14:48,770 --> 01:14:49,720
+The question is, 
+问题是
+
+1647
+01:14:52,820 --> 01:14:54,090
+if you have normalized tables, 
+如果您有规范化的表
+
+1648
+01:14:54,100 --> 01:14:56,250
+don't aren't you going to have the new joins? 
+难道您不会有新的连接吗
+
+1649
+01:14:56,540 --> 01:14:57,210
+The answer is yes, 
+答案是肯定的
+
+1650
+01:14:57,220 --> 01:15:03,960
+but the the performance of these systems gotten so fast that like joins are
+但是这些系统的性能变得如此之快
+
+1651
+01:15:03,970 --> 01:15:05,840
+the most expensive thing you're doing in the system, 
+以至于在大多数情况下
+
+1652
+01:15:05,850 --> 01:15:06,680
+most of the time. 
+连接是您在系统中所做的最昂贵的事情
+
+1653
+01:15:08,080 --> 01:15:11,450
+But like they're so fast that like it's not worth the effort, 
+但就像他们太快了 就像不值得努力一样
+
+1654
+01:15:14,040 --> 01:15:16,150
+you'll still be an advantage to it of the normalizing it. 
+你仍然是它正常化的一个优势
+
+1655
+01:15:16,650 --> 01:15:18,700
+But then there's other like soft calls or not soft calls. 
+但还有其他类似的软调用或不软调用
+
+1656
+01:15:18,710 --> 01:15:24,550
+So there's other engineering costs and the time to set it up. 
+所以还有其他的工程成本和安装时间
+
+1657
+01:15:24,560 --> 01:15:25,030
+But now also, 
+但现在
+
+1658
+01:15:25,040 --> 01:15:28,020
+do you have this dual elements data that like someone's going to understand
+你有没有这种双重元素数据
+
+1659
+01:15:28,030 --> 01:15:29,780
+what the hell they actually are versus like if you have the role
+就像有人会明白他们到底是什么
+
+1660
+01:15:29,790 --> 01:15:31,500
+of data files in a column or storage, 
+而不是像你在列或存储中有数据文件的角色
+
+1661
+01:15:32,400 --> 01:15:33,200
+you stuff that he joins in them. 
+你把他加入其中
+
+1662
+01:15:33,210 --> 01:15:35,680
+But like now, it's more easy for people to come along and say,
+但就像现在 人们更容易走过来说
+
+1663
+01:15:35,690 --> 01:15:36,800
+I know it's in this table. 
+我知道它在这张表里
+
+1664
+01:15:42,320 --> 01:15:42,940
+Now we're out of time, 
+现在我们没时间了
+
+1665
+01:15:44,870 --> 01:15:46,980
+next class, next Wednesday, we'll be here.
+下节课 下周三 我们会在这里
+
+1666
+01:15:46,990 --> 01:15:48,380
+If for real, I'm back in town.
+如果是真的 我会回来的
+
+1667
+01:15:49,040 --> 01:15:52,150
+We're going to spend time talking about how to accelerate the lab queries
+我们将花时间讨论如何加速实验室查询
+
+1668
+01:15:52,160 --> 01:15:54,220
+beyond just doing sequential scans. 
+而不仅仅是执行顺序扫描
+
+1669
+01:15:54,230 --> 01:15:56,420
+So i've been saying multiple times sequential scans are super fast. 
+所以我已经说过很多次了 连续扫描的速度非常快
+
+1670
+01:15:58,790 --> 01:16:02,460
+There are maybe ways to build auxiliary data structures to improve that performance. 
+也许有办法构建辅助数据结构来提高性能
+
+1671
+01:16:03,540 --> 01:16:06,860
+The spoiler is going to be that the the paper you're going to read
+剧透的是
+
+1672
+01:16:06,870 --> 01:16:09,060
+about sketches also talk about bit map indexes. 
+你将要读到的关于草图的论文也谈到了位图索引
+
+1673
+01:16:09,760 --> 01:16:12,600
+These can give you a big hit big win as far as I know nobody does it. 
+这些可以给你一个大的打击大的胜利 据我所知 没有人这样做
+
+1674
+01:16:13,440 --> 01:16:14,630
+No major system does. 
+没有一个主要系统可以做到
+
+1675
+01:16:15,300 --> 01:16:18,410
+It the most indexes you'll get will be inverted indexes that do
+你得到的最多的索引将是倒排索引
+
+1676
+01:16:18,420 --> 01:16:19,450
+fast like text search. 
+它像文本搜索一样快速
+
+1677
+01:16:21,190 --> 01:16:22,790
+And then zone maps will be the other thing that everyone
+然后区域地图将是每个人都做的另一件事
+
+1678
+01:16:22,800 --> 01:16:23,870
+does that's going to be a huge win. 
+这将是一个巨大的胜利
+
+1679
+01:16:25,190 --> 01:16:25,400
+Again, 
+同样
+
+1680
+01:16:25,410 --> 01:16:28,200
+it's an auxiliary data structure where it's a summation
+它是一个辅助数据结构
+
+1681
+01:16:28,210 --> 01:16:32,190
+of the table tables contents that you can use to do early pruning. 
+其中它是表内容的总和 您可以使用它来进行早期修剪
+
+1682
+01:16:34,010 --> 01:16:36,960
+That's the best you're really going to be able to do. 
+这是你能做的最好的事了
+
+1683
+01:16:37,560 --> 01:16:41,770
+Because the overhead of maintaining an index is probably just not worth it. 
+因为维护索引的开销可能是不值得的
+
+1684
+01:16:42,060 --> 01:16:44,850
+We also spend time talking about project one and why you can't do it in a rust. 
+我们还花时间讨论了项目一 以及为什么你不能在铁锈中做它
+
+1685
+01:16:47,260 --> 01:16:47,820
+According to she. 
+据她说
+
+1686
+01:16:48,630 --> 01:16:48,980
+Hi, guys.
+嗨 伙计们
+
+1687
+01:16:49,340 --> 01:16:49,640
+See you. 
+一会儿见
+
+1688
+01:16:49,980 --> 01:16:52,350
+That's my favorite. 
+那是我的最爱
+
+1689
+01:16:52,360 --> 01:16:52,910
+All right. 
+好吧
+
+1690
+01:16:55,660 --> 01:16:56,110
+What is it? 
+那是什么
+
+1691
+01:16:56,800 --> 01:17:02,430
+It's the SP cricket idesi make a mess unless I can do it
+这是板球比赛 我把它弄得一团糟 除非我能像以前那样做
+
+1692
+01:17:02,440 --> 01:17:04,770
+like ago ice cube with the
+冰块和茶一起吃
+
+1693
+01:17:04,780 --> 01:17:07,450
+tea to the eat to the tea comes Duke, 
+茶来了 杜克 我在没有屋顶的
+
+1694
+01:17:07,460 --> 01:17:09,330
+I play the game with no roof. 
+情况下玩这个游戏
+
+1695
+01:17:09,640 --> 01:17:11,910
+Home is on the custody, I'm a focus on drink fruit,
+回家就是监护 我一个人专注地喝水果
+
+1696
+01:17:11,920 --> 01:17:14,350
+put the bus a cap on the ice road, 
+把公车上的冰帽扣在路上
+
+1697
+01:17:14,360 --> 01:17:17,830
+bush week gonna go with a blow to the eyes come. 
+一周下来就会带着一拳打在眼睛上
+
+1698
+01:17:18,570 --> 01:17:23,440
+Indeed that's me rolling with 5th one stop fucking south central g
+的确 这是我与第五站他妈的南部中心g滚动
+
+1699
+01:17:23,450 --> 01:17:25,360
+and thank us when I party. 
+并感谢我们 当我聚会
+
+1700
+01:17:25,730 --> 01:17:30,360
+By the 12 pack case 746 pack 48 gets the real price. 
+由12包箱746包48得到真正的价格
+
+1701
+01:17:30,650 --> 01:17:33,560
+I drink fruit, but you are drinking about 12 hours.
+我喝水果 但你喝了大约12个小时
+
+1702
+01:17:33,570 --> 01:17:35,520
+They say bill makes you fat, 
+他们说比尔让你变胖
+
+1703
+01:17:35,530 --> 01:17:37,000
+but saying eyes is straight, 
+但他们说眼睛是直的
+
+1704
+01:17:37,010 --> 01:17:39,110
+so it really don't matter and so on. 
+所以这真的没关系等等
+
+1705
+01:17:39,120 --> 01:17:39,270
+And. 
+和
