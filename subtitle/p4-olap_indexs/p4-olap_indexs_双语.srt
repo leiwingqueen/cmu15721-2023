@@ -1,0 +1,8544 @@
+﻿1
+00:00:04,650 --> 00:00:08,080
+Hey, yo, yo pack the chrome stuff by like missus jones,
+嘿 哟 哟 把铬合金的东西打包
+
+2
+00:00:08,090 --> 00:00:09,200
+liverpool mathematics. 
+就像琼斯太太 利物浦数学
+
+3
+00:00:09,210 --> 00:00:10,720
+We have the devil spoken stone. 
+我们有魔鬼说话的石头
+
+4
+00:00:10,890 --> 00:00:12,560
+Up one heads, the bed make shots.
+抬起一个头 在床上投篮
+
+5
+00:00:12,570 --> 00:00:17,730
+But today we talk about a lot of accents which is sort of as I said, 
+但今天我们讨论了很多口音 正如我所说的
+
+6
+00:00:17,740 --> 00:00:22,690
+the spoiler is going to be that some of these a lot of techniques were described. 
+剧透将是其中一些技术的描述
+
+7
+00:00:22,700 --> 00:00:25,690
+The modern columnar databases aren't going to support us. 
+现代的柱状数据库不会支持我们
+
+8
+00:00:26,100 --> 00:00:31,730
+But we'll mostly see the pit map indexes will be mostly used in row store
+但是我们将主要看到pit映射索引将主要用于数据库系统中的行存储
+
+9
+00:00:31,740 --> 00:00:35,580
+in database systems that then would have sort of accelerated commoner
+然后将具有某种加速的通用访问
+
+10
+00:00:35,590 --> 00:00:35,940
+access. 
+
+
+11
+00:00:37,560 --> 00:00:39,950
+But let's go through a lot of different things. 
+但让我们来看看很多不同的事情
+
+12
+00:00:39,960 --> 00:00:43,140
+So where we left off, 
+所以在我们停止的地方
+
+13
+00:00:44,660 --> 00:00:50,220
+last class was we were discussing the pros and cons of the sort
+上一节课我们讨论了列存储与基于行
+
+14
+00:00:50,230 --> 00:00:52,930
+of the columnar storage versus row based storage. 
+的存储的优缺点
+
+15
+00:00:53,470 --> 00:00:57,360
+And I talked about how most modern overlap systems
+我谈到了大多数现代重叠系统将如何实现
+
+16
+00:00:57,370 --> 00:00:59,520
+are going to be implementing some variant of packs, 
+包的一些变体
+
+17
+00:01:00,320 --> 00:01:03,030
+because that's me better for doing sequential access potential scans. 
+因为我更适合进行顺序访问潜在扫描
+
+18
+00:01:04,020 --> 00:01:05,210
+On a large amounts of data. 
+在大量的数据上
+
+19
+00:01:05,670 --> 00:01:08,770
+There'll be a bunch of optimization that we can apply to make these run faster. 
+将有一堆的优化 我们可以应用 使这些运行更快
+
+20
+00:01:09,890 --> 00:01:11,100
+The keeping remember, 
+记住
+
+21
+00:01:11,110 --> 00:01:15,410
+two is also all the attributes in a columnar database must be fixed length. 
+第二个也是列数据库中的所有属性必须是固定长度的
+
+22
+00:01:15,830 --> 00:01:18,990
+Because the way we're going to do addressing is through offset arithmetic. 
+因为我们进行寻址的方式是通过偏移算法
+
+23
+00:01:19,690 --> 00:01:20,720
+We're scaling one column. 
+我们正在缩放一列
+
+24
+00:01:20,730 --> 00:01:25,110
+If we know what the 1/100 offset within that column, 
+如果我们知道那一列中的1/100偏移
+
+25
+00:01:25,410 --> 00:01:27,660
+we know how to do the simple math to jump to the hunter, 
+我们就知道如何做简单的数学计算来跳到猎人
+
+26
+00:01:28,200 --> 00:01:31,560
+offset at the other columns to go stitch two balls back together. 
+在其他列中偏移来将两个球重新缝合在一起
+
+27
+00:01:31,570 --> 00:01:36,600
+The other big thing there is that we're going to not always, 
+另一件重要的事情是 我们并不总是这样
+
+28
+00:01:36,610 --> 00:01:40,680
+but if we assume that or the data system assumes that the data files are immutable, 
+但如果我们假设或数据系统假设数据文件是不可变的
+
+29
+00:01:41,160 --> 00:01:42,950
+meaning to write once, read many,
+这意味着写入一次 读取多次
+
+30
+00:01:42,960 --> 00:01:45,830
+like I write it once and I never can go back and make inline updates to it, 
+就像我写一次 我永远不能返回并对其进行内联更新
+
+31
+00:01:46,340 --> 00:01:50,140
+is going to open up a bunch of different optimization that we'll see today, 
+将开启一系列不同的优化 我们今天将看到
+
+32
+00:01:50,660 --> 00:01:55,620
+where if we had to support incremental updates or delete or insertion, 
+如果我们必须支持增量更新或删除或插入
+
+33
+00:01:56,150 --> 00:01:59,620
+then some of these things just won't work or to be too expensive to maintain. 
+那么其中一些东西就不会工作 或者维护成本太高
+
+34
+00:02:00,180 --> 00:02:03,050
+This is another big optimization or assumption that the modern services
+这是现代服务正在做的另一个大的优化
+
+35
+00:02:03,060 --> 00:02:03,490
+are making. 
+或假设
+
+36
+00:02:06,510 --> 00:02:10,890
+So the first thing we sort of motivate what we're talking about today is
+所以我们今天讨论的第一件事是
+
+37
+00:02:10,900 --> 00:02:12,490
+when we talk about o lab indexes, 
+当我们讨论实验室索引时
+
+38
+00:02:12,980 --> 00:02:16,370
+we have to sort of get all the things we learned in introduction class. 
+我们必须得到我们在导论课上学到的所有东西
+
+39
+00:02:17,160 --> 00:02:18,280
+Spout indexes, 
+特别是b+
+
+40
+00:02:19,030 --> 00:02:20,890
+like, in particular, for b plus trees.
+树的喷口索引
+
+41
+00:02:20,900 --> 00:02:22,280
+Or if you remember, 
+或者如果你还记得
+
+42
+00:02:22,290 --> 00:02:26,450
+radix trees are tries these tree based data structures, even hash tables,
+基数树是尝试这些基于树的数据结构
+
+43
+00:02:27,200 --> 00:02:30,090
+because in the old tv world, 
+甚至是哈希表 因为在旧的电视世界里
+
+44
+00:02:30,100 --> 00:02:32,290
+which is what their inter class sort of focuses on without
+这是他们的类间关注的东西
+
+45
+00:02:32,300 --> 00:02:33,290
+explicitly saying it. 
+而不是明确地说出来
+
+46
+00:02:35,090 --> 00:02:38,480
+These indexes are designed for doing finding individual tubles
+这些索引设计用于查找单个元组
+
+47
+00:02:38,490 --> 00:02:39,680
+or small number of tubles. 
+或少量元组
+
+48
+00:02:40,240 --> 00:02:42,310
+With very selective predicates, 
+有了非常有选择性的谓词
+
+49
+00:02:42,320 --> 00:02:46,140
+I go get andy's account or go get andy's orders, 
+我去拿安迪的账户或者去拿安迪的订单
+
+50
+00:02:46,770 --> 00:02:47,140
+right? 
+对吗
+
+51
+00:02:47,800 --> 00:02:52,040
+And in the otp world also as well, 
+在OTP世界中
+
+52
+00:02:52,390 --> 00:02:54,440
+we're not going to assume that the files are immutable. 
+我们也不会假设文件是不可变的
+
+53
+00:02:55,450 --> 00:02:57,360
+Therefore, these index data structures,
+因此 在这些索引数据结构中
+
+54
+00:02:57,370 --> 00:03:05,270
+the b plus trees going to have to store some extra room
+b+树必须在其节点中存储一些额外的空间
+
+55
+00:03:05,280 --> 00:03:08,690
+in their nodes to accommodate updates later on. 
+以适应以后的更新
+
+56
+00:03:09,400 --> 00:03:10,110
+In the leaf nodes. 
+在叶节点中
+
+57
+00:03:10,120 --> 00:03:13,520
+On average, the leaf nodes are actually any node in b plus tree.
+平均而言 叶节点实际上是B加树中的任何节点
+
+58
+00:03:13,990 --> 00:03:15,300
+In a real world database system. 
+在现实世界的数据库系统中
+
+59
+00:03:15,310 --> 00:03:17,020
+On average, it's about 70% full.
+平均而言 它大约有70%的满度
+
+60
+00:03:18,170 --> 00:03:18,250
+Right? 
+对的
+
+61
+00:03:18,260 --> 00:03:20,010
+So that extra 30% is weighted space, 
+因此 额外的30%是加权空间
+
+62
+00:03:20,020 --> 00:03:22,810
+because they want to be able to amortize the cost of someone inserting
+因为他们希望能够分摊插入新数据的成本
+
+63
+00:03:23,310 --> 00:03:28,070
+new data and not have to do a split for every single operation. 
+而不必对每个操作进行拆分
+
+64
+00:03:28,410 --> 00:03:28,710
+Right? 
+对的
+
+65
+00:03:30,380 --> 00:03:34,040
+In the ola world, we we don't need to support increment updates again,
+在ola世界中 我们不需要再次支持增量更新
+
+66
+00:03:34,050 --> 00:03:35,580
+assuming that our files are read only. 
+假设我们的文件是只读的
+
+67
+00:03:36,210 --> 00:03:39,740
+And we typically don't need to find individual tubals, 
+我们通常不需要找到单独的tubal
+
+68
+00:03:39,750 --> 00:03:42,920
+at least the lower points of the query plant, 
+至少不需要找到查询设备的较低点
+
+69
+00:03:42,930 --> 00:03:45,040
+the access methods on the tables themselves. 
+也不需要查找表本身的访问方法
+
+70
+00:03:45,490 --> 00:03:46,440
+When we do joins, 
+当我们连接时
+
+71
+00:03:46,570 --> 00:03:48,880
+we have to find individual two poles or values that match. 
+我们必须找到匹配的两个极点或值
+
+72
+00:03:49,400 --> 00:03:50,950
+But if you're just doing scans, 
+但如果你只是做扫描
+
+73
+00:03:51,640 --> 00:03:53,430
+you're not going to look at andy's record. 
+你就不会去看安迪的记录
+
+74
+00:03:54,020 --> 00:03:55,340
+Or in these orders, 
+或者在这些订单中
+
+75
+00:03:55,350 --> 00:03:58,600
+you're going to look at all the orders from some demographic, 
+你会看到来自一些人口统计的所有订单
+
+76
+00:03:58,610 --> 00:03:59,280
+like some people, 
+比如一些人
+
+77
+00:03:59,290 --> 00:04:00,600
+like everybody lives in pittsburgh. 
+比如每个人都住在匹兹堡
+
+78
+00:04:03,520 --> 00:04:06,030
+The data structure that we would use to make otp workloads run
+我们用来使otp工作负载运行得
+
+79
+00:04:06,040 --> 00:04:08,600
+really fast are not going to be what we want to use
+非常快的数据结构并不是我们
+
+80
+00:04:08,610 --> 00:04:11,290
+for for analytical queries. 
+想要用于分析查询的数据结构
+
+81
+00:04:12,590 --> 00:04:18,300
+So the question is, what can we actually do to speed up spectral scans?
+所以问题是 我们实际上能做什么来加速光谱扫描
+
+82
+00:04:20,950 --> 00:04:21,690
+You have to do clicker. 
+你必须做响片
+
+83
+00:04:23,830 --> 00:04:24,110
+Right? 
+对的
+
+84
+00:04:25,600 --> 00:04:27,190
+Here's a big list of optimization of things you can do. 
+这里有一个你可以做的事情的优化清单
+
+85
+00:04:27,710 --> 00:04:29,230
+Some of these things were to cover the semester, 
+有些东西是要覆盖整个学期的
+
+86
+00:04:29,240 --> 00:04:30,250
+some of the things we won't. 
+有些东西我们不会
+
+87
+00:04:31,260 --> 00:04:34,430
+So the first thing you do is obviously data prefetching, right?
+所以你做的第一件事显然是数据预取 对吗
+
+88
+00:04:34,440 --> 00:04:37,390
+Instead of stalling, every single time i've got to go get new data.
+而不是拖延 每一次我都要去获取新的数据
+
+89
+00:04:37,710 --> 00:04:39,130
+If I know i'm going to squash squat, 
+如果我知道我会被压扁
+
+90
+00:04:39,140 --> 00:04:42,000
+you scan a bunch of files or a bunch of pages that are contagious. 
+你就会扫描一堆文件或一堆具有传染性的页面
+
+91
+00:04:42,460 --> 00:04:44,100
+Let me go ahead and why i'm scanning one, 
+让我继续 为什么我要扫描一个
+
+92
+00:04:44,110 --> 00:04:47,230
+start bringing in the next one off a disk into memory. 
+开始把下一个从磁盘带到内存中
+
+93
+00:04:48,390 --> 00:04:48,920
+Then I can, 
+那我可以
+
+94
+00:04:49,960 --> 00:04:50,910
+as i'm running my query, 
+当我运行查询时
+
+95
+00:04:51,260 --> 00:04:55,090
+instead of having just one thread be responsible for scanning terabyte of data, 
+我可以让多个线程来完成这项工作
+
+96
+00:04:55,370 --> 00:04:56,690
+I could have multiple threads do this. 
+而不是只让一个线程负责扫描TB级的数据
+
+97
+00:04:58,730 --> 00:04:59,800
+Run the task in parallel. 
+并行运行任务
+
+98
+00:05:00,730 --> 00:05:01,970
+I'll get some advantages also, too.
+我也会得到一些好处
+
+99
+00:05:01,980 --> 00:05:04,050
+If I can pre sort or cluster the data ahead of time, 
+如果我可以提前对数据进行预先排序或聚类
+
+100
+00:05:04,060 --> 00:05:07,320
+because now I know that if i'm looking for things in a certain range, 
+因为现在我知道
+
+101
+00:05:07,600 --> 00:05:12,460
+that once I get past a a certain set of values, 
+如果我在某个范围内寻找东西 一旦我通过了一组特定的值
+
+102
+00:05:12,470 --> 00:05:15,540
+I know that the thing i'm looking for is less than that, 
+我就知道我要寻找的东西小于这个值
+
+103
+00:05:15,550 --> 00:05:16,780
+what the value is looking at right now. 
+即现在正在查看的值
+
+104
+00:05:16,790 --> 00:05:18,380
+I know I don't need to look at anything else. 
+我知道我不需要看别的东西
+
+105
+00:05:19,840 --> 00:05:20,520
+Late materialization. 
+晚期物化
+
+106
+00:05:20,530 --> 00:05:23,080
+We talked about last class where and we'll talk about more of this later
+我们上节课讲过
+
+107
+00:05:23,090 --> 00:05:23,640
+in the semester, 
+这学期晚些时候我们会讲更多
+
+108
+00:05:24,030 --> 00:05:26,020
+where if I have a column stored, 
+如果我存储了一列
+
+109
+00:05:26,620 --> 00:05:28,900
+instead of having to pass around the entire triple from one upper to the next, 
+我们不需要把整个三元组从一个上界传递到下一个上界
+
+110
+00:05:29,570 --> 00:05:30,720
+we just pass around the offsets, 
+我们只需要传递偏移量
+
+111
+00:05:31,350 --> 00:05:34,810
+or just the columns of that I needed at that point of the operator. 
+或者只是我在操作符的那个点上需要的列
+
+112
+00:05:36,020 --> 00:05:40,520
+I'm copying moving list data around materialize views, as I said,
+我在物化视图中复制移动列表数据
+
+113
+00:05:40,730 --> 00:05:43,100
+we're not going to discuss in this class, 
+正如我所说的 我们不打算在这门课上讨论
+
+114
+00:05:43,560 --> 00:05:46,060
+but it's sort of a variation of result. 
+但这是结果的一种变化
+
+115
+00:05:46,070 --> 00:05:46,860
+Caching is really simple. 
+缓存非常简单
+
+116
+00:05:46,870 --> 00:05:48,680
+Like, if I have the exact same query,
+比如 如果我有完全相同的查询
+
+117
+00:05:48,980 --> 00:05:50,510
+like select star from table foo, 
+比如select star from table foo
+
+118
+00:05:50,520 --> 00:05:51,670
+where id equals four, 
+其中id等于4
+
+119
+00:05:52,000 --> 00:05:53,500
+I can take that result and cache it. 
+我可以获取该结果并缓存它
+
+120
+00:05:53,750 --> 00:05:55,750
+And if the exact same query shows up, I can reuse it.
+如果出现完全相同的查询 我可以重用它
+
+121
+00:05:56,370 --> 00:06:00,370
+Materialize use are way more sophisticated because it's taking
+物化使用更加复杂
+
+122
+00:06:00,380 --> 00:06:02,010
+a more complex query, 
+因为它采用更复杂的查询
+
+123
+00:06:02,350 --> 00:06:06,550
+be breaking it down into to smaller parts. 
+将其分解为更小的部分
+
+124
+00:06:08,100 --> 00:06:11,720
+And then, as I make change to the database,
+然后 当我对数据库进行更改时 理想情况下
+
+125
+00:06:11,730 --> 00:06:14,000
+I can incrementally update materialize view without having to rerun
+我可以增量更新物化视图
+
+126
+00:06:14,010 --> 00:06:14,640
+the entire query, 
+而不必重新运行整个
+
+127
+00:06:14,650 --> 00:06:15,200
+ideally. 
+查询
+
+128
+00:06:15,720 --> 00:06:19,230
+But it's essentially a a it's a variation of result caching. 
+但它本质上是结果缓存的一种变体
+
+129
+00:06:19,240 --> 00:06:20,030
+The idea is the same. 
+想法是一样的
+
+130
+00:06:21,670 --> 00:06:24,550
+Data skipping is being able to figure out what data we actually don't
+数据跳过是指能够找出我们实际上甚至不需要提前读取的数据
+
+131
+00:06:24,560 --> 00:06:29,360
+even need to read ahead of time and just avoid having to do scans on that. 
+并避免对其进行扫描
+
+132
+00:06:30,940 --> 00:06:35,520
+Data parallelization is where we can use vector rising instructions, 
+数据并行化是指我们可以使用向量上升指令
+
+133
+00:06:35,530 --> 00:06:40,130
+or like cindy to be able to apply different operations or do
+或者像cindy一样 能够在我们的顺序扫描
+
+134
+00:06:40,140 --> 00:06:43,300
+different steps in our sequential scan in
+中同时对多个数据并行应用
+
+135
+00:06:43,310 --> 00:06:46,910
+parallel on a multiple pieces of data at the same time. 
+不同的操作或执行不同的步骤
+
+136
+00:06:48,070 --> 00:06:50,710
+And then code specialization or query compilation, 
+然后代码专门化或查询编译 即时编译
+
+137
+00:06:50,720 --> 00:06:51,670
+just in time compilation, 
+是生成机器代码
+
+138
+00:06:52,090 --> 00:06:56,310
+is to generate machine code that does exactly what our scan is going to do, 
+它完全执行我们的扫描要执行的操作
+
+139
+00:06:56,320 --> 00:06:57,990
+or what our query is going to do. 
+或者我们的查询要执行的操作
+
+140
+00:06:58,500 --> 00:07:00,540
+Instead of how to use an interpreted system. 
+而不是如何使用解释系统
+
+141
+00:07:01,780 --> 00:07:02,950
+There's a lot of things here. 
+这里有很多东西
+
+142
+00:07:03,470 --> 00:07:06,490
+In this semester, we're going to cover these here.
+在这学期 我们将在这里讨论这些
+
+143
+00:07:06,830 --> 00:07:06,970
+Right? 
+对的
+
+144
+00:07:06,980 --> 00:07:08,210
+What is materialized views? 
+什么是物化视图
+
+145
+00:07:08,660 --> 00:07:11,140
+We've already discussed pre fetching an intro class, 
+我们已经讨论了预取一个介绍类
+
+146
+00:07:11,570 --> 00:07:12,590
+clustering sorting. 
+聚类排序
+
+147
+00:07:12,890 --> 00:07:14,810
+It'll come up throughout the semester, but not going to say,
+它会在整个学期中出现
+
+148
+00:07:15,440 --> 00:07:20,580
+I can teach you how to sort data we just use whenever the fastest one is
+但不会说 我可以教你如何排序数据 我们只是在最快的时候使用
+
+149
+00:07:20,890 --> 00:07:21,270
+this time. 
+
+
+150
+00:07:22,970 --> 00:07:24,930
+Again, a bunch of these things would have covered throughout the semester,
+同样 这些内容在整个学期中都会涉及到
+
+151
+00:07:25,520 --> 00:07:27,840
+but today's class we're going to focus on data skipping. 
+但今天的课程我们将重点关注数据跳过
+
+152
+00:07:28,370 --> 00:07:29,280
+You can think of like, again,
+你可以这样想
+
+153
+00:07:29,290 --> 00:07:32,520
+all of these are things you can do to accelerate query execution. 
+同样 所有这些都是你可以做的事情来加速查询执行
+
+154
+00:07:33,660 --> 00:07:36,450
+So what we're still kind of focusing on the lower bounds of the system
+因此 我们仍然关注系统的下限
+
+155
+00:07:36,460 --> 00:07:37,210
+like the storage layer. 
+如存储层
+
+156
+00:07:37,220 --> 00:07:39,370
+So that's why we're just going to focus on this for now. 
+所以这就是为什么我们现在只关注这一点
+
+157
+00:07:41,760 --> 00:07:44,060
+At a high level, there's two things you can do to skip data.
+在高层次上 您可以做两件事来跳过数据
+
+158
+00:07:45,700 --> 00:07:48,240
+You can do a lossy approach or a lossless approach. 
+你可以采用有损方法 也可以采用无损方法
+
+159
+00:07:49,150 --> 00:07:51,220
+A loss approach would be approximate queries. 
+损失方法是近似查询
+
+160
+00:07:52,460 --> 00:07:54,010
+The way to think about this is say, 
+思考这个问题的方法是
+
+161
+00:07:54,020 --> 00:07:57,940
+i'm doing an analytical query like select count star on the number
+我正在做一个分析查询
+
+162
+00:07:57,950 --> 00:08:02,880
+of website visitors in most systems that doesn't do they don't do
+比如在大多数系统中对网站访问者的数量进行SELECT COUNT STAR
+
+163
+00:08:02,890 --> 00:08:03,720
+approximate queries. 
+他们不做近似查询
+
+164
+00:08:03,990 --> 00:08:05,070
+You would get an exact answer, 
+你会得到一个确切的答案
+
+165
+00:08:05,080 --> 00:08:09,060
+would look at every single web visit and count all the entries. 
+会查看每一个网站的访问 并计算所有的条目
+
+166
+00:08:10,470 --> 00:08:11,950
+But in many cases, 
+但在许多情况下
+
+167
+00:08:11,960 --> 00:08:13,190
+in many application domains, 
+在许多应用领域中
+
+168
+00:08:13,200 --> 00:08:14,950
+you don't actually need the exact answer. 
+您实际上并不需要确切的答案
+
+169
+00:08:15,750 --> 00:08:15,760
+Right? 
+对的
+
+170
+00:08:15,770 --> 00:08:18,790
+Do I really care that I need to know the exact number of visitors
+我真的在乎我需要知道我的网站的确切访问者数量
+
+171
+00:08:18,800 --> 00:08:22,920
+to my website to the exact person like999,000, 
+比如999
+
+172
+00:08:22,930 --> 00:08:23,400
+whatever, 
+000人
+
+173
+00:08:23,700 --> 00:08:25,810
+or can I get something that's close enough? 
+或者我能得到足够接近的东西吗
+
+174
+00:08:26,430 --> 00:08:28,150
+And that's enough for my application. 
+这对我的申请来说已经足够了
+
+175
+00:08:29,880 --> 00:08:32,150
+This technique again is called approximate queries. 
+这种技术也称为近似查询
+
+176
+00:08:33,960 --> 00:08:37,840
+There are systems designed explicitly for doing nothing
+有一些系统被明确地设计为对其上的近似
+
+177
+00:08:37,850 --> 00:08:39,280
+about approximate queries on top of it
+查询不做任何事情
+
+178
+00:08:39,290 --> 00:08:41,480
+like a non approximate query database. 
+比如非近似查询数据库
+
+179
+00:08:41,490 --> 00:08:46,890
+It was a project out of university of michigan called verdict db they
+这是密歇根大学的一个项目 叫做verdict db
+
+180
+00:08:47,180 --> 00:08:48,170
+with bars on safari. 
+他们在safari上有酒吧
+
+181
+00:08:48,180 --> 00:08:51,680
+He spun that off as a startup called kibo that basically sits in front
+他成立了一家名为kibo的初创公司
+
+182
+00:08:51,690 --> 00:08:53,760
+of snowflake and does approximate queries in front of snowflake, 
+基本上是坐在雪花前面
+
+183
+00:08:53,770 --> 00:08:57,760
+even though snowflake is not in its basic form, 
+在雪花前面进行近似查询 尽管雪花并不是它的基本形式
+
+184
+00:08:57,770 --> 00:08:59,000
+an approximate query system. 
+一个近似查询系统
+
+185
+00:08:59,470 --> 00:09:01,530
+But a bunch of these other systems blink. 
+但是很多其他的系统都会闪烁
+
+186
+00:09:01,540 --> 00:09:02,690
+Tv is a project kind of, 
+电视是一种项目
+
+187
+00:09:04,360 --> 00:09:06,710
+I was a research project out of berkeley and sort of did the same thing. 
+我是伯克利的一个研究项目 也做了同样的事情
+
+188
+00:09:06,720 --> 00:09:09,450
+But these other systems here are like no flight bit query. 
+但这里的其他系统就像没有飞行比特查询一样
+
+189
+00:09:09,670 --> 00:09:12,480
+They have approximate query aggregates. 
+它们具有近似的查询聚合
+
+190
+00:09:12,490 --> 00:09:16,060
+So you can call there's count star if there's the count thing that gives
+所以你可以称它为计数星
+
+191
+00:09:16,070 --> 00:09:17,020
+you the exact answer, 
+如果有计数的东西给你确切的答案
+
+192
+00:09:17,310 --> 00:09:18,540
+there's also an approximate count. 
+也有一个近似的计数
+
+193
+00:09:19,470 --> 00:09:22,070
+And it's basically using sampling and a way to give you
+它基本上是使用采样和一种方法来给你
+
+194
+00:09:23,300 --> 00:09:25,970
+some statistically bounded guarantee of the acts of the answer. 
+答案行为的一些统计上有界的保证
+
+195
+00:09:27,110 --> 00:09:28,500
+With proximal queries, you basically say,
+对于最近的查询
+
+196
+00:09:28,830 --> 00:09:31,700
+i'm all going to say i'm going to be a fraction of the data that
+你基本上会说
+
+197
+00:09:31,710 --> 00:09:32,500
+I regularly have. 
+我都会说我将是我经常拥有的数据的一小部分
+
+198
+00:09:34,630 --> 00:09:38,160
+The other approach to do a lossless pruning or sorry, 
+另一种方法是进行无损修剪
+
+199
+00:09:38,210 --> 00:09:39,840
+data skipping is to do data pruning, 
+或者对不起 数据跳过 是进行数据修剪
+
+200
+00:09:40,310 --> 00:09:43,430
+where we're going to rely on some auxiliary data structure
+我们将依赖于一些辅助数据结构
+
+201
+00:09:43,800 --> 00:09:46,380
+that's been pre built on our data, 
+这些结构是在我们的数据上预先构建的
+
+202
+00:09:46,890 --> 00:09:48,640
+or be maintained by the database system. 
+或者由数据库系统维护
+
+203
+00:09:48,930 --> 00:09:51,840
+That's going to allow it to identify portions of the database, 
+这将允许它识别数据库的部分
+
+204
+00:09:51,850 --> 00:09:56,390
+the portions of the data files for a table that's needed in a scan that it doesn't. 
+即扫描中需要的表的数据文件部分 而它不需要
+
+205
+00:09:56,680 --> 00:09:57,390
+Does it need to read? 
+它需要阅读吗
+
+206
+00:09:58,840 --> 00:10:00,830
+Again, ab plus tree is basically this, right?
+同样 AB加树基本上是这样的 对吗
+
+207
+00:10:00,840 --> 00:10:01,870
+B plus tree says, 
+B加树表示
+
+208
+00:10:02,280 --> 00:10:06,040
+I can, if i'm looking up some value on a predicate, and I have an index,
+如果我在一个谓词上查找某个值
+
+209
+00:10:06,050 --> 00:10:07,440
+b bus tree on that predicate, 
+并且我在该谓词上有一个索引
+
+210
+00:10:07,450 --> 00:10:09,030
+I can get down to the leaf node. 
+那么我可以找到叶节点
+
+211
+00:10:09,410 --> 00:10:11,290
+Find anything i'm looking for without having to scan the entire table. 
+找到我要找的任何东西 而不必扫描整个表
+
+212
+00:10:12,160 --> 00:10:13,100
+It's basically the same idea, 
+这基本上是相同的想法
+
+213
+00:10:13,110 --> 00:10:16,990
+but we're going to see a bunch of different ways that we can do in this class. 
+但我们将在这门课上看到一系列不同的方法
+
+214
+00:10:19,490 --> 00:10:21,510
+One of the tradeoffs we have to consider as we go along, 
+我们必须考虑的权衡之一是这个辅助数据结构的范围
+
+215
+00:10:21,520 --> 00:10:25,770
+and you'll see this multiple times is the scope of this auxiliary data structure. 
+您将多次看到这一点
+
+216
+00:10:25,780 --> 00:10:25,970
+Like, 
+比如
+
+217
+00:10:26,620 --> 00:10:27,410
+what is the purview? 
+权限是什么
+
+218
+00:10:27,420 --> 00:10:32,350
+How much data is it as actually covering in its it's the metadata. 
+它实际上涵盖了多少数据 它是元数据
+
+219
+00:10:32,360 --> 00:10:34,170
+It's generated for this auxiliary data structure
+它是为这个辅助数据结构生成的
+
+220
+00:10:34,590 --> 00:10:38,190
+versus how selective the kind of filter it could be. 
+而不是它可以选择的过滤器类型
+
+221
+00:10:39,020 --> 00:10:39,500
+Like think of this. 
+就像想想这个
+
+222
+00:10:39,510 --> 00:10:45,480
+Like I if I have a always taken extremes of databases, 
+就像我一样 如果我总是采取极端的数据库
+
+223
+00:10:45,490 --> 00:10:47,980
+systems are always going to think about the scope of the problem. 
+系统总是会考虑问题的范围
+
+224
+00:10:47,990 --> 00:10:50,170
+Like on one extreme, 
+就像在一个极端
+
+225
+00:10:50,180 --> 00:10:55,820
+for the scope of one of these printing data structures would be the entire table. 
+这些打印数据结构之一的范围将是整个表
+
+226
+00:10:56,460 --> 00:10:57,650
+I have 1 billion rows, 
+我有10亿行
+
+227
+00:10:57,660 --> 00:11:02,350
+and maybe I keep the min and max value for for in a column, 
+也许我把的最小值和最大值放在列中
+
+228
+00:11:02,360 --> 00:11:03,110
+in 1 billion rows. 
+放在10亿行中
+
+229
+00:11:03,120 --> 00:11:04,990
+That's not going to help me skip any data, 
+这不会帮助我跳过任何数据
+
+230
+00:11:05,000 --> 00:11:08,030
+because the min and max is basically the entire domain of the column. 
+因为最小值和最大值基本上是列的整个域
+
+231
+00:11:08,810 --> 00:11:11,130
+Or I could have an isolated data structure on every single two pole. 
+或者我可以在每两个极点上都有一个独立的数据结构
+
+232
+00:11:11,910 --> 00:11:12,960
+And that's useless, too, right?
+那也没用 对吧
+
+233
+00:11:13,170 --> 00:11:13,840
+That's the other extreme. 
+这是另一个极端
+
+234
+00:11:13,850 --> 00:11:16,800
+So we want something in the middle where it's going to be
+所以我们想要中间的东西 它将足够大
+
+235
+00:11:17,180 --> 00:11:19,780
+large enough that it's going to allow us to throw a lot of data away. 
+它将允许我们丢弃大量的数据
+
+236
+00:11:20,220 --> 00:11:20,780
+But, 
+但是
+
+237
+00:11:22,920 --> 00:11:23,940
+sorry, small enough that's going out.
+对不起 够小了 那就出去了
+
+238
+00:11:23,950 --> 00:11:24,820
+So throw a lot of data away, 
+所以要扔掉很多数据 但不能太大
+
+239
+00:11:24,830 --> 00:11:30,040
+but not too large where but I said large enough that we throw a lot of data, 
+但我说的是足够大 我们要扔掉很多数据
+
+240
+00:11:30,050 --> 00:11:30,920
+but it's not too small. 
+但不能太小
+
+241
+00:11:30,930 --> 00:11:33,160
+We're spending all the time looking in this auxiliary data structure. 
+我们把所有的时间都花在这个辅助数据结构上
+
+242
+00:11:36,220 --> 00:11:38,460
+Then the other issue is it going to be manual automatic? 
+那么另一个问题是它将是手动的还是自动的
+
+243
+00:11:38,970 --> 00:11:41,480
+For most of the approaches, we'll see where zone maps.
+对于大多数方法 我们将看到区域映射的位置
+
+244
+00:11:41,490 --> 00:11:42,880
+In particular, these are going to be automatic.
+特别是 这些将是自动的
+
+245
+00:11:42,890 --> 00:11:43,880
+The decent just does it. 
+体面的人就是这么做的
+
+246
+00:11:44,370 --> 00:11:46,570
+For the bit map indexes, these are things you have to define.
+对于位图索引 这些是您必须定义的内容
+
+247
+00:11:47,130 --> 00:11:50,940
+And you have to know like in some cases you have to define what the ranges are. 
+你必须知道 在某些情况下 你必须定义范围
+
+248
+00:11:53,340 --> 00:11:55,080
+This class we're only focusing on this. 
+这门课我们只关注这个
+
+249
+00:11:55,380 --> 00:11:58,610
+We won't discuss approximate queries for the rest of the semester. 
+在本学期剩下的时间里 我们不会讨论近似查询
+
+250
+00:12:00,750 --> 00:12:04,070
+This how to say this requires, again,
+如何说呢
+
+251
+00:12:04,080 --> 00:12:08,500
+outside knowledge of the external information about whether the application
+这需要外部信息的外部知识
+
+252
+00:12:08,510 --> 00:12:09,820
+is ok with approximate answers, 
+关于应用程序是否可以得到近似的答案
+
+253
+00:12:10,070 --> 00:12:11,610
+that the data system can't figure out for you. 
+数据系统无法为您计算出来
+
+254
+00:12:12,230 --> 00:12:13,990
+Like, it doesn't know when you're ok,
+比如 它不知道你什么时候没问题
+
+255
+00:12:14,360 --> 00:12:17,790
+a with aa rounding error in your bank account, you're probably not,
+你的银行账户里有一个舍入误差 你可能不知道
+
+256
+00:12:18,090 --> 00:12:21,040
+but doesn't know that you have to be told I want to run approximate queries. 
+但它不知道你必须被告知我想运行近似查询
+
+257
+00:12:21,360 --> 00:12:22,190
+So we can order that for now. 
+所以我们现在可以订购了
+
+258
+00:12:23,890 --> 00:12:26,410
+The considerations we have to have for anything anytime we're doing
+任何时候我们在进行数据修剪或使用辅助
+
+259
+00:12:26,420 --> 00:12:28,930
+data pruning or using auxiliary data structures. 
+数据结构时都必须考虑的事项
+
+260
+00:12:29,750 --> 00:12:32,210
+It's going to be how selective we want or how selective these predators
+这将是我们想要的选择性
+
+261
+00:12:32,220 --> 00:12:32,970
+are going to be. 
+或者这些捕食者的选择性
+
+262
+00:12:33,390 --> 00:12:38,550
+Like if if there's a column that's a bullying value, 
+就像如果有一列是欺凌值
+
+263
+00:12:38,890 --> 00:12:40,910
+and it's every 1 billion two balls, 
+并且它是每10亿个两个球
+
+264
+00:12:40,920 --> 00:12:42,310
+this column is true. 
+这个列是真的
+
+265
+00:12:42,740 --> 00:12:44,500
+We don't want to build an index on that because it's useless, 
+我们不想在此基础上建立索引
+
+266
+00:12:44,510 --> 00:12:46,030
+because not just let's scan a rip through it. 
+因为它是无用的 因为不仅仅是让我们扫描它
+
+267
+00:12:48,150 --> 00:12:49,900
+How selective the queries are going to panel, 
+查询将如何选择面板
+
+268
+00:12:51,090 --> 00:12:53,830
+how effective these are, 
+这些有多有效
+
+269
+00:12:53,840 --> 00:12:55,230
+julia data structures are going to be. 
+Julia数据结构将会
+
+270
+00:12:55,780 --> 00:12:57,900
+We also have to consider the case of how skew the data is. 
+我们还必须考虑数据有多偏斜的情况
+
+271
+00:12:57,910 --> 00:12:58,140
+Again, 
+同样
+
+272
+00:12:58,150 --> 00:13:03,120
+my extreme example where everything is set to true on 1 billion rows. 
+在我的极端示例中 10亿行上的所有内容都设置为true
+
+273
+00:13:03,710 --> 00:13:05,140
+If I build ab plus tree on that, 
+如果我在那上面建立ab+树
+
+274
+00:13:05,530 --> 00:13:06,620
+or a bit map index on that, 
+或者在那上面建立一个位图索引 它是无用的
+
+275
+00:13:07,510 --> 00:13:10,860
+it's useless because I get to leaf in the b plus tree. 
+因为我得到了b+树中的叶子
+
+276
+00:13:11,160 --> 00:13:14,070
+Then there's a giant linked list or giant list of all the other triples. 
+然后是一个巨大的链表或所有其他三元组的巨大列表
+
+277
+00:13:14,910 --> 00:13:15,100
+Right? 
+对的
+
+278
+00:13:16,100 --> 00:13:17,950
+There's a trade off here that we have to be considered. 
+这里有一个我们必须考虑的权衡
+
+279
+00:13:18,470 --> 00:13:21,390
+Then again, we won't discuss this too much,
+话又说回来 我们不会过多地讨论这个问题
+
+280
+00:13:21,400 --> 00:13:22,950
+but if the data is already pre sorted, 
+但如果数据已经预先排序
+
+281
+00:13:23,840 --> 00:13:27,060
+then that's going to allow us to do some optimization that we wouldn't be
+那么这将允许我们做一些优化
+
+282
+00:13:27,070 --> 00:13:27,780
+able to get otherwise. 
+否则我们将无法得到
+
+283
+00:13:27,790 --> 00:13:31,040
+So there's a lot of things we want to cover. 
+所以我们想要涵盖的内容很多
+
+284
+00:13:31,090 --> 00:13:31,800
+Again. 
+又
+
+285
+00:13:31,810 --> 00:13:32,800
+This is just like a quick, 
+这就像一个快速的
+
+286
+00:13:33,740 --> 00:13:35,650
+some mortgage board, everything you could possibly do.
+一些抵押贷款委员会 你可以做的一切
+
+287
+00:13:35,860 --> 00:13:36,730
+There's other things too. 
+还有其他的事情
+
+288
+00:13:36,740 --> 00:13:42,180
+We're going to do our multi dimensional indexes and full inverted indexes. 
+我们要做我们的多维索引和完全倒排索引
+
+289
+00:13:43,900 --> 00:13:45,600
+Because I want to focus on the o lab stuff. 
+因为我想专注于O实验室的东西
+
+290
+00:13:46,570 --> 00:13:48,880
+We're going to go through zone maps again, the most common ones.
+我们将再次浏览区域地图 最常见的
+
+291
+00:13:48,890 --> 00:13:51,720
+And i'll spend a lot of time talking about different bit map representations. 
+我将花很多时间讨论不同的位图表示
+
+292
+00:13:52,340 --> 00:13:55,560
+And then that'll lead us into the imprints and the column sketches. 
+这样我们就能看到印记和柱状图了
+
+293
+00:13:55,990 --> 00:13:56,830
+The paper you guys read, 
+你们读的报纸
+
+294
+00:14:00,980 --> 00:14:02,180
+as I said before, many times,
+正如我之前所说的
+
+295
+00:14:02,190 --> 00:14:05,910
+zoom maps are the most common sort of data skipping technique
+很多时候
+
+296
+00:14:05,920 --> 00:14:07,600
+that most systems use, 
+缩放地图是大多数系统使用的最常见的数据跳转技术
+
+297
+00:14:07,950 --> 00:14:08,910
+where the left system is used. 
+其中使用了左侧系统
+
+298
+00:14:09,180 --> 00:14:11,700
+The basic idea is that these are just pre computer aggregates
+其基本思想是 这些只是表中
+
+299
+00:14:12,260 --> 00:14:15,360
+for all the individual values and all the values with individual columns, 
+所有单个值和具有单个列的所有值的预
+
+300
+00:14:15,600 --> 00:14:16,510
+a of a table. 
+计算机聚合
+
+301
+00:14:19,050 --> 00:14:21,610
+The idea is that for certain predicates, 
+我们的想法是 对于某些谓词
+
+302
+00:14:21,620 --> 00:14:25,630
+we could check the zone map first and see whether there could be any data
+我们可以首先检查区域映射 并查看博客中是否有
+
+303
+00:14:25,860 --> 00:14:27,170
+in the blog about the reader, 
+关于读者的任何数据
+
+304
+00:14:27,180 --> 00:14:30,050
+the chunk of data about the read based on the zone map. 
+即基于区域映射的关于读者的数据块
+
+305
+00:14:30,350 --> 00:14:31,810
+If we know according to zoom map, 
+如果我们知道根据缩放地图 没有
+
+306
+00:14:31,820 --> 00:14:33,280
+there isn't then we skip it entirely. 
+那么我们完全跳过它
+
+307
+00:14:34,990 --> 00:14:35,150
+Right? 
+对的
+
+308
+00:14:35,160 --> 00:14:40,860
+So say a sample column, it has52 poles with this consuming a single table,
+比如说一个样本列 它有52个极点
+
+309
+00:14:40,870 --> 00:14:41,580
+the single column, 
+这消耗了一个表 一个列
+
+310
+00:14:41,590 --> 00:14:43,100
+and has52 balls. 
+有52个球
+
+311
+00:14:44,190 --> 00:14:45,220
+There's no map for this. 
+这里没有地图
+
+312
+00:14:45,230 --> 00:14:48,480
+We could compute the min, the max, the average, the sum, and the count.
+我们可以计算最小值 最大值 平均值 总和和计数
+
+313
+00:14:49,490 --> 00:14:50,150
+Pretty straightforward. 
+相当直接
+
+314
+00:14:51,200 --> 00:14:52,390
+But now my query comes along. 
+但现在我的问题来了
+
+315
+00:14:52,750 --> 00:14:54,910
+Select start from table where value is greater than 600. 
+选择从值大于600的表开始
+
+316
+00:14:56,720 --> 00:14:59,520
+The first thing I would do is go look in the zone map and say, 
+我要做的第一件事是查看区域地图 然后说
+
+317
+00:14:59,770 --> 00:15:01,920
+I know i'm looking for value is greater than 600, 
+我知道我要查找的值大于600
+
+318
+00:15:02,200 --> 00:15:03,470
+but the max is 400. 
+但最大值是400
+
+319
+00:15:03,740 --> 00:15:04,690
+So therefore, 
+因此
+
+320
+00:15:05,380 --> 00:15:09,500
+I know there isn't going to be a value in this block of data that
+我知道在这个数据块中不会有与我的谓词
+
+321
+00:15:09,510 --> 00:15:10,540
+could match my predicate. 
+匹配的值
+
+322
+00:15:11,020 --> 00:15:12,580
+So I could just skip it entirely. 
+所以我可以完全跳过它
+
+323
+00:15:15,260 --> 00:15:15,900
+Pretty straightforward. 
+相当直接
+
+324
+00:15:18,160 --> 00:15:18,310
+Again, 
+再一次
+
+325
+00:15:18,320 --> 00:15:23,600
+I showed this diagram last class from the data breaks talk when they talk
+我在上一节课中展示了这个图表 当他们谈论k部分时
+
+326
+00:15:23,610 --> 00:15:25,670
+about part k and lo and behold, 
+你瞧 没有在区域
+
+327
+00:15:25,680 --> 00:15:27,030
+without calling it in a zone map, 
+地图中调用它
+
+328
+00:15:27,740 --> 00:15:30,100
+right here, they call page as metadata,
+就在这里 他们将页面称为元数据
+
+329
+00:15:30,110 --> 00:15:34,190
+the maintenance of the count that's stored in the header of every chunk. 
+存储在每个块的头中的计数的维护
+
+330
+00:15:35,280 --> 00:15:36,190
+This is the zone map. 
+这是区域地图
+
+331
+00:15:36,200 --> 00:15:39,210
+I think oracle invented the term zone map. 
+我认为甲骨文发明了“区域地图”这个词
+
+332
+00:15:39,220 --> 00:15:40,960
+Maybe it's copyrighted, I don't know, trademarked.
+也许它是有版权的 我不知道 商标
+
+333
+00:15:42,270 --> 00:15:46,400
+But when people say the original definition was called small materialized aggregates, 
+但当人们说最初的定义被称为小的物化聚合体时
+
+334
+00:15:46,410 --> 00:15:50,940
+that's the original paper from some this paper here from this german guy. 
+这是来自一些人的原始论文 这篇论文来自这个德国人
+
+335
+00:15:52,190 --> 00:15:54,520
+But everyone pretty much calls him zone maps, 
+但几乎每个人都叫他区域地图
+
+336
+00:15:54,530 --> 00:15:56,400
+even though oracle has him, calls him that,
+即使甲骨文有他 也这么叫他
+
+337
+00:15:57,700 --> 00:15:58,050
+right? 
+是吧
+
+338
+00:15:59,220 --> 00:16:01,060
+Again, pretty straightforward, not hard to compute.
+同样 非常简单 不难计算
+
+339
+00:16:01,430 --> 00:16:04,530
+And because I guess in the case of parquet, 
+因为我猜在镶木地板的情况下
+
+340
+00:16:04,540 --> 00:16:05,690
+these files are immutable. 
+这些文件是不可变的
+
+341
+00:16:06,420 --> 00:16:07,250
+We don't have to maintain this. 
+我们不需要维护这个
+
+342
+00:16:07,260 --> 00:16:08,510
+We don't have to change this all the time. 
+我们不需要一直改变这个
+
+343
+00:16:08,520 --> 00:16:09,490
+We just store it in the header. 
+我们只是将其存储在标题中
+
+344
+00:16:09,500 --> 00:16:10,530
+And we're done. 
+我们就结束了
+
+345
+00:16:19,330 --> 00:16:19,930
+As I said before, 
+正如我之前所说
+
+346
+00:16:19,940 --> 00:16:23,210
+there's a trade off between the scope of the zone map and its efficacy. 
+在区域地图的范围和它的功效之间有一个权衡
+
+347
+00:16:23,570 --> 00:16:27,210
+I have a zoom map on an individual to pull, that's going to be useless.
+我有一个关于个人的缩放地图要拉 这将是无用的
+
+348
+00:16:27,540 --> 00:16:30,790
+I have a zoom map on the entire table. 
+我在整个桌子上有一个缩放地图
+
+349
+00:16:32,240 --> 00:16:34,090
+That's not going to be either, 
+这也不会发生
+
+350
+00:16:34,100 --> 00:16:38,030
+because if I have actually, it could help,
+因为如果我确实有
+
+351
+00:16:38,040 --> 00:16:40,950
+because if I know that the thing i'm looking for is not in the bounds
+它可能会有帮助
+
+352
+00:16:40,960 --> 00:16:42,190
+of the zone amount of the entire table, 
+因为如果我知道我要找的东西不在整个表的区域数量的范围内
+
+353
+00:16:42,490 --> 00:16:44,050
+then I avoid reading the entire table. 
+那么我就会避免读取整个表
+
+354
+00:16:46,260 --> 00:16:48,630
+But if in the likely case that it is in there, 
+但如果在可能的情况下 它在那里
+
+355
+00:16:49,380 --> 00:16:50,810
+then there's no map is basically useless. 
+那么没有地图基本上是无用的
+
+356
+00:16:50,820 --> 00:16:55,240
+And I spent time processing and reading it. 
+我花时间处理和阅读它
+
+357
+00:16:55,250 --> 00:16:57,880
+The other planning to point out two of zoom maps is
+指出两个缩放映射的另一个计划是
+
+358
+00:16:57,890 --> 00:17:03,230
+that they're only useful when the attributes position and the values
+它们只有在属性位置和值相关时才
+
+359
+00:17:03,240 --> 00:17:04,050
+are correlated. 
+有用
+
+360
+00:17:04,400 --> 00:17:07,280
+Meaning if if the thing i'm looking for, 
+意思是如果我要找的东西
+
+361
+00:17:09,380 --> 00:17:14,650
+if on a certain column is and that columns values are completely random, 
+如果某一列的值是完全随机的
+
+362
+00:17:15,160 --> 00:17:16,600
+then the zoom out going to help, 
+那么缩小会有帮助
+
+363
+00:17:16,610 --> 00:17:17,680
+not going to help me again, 
+但不会再次帮助我
+
+364
+00:17:17,690 --> 00:17:21,470
+because the the value domain that's encompassed by the blockade i'm looking
+因为我正在查看的封锁所包含的
+
+365
+00:17:21,480 --> 00:17:23,260
+at could be quite large. 
+值域可能相当大
+
+366
+00:17:23,270 --> 00:17:23,940
+And therefore, 
+因此 每次我
+
+367
+00:17:24,610 --> 00:17:25,610
+every time I check the zone map, 
+检查区域映射时
+
+368
+00:17:25,620 --> 00:17:27,450
+it's going to come back as true for my predicate. 
+对于我的谓词 它都会返回为真
+
+369
+00:17:28,070 --> 00:17:31,100
+But I then I got to go scan it and finally think i'm looking for anyway. 
+但后来我去扫描它 最后认为我无论如何都在寻找
+
+370
+00:17:31,920 --> 00:17:32,300
+Right? 
+对的
+
+371
+00:17:32,600 --> 00:17:37,350
+But if I could pre sort the data on the attributes that are in my predicate, 
+但是 如果我可以对谓词中的属性上的数据进行预排序
+
+372
+00:17:37,730 --> 00:17:40,460
+then my zoom map will start help me throw things away. 
+那么我的缩放映射将开始帮助我扔掉东西
+
+373
+00:17:43,410 --> 00:17:44,710
+So again, zoom maps,
+再一次 缩放地图
+
+374
+00:17:44,760 --> 00:17:46,910
+is it at index sort of right, 
+它在索引上是正确的
+
+375
+00:17:46,920 --> 00:17:49,310
+like it's a filter, not an index,
+就像它是一个过滤器 而不是一个索引
+
+376
+00:17:49,320 --> 00:17:51,590
+so a filter would tell you is something here or no. 
+所以过滤器会告诉你这里有什么东西
+
+377
+00:17:52,150 --> 00:17:53,370
+And have to go look for it. 
+必须去找它
+
+378
+00:17:53,380 --> 00:17:54,770
+Index would tell you where it is. 
+索引会告诉你它在哪里
+
+379
+00:17:55,540 --> 00:17:57,670
+This is a filter, but it's still, again,
+这是一个过滤器 但它仍然 再次
+
+380
+00:17:57,680 --> 00:17:59,270
+this is the most commonly used one. 
+这是最常用的一个
+
+381
+00:17:59,690 --> 00:18:01,310
+And it's not just like you, 
+它不只是像你一样
+
+382
+00:18:02,040 --> 00:18:05,290
+you have to have additional code in your query execution engine to be
+你必须在你的查询执行引擎中有额外的代码
+
+383
+00:18:05,300 --> 00:18:09,270
+able to consider these zone maps as part of the the process of deciding
+以便能够将这些区域映射视为决定
+
+384
+00:18:09,280 --> 00:18:09,960
+what data you
+你实际想要
+
+385
+00:18:09,970 --> 00:18:12,530
+actually want to read. 
+读取的数据的过程的一部分
+
+386
+00:18:13,830 --> 00:18:20,510
+I have off the record numbers from i'll have probably put this out. 
+我有破纪录的数字 我可能已经把这个拿出来了
+
+387
+00:18:21,610 --> 00:18:22,940
+They said like, 
+他们说
+
+388
+00:18:23,390 --> 00:18:28,070
+I think like 80 to 90% of the queries get take advantage of his own maps. 
+我认为80%到90%的查询都利用了他自己的地图
+
+389
+00:18:30,290 --> 00:18:31,680
+And again, at their scale that's massive.
+再一次 在他们的规模上 这是巨大的
+
+390
+00:18:34,710 --> 00:18:34,860
+Right? 
+对的
+
+391
+00:18:35,390 --> 00:18:37,220
+So the win for these is quite obvious. 
+所以这些的胜利是显而易见的
+
+392
+00:18:37,230 --> 00:18:38,100
+This is why everyone does it. 
+这就是为什么每个人都这么做
+
+393
+00:18:40,100 --> 00:18:40,430
+But again, 
+但是
+
+394
+00:18:40,440 --> 00:18:44,460
+it's although 90% of the queries of they're talking about will take
+尽管他们谈论的90%的查询将利用区域地图
+
+395
+00:18:44,470 --> 00:18:47,130
+advantage of the zone maps doesn't mean they're going to throw
+但这并不意味着他们
+
+396
+00:18:47,140 --> 00:18:48,890
+away substantial portions of data. 
+将丢弃大量数据
+
+397
+00:18:49,410 --> 00:18:51,970
+It just means that there's some amount of data they were able to throw it away. 
+这只是意味着有一些数据 他们可以扔掉它
+
+398
+00:18:52,620 --> 00:18:53,930
+And in their world that matters, 
+在他们的世界里 这很重要
+
+399
+00:18:55,580 --> 00:18:57,650
+if you have like a very large data, 
+如果你有一个非常大的数据
+
+400
+00:18:57,660 --> 00:19:01,050
+then what's your overhead for like free computing with zone maps? 
+那么你的开销是什么 比如区域地图的免费计算
+
+401
+00:19:01,870 --> 00:19:03,310
+This question is, if you have very large data,
+这个问题是 如果你有非常大的数据
+
+402
+00:19:03,320 --> 00:19:05,590
+what's the overhead of pre computing the zm maps? 
+预先计算zm地图的开销是多少
+
+403
+00:19:06,450 --> 00:19:06,920
+What's your idea? 
+你的想法是什么
+
+404
+00:19:06,930 --> 00:19:07,680
+Very large? 
+非常大
+
+405
+00:19:08,090 --> 00:19:08,690
+Pet a bytes, 
+PET A字节
+
+406
+00:19:15,280 --> 00:19:21,300
+like most systems don't magically conjure up peta bytes of data instantaneously. 
+像大多数系统一样 它不会神奇地瞬间变出PETA字节的数据
+
+407
+00:19:23,180 --> 00:19:26,260
+A it's usually a fire hose of something
+通常
+
+408
+00:19:26,870 --> 00:19:29,110
+downstream in your application stack is generating data that
+应用程序堆栈下游的某些东西正在生成数据
+
+409
+00:19:29,120 --> 00:19:30,510
+you're now ingesting in storing, 
+而您现在正在存储这些数据
+
+410
+00:19:30,520 --> 00:19:32,300
+but it doesn't happen all at once. 
+但这并不是同时发生的
+
+411
+00:19:33,230 --> 00:19:35,910
+The only system I the only application I know where this does happen all
+唯一的系统 也是我所知道的唯一能同时发生的应用
+
+412
+00:19:35,920 --> 00:19:41,240
+at once was the large hadron collider at at cern. 
+是欧洲核子研究中心的大型强子对撞机
+
+413
+00:19:41,250 --> 00:19:43,810
+Because when they did the experiment like that thing, 
+因为当他们做实验的时候
+
+414
+00:19:43,820 --> 00:19:45,930
+generally tetabytes instantaneously, right?
+就像那个东西一样 通常是瞬间的 对吧
+
+415
+00:19:46,260 --> 00:19:47,140
+And they got to deal with that. 
+他们必须解决这个问题
+
+416
+00:19:47,500 --> 00:19:50,090
+Most systems are not smashing atoms, right?
+大多数系统都不会粉碎原子 对吧
+
+417
+00:19:50,100 --> 00:19:50,850
+Most systems are like, 
+大多数系统是这样的
+
+418
+00:19:51,400 --> 00:19:52,550
+i'm collecting sensor data, 
+我正在收集传感器数据
+
+419
+00:19:52,560 --> 00:19:53,910
+or I have people using my website. 
+或者有人在使用我的网站
+
+420
+00:19:54,760 --> 00:19:57,980
+I'm getting things in as a stream. 
+我把东西像小溪一样流进去
+
+421
+00:19:57,990 --> 00:19:59,660
+So in that case, I can batch things up.
+这样的话 我可以分批处理
+
+422
+00:20:00,080 --> 00:20:00,870
+Compute these o maps. 
+计算这些O映射
+
+423
+00:20:00,880 --> 00:20:02,030
+Again, it's not expensive.
+再说一次 它不贵
+
+424
+00:20:02,490 --> 00:20:04,010
+I got to pack it into the file. 
+我得把它放进文件里
+
+425
+00:20:04,020 --> 00:20:07,130
+Anyway, somebody reading it because I got to split things up into columns.
+总之 有人在读它 因为我要把东西分成几栏
+
+426
+00:20:07,770 --> 00:20:08,920
+It's not expensive to maintain. 
+它的维护成本并不高
+
+427
+00:20:16,290 --> 00:20:17,040
+So the alternative, 
+所以另一种方法
+
+428
+00:20:17,410 --> 00:20:20,790
+another approach i'm going to look at is we're going to spend most
+我要考虑的另一种方法是
+
+429
+00:20:20,800 --> 00:20:23,760
+of this class on is instead of using zoom zone. 
+我们将在这门课上花费大部分时间 而不是使用缩放区
+
+430
+00:20:23,770 --> 00:20:26,000
+So zone maps will help you filter out blocks. 
+因此 区域地图将帮助您筛选出块
+
+431
+00:20:26,490 --> 00:20:29,940
+If you still want to find things that are actually matching like you want
+如果你仍然想找到真正匹配的东西
+
+432
+00:20:29,950 --> 00:20:30,440
+an index. 
+比如你想要一个索引
+
+433
+00:20:32,440 --> 00:20:33,630
+For o lab workloads, 
+对于O Lab工作负载
+
+434
+00:20:33,640 --> 00:20:36,270
+bit map indexes are going to be the primary choice. 
+位图索引将是首选
+
+435
+00:20:36,730 --> 00:20:39,330
+Again ignoring inverted indexes annoying multi dimensional indexes
+同样 忽略倒排索引会使多维索引变得恼人
+
+436
+00:20:39,340 --> 00:20:42,220
+because those are sort of different types of queries. 
+因为它们是不同类型的查询
+
+437
+00:20:43,680 --> 00:20:46,900
+Think of things like select start from table where attribute
+想想像SELECT START FROM TABLE这样的东西
+
+438
+00:20:46,910 --> 00:20:50,140
+greater than something or attribute equal something like those. 
+其中属性大于某物或属性等于某物
+
+439
+00:20:52,830 --> 00:20:57,730
+The full text indexes are trying to find words in strings are text documents. 
+全文索引试图在文本文档的字符串中查找单词
+
+440
+00:20:57,980 --> 00:20:58,930
+We can ignore that for now. 
+我们现在可以忽略它
+
+441
+00:21:00,590 --> 00:21:04,340
+With bit that index is the idea is that for every unique value, 
+对于位 索引的思想是对于每个唯一的值
+
+442
+00:21:06,400 --> 00:21:07,910
+a in a column, in an attribute,
+在列中 在属性中
+
+443
+00:21:08,410 --> 00:21:12,330
+we're going to maintain a separate vector with a bit set to one, 
+我们将维护一个单独的向量
+
+444
+00:21:12,340 --> 00:21:16,620
+whether a tubal at that offset has that particular value. 
+其中一个位设置为1 无论该偏移处的tubal是否具有该特定值
+
+445
+00:21:18,530 --> 00:21:19,840
+Again, because everything's fixed length,
+同样 因为所有内容的长度都是固定的
+
+446
+00:21:19,850 --> 00:21:23,040
+we can just use the offset in the bit map to then map to the offset
+所以我们可以只使用位图中的偏移量
+
+447
+00:21:23,550 --> 00:21:25,330
+in the actual data columns themselves. 
+然后映射到实际数据列本身中的偏移量
+
+448
+00:21:25,950 --> 00:21:28,980
+I th position in the bit map corresponds to the I th position in the two bone. 
+位图中的第I个位置对应于两个骨骼中的第I个位置
+
+449
+00:21:30,040 --> 00:21:30,430
+And obviously, 
+显然
+
+450
+00:21:30,440 --> 00:21:34,090
+we're not going to want to have a giant bit map for the entire table. 
+我们不希望整个表都有一个巨大的位图
+
+451
+00:21:34,490 --> 00:21:37,730
+We're going to do this as we chunk things up in our pack styles
+正如我们之前分享的那样
+
+452
+00:21:37,740 --> 00:21:39,090
+of row groups as we shared before. 
+我们将在行组的包样式中对内容进行分块时执行此操作
+
+453
+00:21:40,120 --> 00:21:41,950
+Bit map indexes are an old idea. 
+位图索引是一个古老的概念
+
+454
+00:21:42,080 --> 00:21:43,950
+They go back to the 1970s. 
+它们可以追溯到20世纪70年代
+
+455
+00:21:45,670 --> 00:21:49,010
+And then there's this paper from 87 that sort of describes the first way
+87年的这篇论文描述了第一种方法
+
+456
+00:21:50,050 --> 00:21:51,680
+to put it into a database system. 
+把它放进数据库系统
+
+457
+00:21:52,310 --> 00:21:56,660
+This is just a sample of some of the systems that support bit map indexes. 
+这只是一些支持位图索引的系统的示例
+
+458
+00:21:58,800 --> 00:22:00,080
+Post code has these things called brain. 
+邮政编码有一种叫做大脑的东西
+
+459
+00:22:00,090 --> 00:22:04,520
+They're going to be range index by binary range indexes. 
+它们将是二进制范围索引的范围索引
+
+460
+00:22:04,530 --> 00:22:07,220
+And that'll be we'll see in range coding, 
+这将是我们将在范围编码中看到的
+
+461
+00:22:07,230 --> 00:22:10,600
+a second pelosa is now commercialized as feature based. 
+第二个Pelosa现在被商业化为基于特征的
+
+462
+00:22:10,970 --> 00:22:15,010
+This is nothing but aa giant distributed bit map index database. 
+这只不过是一个巨大的分布式位图索引数据库
+
+463
+00:22:15,020 --> 00:22:16,860
+That's all it is just bit maps. 
+这就是全部 它只是位图
+
+464
+00:22:18,020 --> 00:22:20,450
+Then you can pino has range indexes, 
+然后你可以有范围索引
+
+465
+00:22:21,760 --> 00:22:23,790
+a bunch of other systems that I support this. 
+一堆我支持的其他系统
+
+466
+00:22:29,120 --> 00:22:30,350
+Here's a really simple example. 
+这里有一个非常简单的例子
+
+467
+00:22:30,730 --> 00:22:33,240
+We have a table has 2 columns, the id field,
+我们有一个表 它有两列
+
+468
+00:22:33,250 --> 00:22:35,000
+and then whether somebody's lit or not, 
+id字段 然后不管某人是否被点亮
+
+469
+00:22:35,740 --> 00:22:36,370
+yes or no, 
+是或否
+
+470
+00:22:36,920 --> 00:22:39,230
+say we want to build a bit map index on this column. 
+假设我们想在这一列上建立一个位图索引
+
+471
+00:22:40,360 --> 00:22:41,150
+We're going to have, 
+我们将有
+
+472
+00:22:41,660 --> 00:22:43,460
+since it's a binary value, 
+因为它是一个二进制值
+
+473
+00:22:44,230 --> 00:22:46,580
+yes or no, we only have 2 bit maps.
+是或否 我们只有2位图
+
+474
+00:22:47,000 --> 00:22:49,310
+And so we'll have one for and one for no. 
+所以我们将有一个代表和一个代表不
+
+475
+00:22:49,670 --> 00:22:49,820
+Again, 
+同样
+
+476
+00:22:49,830 --> 00:22:53,680
+there's a one in the bit map corresponding to whether the attribute
+位图中的1对应于原始数据中的
+
+477
+00:22:53,690 --> 00:22:56,760
+within the original data has that particular value. 
+属性是否具有该特定值
+
+478
+00:22:58,540 --> 00:23:02,020
+If i'm looking inside this, if I jump to the 4th all set here,
+如果我在里面看 如果我跳到这里的第四个所有设置
+
+479
+00:23:02,340 --> 00:23:07,300
+I can check to see that for the lit status is zero for it's one for no. 
+我可以检查到亮起的状态是0 它是1 表示没有
+
+480
+00:23:07,390 --> 00:23:08,180
+I know it's no. 
+我知道这不是
+
+481
+00:23:08,850 --> 00:23:10,270
+That corresponds to the original value here. 
+它对应于这里的原始值
+
+482
+00:23:12,350 --> 00:23:15,100
+This is like a bit map index in its most basic form, pretty simple.
+这就像是最基本形式的位图索引 非常简单
+
+483
+00:23:16,930 --> 00:23:20,670
+And they will see some ways we can use sim d to make this actually go faster. 
+他们将看到我们可以使用SIM D的一些方法 使其运行得更快
+
+484
+00:23:20,760 --> 00:23:24,150
+You're not actually just running in a for loop and examining bits one by one. 
+实际上 您并不只是在for循环中运行并逐个检查位
+
+485
+00:23:25,320 --> 00:23:26,470
+We'll cover in a few more slides, 
+我们将在更多的幻灯片中讨论
+
+486
+00:23:26,480 --> 00:23:28,710
+then we'll cover later in the semester a lot more. 
+然后我们将在本学期晚些时候讨论更多内容
+
+487
+00:23:35,020 --> 00:23:37,770
+Today's question is, which then leads to this next slide.
+今天的问题是 接下来是下一张幻灯片
+
+488
+00:23:38,120 --> 00:23:40,810
+What kind of data is suitable to be used in a bit map index? 
+什么样的数据适合在位图索引中使用
+
+489
+00:23:41,240 --> 00:23:44,950
+Because if it's a the worst case scenario, again, thinking extremes,
+因为如果这是一个最坏的情况 再次考虑极端情况
+
+490
+00:23:44,960 --> 00:23:47,770
+if it's a auto increment key or serial key, 
+如果它是一个自动增量键或串行键
+
+491
+00:23:48,160 --> 00:23:51,550
+where every two pole has had a unique value. 
+其中每两个极点都有一个唯一的值
+
+492
+00:23:51,850 --> 00:23:52,610
+That's the worst case scenario, 
+这是最坏的情况
+
+493
+00:23:52,620 --> 00:23:56,690
+because I have a bit map for every single one for every single value, 
+因为我对每个值的每个1都有一个位图
+
+494
+00:23:56,700 --> 00:23:58,090
+and most of them are going to be all zeros. 
+而它们中的大多数都是零
+
+495
+00:23:58,880 --> 00:24:00,510
+Every entry is going to be zero except for one. 
+除了一个条目外 每个条目都将为零
+
+496
+00:24:02,600 --> 00:24:06,610
+And then my extreme case is like a it's a binary decision, yes or no.
+然后我的极端情况是 这是一个二元决策 是或不是
+
+497
+00:24:07,370 --> 00:24:08,290
+That's the best case scenario. 
+这是最好的情况
+
+498
+00:24:09,380 --> 00:24:10,790
+But most things are not that extreme. 
+但大多数事情并没有那么极端
+
+499
+00:24:10,800 --> 00:24:11,550
+It's somewhere in the middle. 
+它在中间的某个地方
+
+500
+00:24:15,250 --> 00:24:15,740
+Like on. 
+就像在
+
+501
+00:24:16,650 --> 00:24:16,810
+Her question. 
+她的问题
+
+502
+00:24:16,820 --> 00:24:17,470
+Is her statement? 
+是她的陈述吗
+
+503
+00:24:17,700 --> 00:24:19,010
+Isn't it just an edom value? 
+它不只是一个EDOM值吗
+
+504
+00:24:19,870 --> 00:24:21,200
+But no, is the edom?
+不 是以东吗
+
+505
+00:24:23,810 --> 00:24:24,240
+You only. 
+只有你
+
+506
+00:24:33,450 --> 00:24:33,600
+No. 
+不
+
+507
+00:24:34,340 --> 00:24:36,540
+He's correct that like this is like, 
+他是对的 就像这样
+
+508
+00:24:37,560 --> 00:24:41,460
+i'm just trying to show like there's 2 bit maps in a binary decision. 
+我只是想说明在二元决策中有两个位图
+
+509
+00:24:41,470 --> 00:24:42,620
+It's either one or zero. 
+不是一就是零
+
+510
+00:24:42,750 --> 00:24:43,700
+You only need 1 bit map. 
+您只需要1个位图
+
+511
+00:24:44,200 --> 00:24:44,760
+Yeah, right.
+是啊 对
+
+512
+00:24:45,480 --> 00:24:45,790
+So how about? 
+那么怎么样
+
+513
+00:24:46,080 --> 00:24:46,310
+No? 
+不
+
+514
+00:24:46,320 --> 00:24:47,910
+Maybe you still need 3 bit maps. 
+也许你还需要3个位图
+
+515
+00:24:49,160 --> 00:24:50,270
+Like your maybe lit, right?
+就像你的Maybe Lit 对吧
+
+516
+00:24:51,010 --> 00:24:51,560
+Yeah, see.
+是啊 看
+
+517
+00:24:51,570 --> 00:24:54,760
+Like, maybe so like you need 3 bit maps,
+就像 也许就像你需要3个位图
+
+518
+00:24:57,280 --> 00:25:02,170
+but to your.like zero, 
+但是对于你的.比如零
+
+519
+00:25:02,180 --> 00:25:06,610
+just having like storing like 1012 or something. 
+只是像存储1012之类的东西
+
+520
+00:25:10,640 --> 00:25:12,620
+Really, I don't know how I call it a bit now.
+真的 我现在有点不知道怎么称呼它了
+
+521
+00:25:14,200 --> 00:25:16,880
+Because if you store it, like,
+因为如果你存储它
+
+522
+00:25:17,880 --> 00:25:18,430
+so, 
+就像这样
+
+523
+00:25:19,180 --> 00:25:25,160
+you're basically saying it's basically it's sort of a column. 
+你基本上是说它基本上是一种列
+
+524
+00:25:25,620 --> 00:25:25,990
+Right? 
+对的
+
+525
+00:25:28,230 --> 00:25:31,100
+We'll see why you want to do this as we go along, right?
+当我们继续的时候 我们会看到你为什么要这样做 对吗
+
+526
+00:25:32,580 --> 00:25:33,890
+You can have more compact form. 
+你可以有更紧凑的形式
+
+527
+00:25:34,310 --> 00:25:37,060
+I'm not even getting into like e gnom is
+我甚至还没有进入E gnom
+
+528
+00:25:37,390 --> 00:25:41,460
+maybe also like it's a simplified example where like you could do
+它可能也是一个简化的例子
+
+529
+00:25:42,450 --> 00:25:43,900
+the compression techniques and things like that. 
+你可以做压缩技术之类的事情
+
+530
+00:25:44,250 --> 00:25:47,490
+We'll go along and we'll see that because we store things in bits. 
+我们会继续下去 我们会看到这一点 因为我们用比特来存储东西
+
+531
+00:25:48,060 --> 00:25:52,360
+We can play games to make things run really fast. 
+我们可以玩游戏 让事情运行得非常快
+
+532
+00:25:53,950 --> 00:25:57,920
+Yeah, i'm going to do in.
+是的 我要进去了
+
+533
+00:25:57,930 --> 00:25:59,160
+India is like you have english. 
+印度就像你有英语一样
+
+534
+00:26:00,580 --> 00:26:03,870
+His statement is this only works for categorical variables of values, 
+他的陈述是 这只适用于值的分类变量 这是同样的事情
+
+535
+00:26:04,210 --> 00:26:05,900
+which is the same thing, as she saying in e num.
+正如她在e num中所说的
+
+536
+00:26:06,650 --> 00:26:10,930
+I will say through our analysis of schemers, 
+我要说的是 通过我们对阴谋家的分析 大多数人都不会
+
+537
+00:26:11,370 --> 00:26:14,050
+most people don't, there's like edoms are super rare,
+就像edom是非常罕见的
+
+538
+00:26:14,910 --> 00:26:14,950
+right? 
+对吧
+
+539
+00:26:15,160 --> 00:26:18,230
+Even though like it may be like in the application, treat,
+即使像它可能像在应用程序中
+
+540
+00:26:18,240 --> 00:26:19,270
+it really isn't enough. 
+对待 这真的是不够的
+
+541
+00:26:19,680 --> 00:26:22,000
+They define it as an inter, whatever, right?
+他们把它定义为兴趣 不管是什么 对吧
+
+542
+00:26:22,230 --> 00:26:25,220
+Without thinking about it to his comment, also, too,
+对他的评论也不假思索
+
+543
+00:26:25,230 --> 00:26:27,140
+that like it's a category of variable. 
+认为它也是一类变量
+
+544
+00:26:27,850 --> 00:26:32,090
+But like it'll work on anything like you like, 
+但我想 它可以在任何你喜欢的东西上工作
+
+545
+00:26:32,430 --> 00:26:36,130
+I think, like an oracle or you can tell I want a bit map index.
+比如甲骨文 或者你可以告诉我我想要一个位图索引
+
+546
+00:26:36,650 --> 00:26:38,270
+It doesn't come back say, hey, that's a bad idea.
+它不会回来说 嘿 这是一个坏主意
+
+547
+00:26:38,280 --> 00:26:39,030
+I'm not doing that. 
+我不会这么做的
+
+548
+00:26:39,040 --> 00:26:44,810
+Like if it's the worst case scenario between restrictions. 
+就像限制之间的最坏情况
+
+549
+00:26:44,820 --> 00:26:46,050
+And I it says like, 
+它说
+
+550
+00:26:46,980 --> 00:26:48,090
+we're all saying the same thing. 
+我们都在说同样的事情
+
+551
+00:26:48,260 --> 00:26:50,530
+This is my example here to show why this doesn't always work. 
+这是我在这里的例子来说明为什么这并不总是有效
+
+552
+00:26:52,550 --> 00:26:54,990
+They have a dimension table on customer information. 
+他们有一个关于客户信息的维度表
+
+553
+00:26:55,320 --> 00:26:59,130
+And then we have this zip code attribute here, right?
+然后我们在这里有这个邮政编码属性 对吗
+
+554
+00:26:59,990 --> 00:27:03,820
+My query is select id id email address from the customer dimension table
+我的查询是从Customer维度表中选择ID ID电子邮件地址
+
+555
+00:27:03,830 --> 00:27:05,930
+where the zip code is in this range here. 
+其中邮政编码在此范围内
+
+556
+00:27:06,860 --> 00:27:08,290
+These three possible values in pittsburgh, 
+匹兹堡的这三个可能的值
+
+557
+00:27:09,240 --> 00:27:11,390
+I want to build an index on this column here. 
+我想在这列上建立一个索引
+
+558
+00:27:12,250 --> 00:27:13,920
+If I build it as a bit map index, 
+如果我将其构建为位图索引
+
+559
+00:27:15,300 --> 00:27:21,150
+then it's got to be fast because if I want to do a scan now to find
+然后它必须很快
+
+560
+00:27:21,160 --> 00:27:22,230
+all the matches for this, 
+因为如果我现在要做一个扫描来找到所有的匹配
+
+561
+00:27:22,660 --> 00:27:28,130
+I just scanned the 3 bit maps that correspond to15216152171218. 
+我只扫描了对应于15216152171218的3位图
+
+562
+00:27:28,450 --> 00:27:29,780
+And I take the intersection of those. 
+我取它们的交集
+
+563
+00:27:30,230 --> 00:27:31,730
+Now I know the two poles that match, 
+现在我知道了匹配的两极
+
+564
+00:27:33,020 --> 00:27:33,270
+right? 
+是吧
+
+565
+00:27:33,280 --> 00:27:37,990
+And I can do that evaluation of bits very efficiently, 
+我可以非常有效地计算比特
+
+566
+00:27:38,780 --> 00:27:41,110
+much more faster than actually comparing to integers. 
+比实际比较整数要快得多
+
+567
+00:27:42,560 --> 00:27:42,600
+Right? 
+对的
+
+568
+00:27:42,610 --> 00:27:48,200
+Because I I can pack together a bunch of bits in a single value, 
+因为我可以把一堆位打包成一个值
+
+569
+00:27:48,450 --> 00:27:50,700
+and then do the bit wise comparison on those. 
+然后对它们进行逐位比较
+
+570
+00:27:51,730 --> 00:27:55,090
+But this obviously is going to be problematic as you guys keep bringing up, 
+但这显然是有问题的
+
+571
+00:27:55,100 --> 00:27:58,210
+because the value domain for zip codes in the united states
+因为你们一直在提
+
+572
+00:27:58,220 --> 00:27:59,290
+is actually quite large. 
+因为美国邮政编码的值域实际上相当大
+
+573
+00:28:00,930 --> 00:28:02,250
+Anything guess how many tip codes there are in? 
+猜猜里面有多少个密码
+
+574
+00:28:02,740 --> 00:28:05,260
+The us 10,000, 
+美国一万
+
+575
+00:28:05,270 --> 00:28:07,220
+no100,000. 
+不是十万
+
+576
+00:28:08,260 --> 00:28:08,480
+All right. 
+好吧
+
+577
+00:28:08,730 --> 00:28:10,200
+It's less than 1,000, more than 10,000.
+少则一千 多则一万
+
+578
+00:28:11,030 --> 00:28:11,710
+It's 43,000. 
+它是43 000
+
+579
+00:28:13,240 --> 00:28:15,120
+So if I have 10 million two poles, 
+所以如果我有一千万个两极
+
+580
+00:28:15,440 --> 00:28:18,530
+and I build the bit map index on this, 
+我在此基础上建立位图索引
+
+581
+00:28:18,540 --> 00:28:25,150
+I have to have43,000 different bit maps of length10 million bits. 
+我必须有43000个长度为一千万位的不同位图
+
+582
+00:28:25,680 --> 00:28:27,420
+And that's about 5033 gigs. 
+这大约是5033个G
+
+583
+00:28:28,780 --> 00:28:28,890
+Right? 
+对的
+
+584
+00:28:29,060 --> 00:28:30,930
+The original data of just like 10 million, 
+就像一千万的原始数据
+
+585
+00:28:30,940 --> 00:28:32,130
+30 bit integers is like what? 
+30位的整数是什么样的
+
+586
+00:28:32,140 --> 00:28:32,770
+40 megs. 
+40兆
+
+587
+00:28:34,800 --> 00:28:37,270
+We're paying a a lot of space for all these bit maps. 
+我们为所有这些位图付出了大量的空间
+
+588
+00:28:37,280 --> 00:28:39,660
+And most of the time they're going to be sparse, 
+大多数时候 它们将是稀疏的
+
+589
+00:28:39,670 --> 00:28:40,660
+much time is going to be zero. 
+很多时间将是零
+
+590
+00:28:43,050 --> 00:28:43,460
+Right? 
+对的
+
+591
+00:28:44,690 --> 00:28:46,060
+This sort of naive scheme was like, 
+这种简单的方案就像
+
+592
+00:28:46,150 --> 00:28:51,460
+let's just create giant bit maps for the entire length of all the two poles, 
+让我们为所有两个极点的整个长度或表的大小创建巨大的位图
+
+593
+00:28:51,710 --> 00:28:55,380
+or the size of the table and have for every unique possible value that I have. 
+并为我拥有的每个唯一的可能值创建
+
+594
+00:28:55,870 --> 00:28:55,970
+Right? 
+对的
+
+595
+00:28:56,380 --> 00:28:57,600
+This obviously won't work. 
+这显然是行不通的
+
+596
+00:28:57,610 --> 00:29:00,180
+So we need to be smart about how we're going to do this. 
+所以我们需要聪明地决定如何做这件事
+
+597
+00:29:03,020 --> 00:29:05,210
+The two design choices we have to consider is the encoding scheme
+我们必须考虑的两个设计选择是编码方案
+
+598
+00:29:05,380 --> 00:29:07,650
+how to represent and organize the data within the bit map. 
+如何在位图中表示和组织数据
+
+599
+00:29:08,980 --> 00:29:10,970
+In my simple examples, i'm just saying it's a giant.
+在我简单的例子中 我只是说它是一个巨人
+
+600
+00:29:11,660 --> 00:29:13,370
+You mount a giant array of bits, 
+你安装了一个巨大的比特数组
+
+601
+00:29:14,120 --> 00:29:15,430
+but we can be more clever. 
+但我们可以更聪明
+
+602
+00:29:16,780 --> 00:29:20,790
+Then how do we actually compress the size or reduce the size of bit maps
+然后 我们如何实际压缩或减少位图的大小
+
+603
+00:29:20,800 --> 00:29:22,150
+where we know they're going to be sparse? 
+我们知道它们将是稀疏的
+
+604
+00:29:23,530 --> 00:29:25,560
+We'll cover this second one, the next class,
+我们将在下一节课上讨论第二个问题
+
+605
+00:29:25,570 --> 00:29:27,360
+and then this class will focus on the first one here. 
+然后这节课将集中讨论第一个问题
+
+606
+00:29:30,560 --> 00:29:32,790
+The idea again, we want to get, we don't want to, basically we're trying to,
+再一次 我们想要得到
+
+607
+00:29:32,800 --> 00:29:35,590
+can we get the benefits that we would get if we had a bit map
+我们不想要 基本上我们正在尝试
+
+608
+00:29:36,320 --> 00:29:40,430
+to do accelerate scans without paying that huge georgia ahead
+如果我们有一个位图来加速扫描 而不需要在这些巨大的空数据阵列之前支付巨大的乔治亚
+
+609
+00:29:41,150 --> 00:29:43,340
+of these giant arrays of empty data. 
+我们就能得到好处
+
+610
+00:29:46,510 --> 00:29:47,380
+The before encoding schemes, 
+在编码方案之前
+
+611
+00:29:47,390 --> 00:29:51,480
+we can consider what i've already shown you is the equality coding. 
+我们可以考虑我已经向您展示的是等式编码
+
+612
+00:29:52,300 --> 00:29:55,610
+You just have a giant bit map with for every unique value that you
+对于列中可能存在的每个唯一值
+
+613
+00:29:55,620 --> 00:29:57,970
+could possibly have in your column. 
+都有一个巨大的位图
+
+614
+00:30:00,470 --> 00:30:01,440
+With range of coding, 
+有了范围编码
+
+615
+00:30:02,290 --> 00:30:08,010
+it's a way to sort of store less bit maps for all the unique values
+它是一种为所有唯一值存储较少位图的方法
+
+616
+00:30:08,020 --> 00:30:10,960
+instead of saying for exactly 15217, 
+而不是说正好是15217
+
+617
+00:30:10,970 --> 00:30:12,860
+and 15216 for those zip codes. 
+这些邮政编码是15216
+
+618
+00:30:13,220 --> 00:30:17,500
+But if I take a range of zip codes and represent a bit map of those values, 
+但如果我取一系列邮政编码并表示这些值的位图
+
+619
+00:30:18,710 --> 00:30:21,630
+and this is sort of what the column sketch paper you guys read. 
+这就是你们读过的专栏素描纸
+
+620
+00:30:21,640 --> 00:30:23,350
+It's viewed the basic same idea. 
+它被视为基本相同的想法
+
+621
+00:30:23,740 --> 00:30:28,810
+Whereas now that means that I could get false positives where I think I
+然而
+
+622
+00:30:28,820 --> 00:30:29,650
+have a match, 
+现在这意味着我可能会在我认为匹配的地方得到误报
+
+623
+00:30:30,580 --> 00:30:33,630
+I could possibly have a match within some range. 
+我可能会在某个范围内得到匹配
+
+624
+00:30:35,160 --> 00:30:37,530
+I think i'm matching more triples than I actually I am matching. 
+我认为我匹配的三元组比我实际匹配的要多
+
+625
+00:30:37,750 --> 00:30:39,700
+Then i've got to go check back the original values
+然后 我必须检查原始基础数据的原始值
+
+626
+00:30:39,710 --> 00:30:42,520
+of the original base data and do the final pruning. 
+并进行最后的修剪
+
+627
+00:30:44,050 --> 00:30:45,160
+So postcards has this, 
+所以明信片有这个
+
+628
+00:30:45,170 --> 00:30:47,320
+again with these grid indexes. 
+同样有这些网格索引
+
+629
+00:30:47,750 --> 00:30:49,740
+Patchy piano came out of, 
+不完整的钢琴出来了
+
+630
+00:30:50,990 --> 00:30:52,350
+it came out of linked in, I forgot,
+它来自linkedin
+
+631
+00:30:52,620 --> 00:30:59,370
+but a it's an open source system or that system that supports makes
+我忘了 但它是一个开源系统
+
+632
+00:30:59,380 --> 00:31:00,570
+heavy use of range indexes. 
+或者支持大量使用范围索引的系统
+
+633
+00:31:01,820 --> 00:31:04,210
+Again, the human has to specify these ranges.
+同样 人类必须指定这些范围
+
+634
+00:31:04,670 --> 00:31:06,860
+As far as I know that no data system can actually automatically figure
+据我所知
+
+635
+00:31:06,870 --> 00:31:07,980
+these things out for you yet. 
+目前还没有数据系统可以自动为你解决这些问题
+
+636
+00:31:10,080 --> 00:31:13,670
+Hydro coding is a way to use a tree structure to identify the mpu key ranges, 
+Hydro编码是一种使用树形结构来识别MPU密钥范围的方法
+
+637
+00:31:14,190 --> 00:31:16,190
+and then not actually have a store them. 
+而不是实际存储它们
+
+638
+00:31:16,650 --> 00:31:18,190
+We'll see that in the next slide, 
+我们将在下一张幻灯片中看到
+
+639
+00:31:18,200 --> 00:31:22,270
+and then bit slicing is a way to actually maintain a bit map
+然后位切片是一种实际维护
+
+640
+00:31:22,280 --> 00:31:27,430
+of a single bit location a within a column, 
+列中单个位位置a的位图的方法
+
+641
+00:31:27,830 --> 00:31:29,900
+and then do a bunch of tricks to speed things up. 
+然后使用一系列技巧来加快速度
+
+642
+00:31:30,480 --> 00:31:31,860
+When you violate this bit, 
+当你违反这一点时
+
+643
+00:31:31,870 --> 00:31:34,020
+slicing is a really neat idea from the 1990s. 
+切片是20世纪90年代的一个非常巧妙的想法
+
+644
+00:31:35,740 --> 00:31:36,530
+I don't think. 
+我不认为
+
+645
+00:31:36,870 --> 00:31:39,850
+He says, maybe I think pino might use something like this or pelosi,
+他说 也许我认为皮诺可能会用这样的东西或者佩洛西
+
+646
+00:31:41,000 --> 00:31:46,350
+but we'll see the modern variation of bit weaving from wisconsin how to do
+但我们将看到来自威斯康星州的比特编织的现代变化如何非常有效地做到这一点
+
+647
+00:31:46,360 --> 00:31:47,100
+this very efficiently, 
+这是非常酷的
+
+648
+00:31:47,560 --> 00:31:48,100
+which is pretty cool. 
+
+
+649
+00:31:50,550 --> 00:31:51,740
+Let's go through the last two, 
+让我们来看看最后两个
+
+650
+00:31:51,750 --> 00:31:53,540
+because there's not much to say about range encoding. 
+因为关于范围编码没有太多可说的
+
+651
+00:31:53,930 --> 00:31:55,710
+Obviously, again, it's just the same idea.
+显然 再一次 这只是同样的想法
+
+652
+00:31:56,930 --> 00:31:59,000
+Instead of having a bit not per value, you have one per range.
+不是每个值有一个位 而是每个范围有一个位
+
+653
+00:32:01,450 --> 00:32:02,040
+Hydro coding. 
+水力编码
+
+654
+00:32:02,050 --> 00:32:05,040
+The idea is going to be is that we're going to have a tree structure. 
+我们的想法是 我们将有一个树形结构
+
+655
+00:32:05,050 --> 00:32:07,350
+We're going to organize the bit map as a tree structure. 
+我们将把位图组织为树形结构
+
+656
+00:32:07,920 --> 00:32:12,150
+Where at each node, 
+在每个节点上
+
+657
+00:32:12,600 --> 00:32:14,320
+there's going to be a bit map itself. 
+都会有一个位图
+
+658
+00:32:15,930 --> 00:32:20,070
+And that's going to gonna tell you whether the child represented
+这将告诉你由该节点的位置表示的
+
+659
+00:32:20,080 --> 00:32:24,500
+by the position at that node is gonna have a one below it in the subtree. 
+子节点在子树中是否有一个1
+
+660
+00:32:26,280 --> 00:32:28,420
+In this case here, every node is going to have 4 bits,
+在这种情况下 每个节点将有4个位
+
+661
+00:32:28,920 --> 00:32:31,350
+every or in its bit internal bit map. 
+每个或在其位内部位映射中
+
+662
+00:32:31,360 --> 00:32:32,770
+And then every no, 
+然后每一个不
+
+663
+00:32:32,780 --> 00:32:33,970
+it's going to have four children. 
+它会有四个孩子
+
+664
+00:32:34,630 --> 00:32:36,710
+So I a if I have a one in a position, 
+所以如果我在一个位置上有一个1
+
+665
+00:32:36,720 --> 00:32:41,800
+then that's going to tell me that the subtree pointed down by this pointer. 
+那么这将告诉我这个指针指向的子树
+
+666
+00:32:42,230 --> 00:32:43,640
+There's going to be a one somewhere. 
+在某个地方会有一个
+
+667
+00:32:43,650 --> 00:32:44,710
+They don't know where, 
+他们不知道在哪里
+
+668
+00:32:44,720 --> 00:32:46,520
+but somewhere in this case here, 
+但在这里的某个地方
+
+669
+00:32:46,530 --> 00:32:47,680
+the second position is zero. 
+第二个位置是零
+
+670
+00:32:47,690 --> 00:32:50,660
+So I know that in the second child going down, 
+所以我知道在第二个子树中
+
+671
+00:32:50,670 --> 00:32:52,600
+this subtree isn't going to be anything. 
+这个子树不会是任何东西
+
+672
+00:32:54,310 --> 00:32:56,730
+The way to think about this is along the leaf nodes. 
+思考这个问题的方法是沿着叶节点
+
+673
+00:32:57,170 --> 00:32:58,840
+These are the offsets in the bit map, 
+这些是位图中的偏移量
+
+674
+00:32:58,850 --> 00:32:59,880
+just as we had before. 
+就像我们之前一样
+
+675
+00:33:03,010 --> 00:33:04,400
+In this case here, i'm storing,
+在这个例子中
+
+676
+00:33:04,450 --> 00:33:06,670
+say, offsets at the top here,
+我在顶部存储了偏移量
+
+677
+00:33:06,680 --> 00:33:08,390
+and I have the bits at the corresponding location. 
+并且在相应的位置存储了位
+
+678
+00:33:10,570 --> 00:33:13,120
+I'm not actually storing the bunch of zeros. 
+我实际上并没有存储这一堆零
+
+679
+00:33:13,600 --> 00:33:17,360
+What you're really storing is just the locations where you have a one. 
+你真正存储的只是你有一个的位置
+
+680
+00:33:19,520 --> 00:33:19,910
+You see, 
+你看
+
+681
+00:33:19,920 --> 00:33:24,490
+if I want to figure out whether I I have aa bit set in position one, 
+如果我想弄清楚我是否在位置1设置了AA位
+
+682
+00:33:25,220 --> 00:33:25,410
+right? 
+对吗
+
+683
+00:33:25,420 --> 00:33:26,290
+I start at the top. 
+我从上面开始
+
+684
+00:33:26,510 --> 00:33:30,180
+I say, I know I need to look at this side of the tree.
+我说 我知道我需要看看树的这一边
+
+685
+00:33:30,190 --> 00:33:31,740
+So therefore, the first bit is one.
+因此 第一位是1
+
+686
+00:33:32,160 --> 00:33:33,540
+I know, and not zero.
+我知道 而且不是零
+
+687
+00:33:33,830 --> 00:33:34,700
+I need to go down here. 
+我需要从这里下去
+
+688
+00:33:35,010 --> 00:33:36,800
+This bit is set to one. 
+此位设置为1
+
+689
+00:33:37,190 --> 00:33:38,850
+I know I need to go down here and then low and behold, 
+我知道我需要从这里往下走
+
+690
+00:33:38,860 --> 00:33:41,210
+I can look at my bit map and see that there's something there. 
+然后往下看 我可以看我的位图 看到那里有什么东西
+
+691
+00:33:43,050 --> 00:33:43,310
+Right? 
+对的
+
+692
+00:33:45,890 --> 00:33:51,280
+What are some problems with this i's over here? 
+我在这里有什么问题
+
+693
+00:33:52,350 --> 00:33:55,070
+He says you decide the size of the tree before the size of the nodes. 
+他说你先决定树的大小 再决定节点的大小
+
+694
+00:33:56,380 --> 00:33:57,420
+That's not hard, right?
+这并不难 对吧
+
+695
+00:33:57,430 --> 00:34:01,330
+Because it depends on the number of values I have. 
+因为它取决于我拥有的值的数量
+
+696
+00:34:05,550 --> 00:34:08,800
+There will be one friendship outside to just keep sending, 
+外面会有一种友谊 只是不断地发送
+
+697
+00:34:08,810 --> 00:34:10,150
+and then well, 
+然后好吧
+
+698
+00:34:10,520 --> 00:34:14,960
+versus like it will be a really deep like the type of opportunity. 
+与喜欢相比 这将是一个非常深的喜欢的机会
+
+699
+00:34:14,970 --> 00:34:15,300
+Really. 
+真的
+
+700
+00:34:15,310 --> 00:34:23,470
+I don't know that his statement is that if the again, 
+我不知道他的说法是 如果再来一次
+
+701
+00:34:23,960 --> 00:34:24,910
+so this is a bit map, 
+所以这是一个位图 这是说像某人点燃或不点燃
+
+702
+00:34:24,920 --> 00:34:28,030
+this is the thing that says like with someone lit or not, yes or no.
+是或不是
+
+703
+00:34:28,960 --> 00:34:31,710
+This is just instead of storing it again as a giant array. 
+而不是将其再次存储为一个巨大的数组
+
+704
+00:34:32,200 --> 00:34:32,990
+This is the array. 
+这是阵列
+
+705
+00:34:34,120 --> 00:34:36,250
+So skew this in terms of what's, 
+所以根据什么来倾斜它
+
+706
+00:34:36,670 --> 00:34:41,510
+because it's the bit set to one that corresponds to like this position
+因为它是设置为1的位
+
+707
+00:34:41,520 --> 00:34:42,670
+here corresponds to one tube. 
+对应于这里的位置对应于一个电子管
+
+708
+00:34:46,360 --> 00:34:47,400
+Distribution is unique. 
+分布是唯一的
+
+709
+00:34:47,860 --> 00:34:49,810
+And you don't say anything. 
+你什么都不说
+
+710
+00:34:50,580 --> 00:34:52,250
+It says the distribution is uniform. 
+它说分布是均匀的
+
+711
+00:34:52,420 --> 00:34:53,490
+If all the bits are set to one, 
+如果所有位都设置为1
+
+712
+00:34:53,500 --> 00:34:54,570
+then you don't save any space. 
+则不会节省任何空间
+
+713
+00:34:55,610 --> 00:34:56,880
+Yes, you spend more time.
+是的 你花更多的时间
+
+714
+00:34:56,890 --> 00:34:57,120
+Yes. 
+是的
+
+715
+00:34:58,550 --> 00:35:00,510
+Let's say, a little bit similar to that,
+让我们说 有点类似
+
+716
+00:35:00,520 --> 00:35:04,150
+but i'm kind of worried for memory optimization issues in terms of locality. 
+但我有点担心在局部性方面的内存优化问题
+
+717
+00:35:04,510 --> 00:35:04,720
+There you go. 
+你去那里
+
+718
+00:35:05,090 --> 00:35:06,040
+And what else? 
+还有什么
+
+719
+00:35:07,130 --> 00:35:07,530
+It's tied. 
+平手了
+
+720
+00:35:07,540 --> 00:35:09,280
+I what's reading the memory? 
+我什么在读记忆
+
+721
+00:35:10,340 --> 00:35:11,750
+The cpu right? 
+CPU对吗
+
+722
+00:35:12,650 --> 00:35:14,420
+So this seems like a great idea. 
+所以这似乎是个好主意
+
+723
+00:35:15,870 --> 00:35:16,710
+It's one of the things. 
+这是其中一件事
+
+724
+00:35:16,720 --> 00:35:18,610
+Again, this idea that came out of the 1990s.
+同样 这个想法产生于20世纪90年代
+
+725
+00:35:18,620 --> 00:35:19,750
+It seems like a good idea, 
+这似乎是一个好主意
+
+726
+00:35:19,760 --> 00:35:23,840
+but nobody actually implements it because on a modern super scalar cpu this
+但没有人真正实现它 因为在现代超标量cpu上
+
+727
+00:35:23,850 --> 00:35:25,640
+is a part came out of 2003, 
+这是2003年推出的一部分
+
+728
+00:35:25,650 --> 00:35:29,730
+but on a modern cpu this is a bad idea, 
+但在现代cpu上 这是一个坏主意
+
+729
+00:35:29,740 --> 00:35:33,030
+because now you have this in direction, 
+因为现在你有了这个方向
+
+730
+00:35:33,040 --> 00:35:34,350
+whereas i'm doing this probing, 
+而我正在做这个探测
+
+731
+00:35:34,360 --> 00:35:35,830
+i've got to go look at this bit map, 
+我必须去看看这个位图
+
+732
+00:35:35,840 --> 00:35:37,630
+and I may go down one path versus another. 
+我可能会走上一条路而不是另一条路
+
+733
+00:35:37,970 --> 00:35:40,700
+And then that might be another cache line miss to go fetch this. 
+然后可能是另一个缓存线未命中去取这个
+
+734
+00:35:41,360 --> 00:35:41,620
+Right? 
+对的
+
+735
+00:35:41,630 --> 00:35:49,240
+So like the the cost ever had this storage savings you would get is
+因此
+
+736
+00:35:49,250 --> 00:35:52,950
+not worth the sort of the performance panel you pay for using
+就像曾经有过的成本一样
+
+737
+00:35:53,210 --> 00:35:54,700
+a probing data structure like this. 
+您将获得的存储节省并不值得您为使用像这样的探测数据结构而支付的性能面板
+
+738
+00:35:55,320 --> 00:35:57,390
+Again, think of like trying to scan large things.
+再一次 想象一下尝试扫描大的东西
+
+739
+00:35:57,810 --> 00:36:00,840
+Again, it's not get b plus three where I can scan along the leaf nodes.
+同样 在我可以沿着叶节点扫描的地方 它没有得到B+3
+
+740
+00:36:01,310 --> 00:36:02,910
+I'd have to store some metadata, 
+我必须存储一些元数据
+
+741
+00:36:04,560 --> 00:36:07,110
+either store some metadata about where what position i'm in, 
+或者存储一些关于我在什么位置的元数据
+
+742
+00:36:08,380 --> 00:36:11,690
+and then maintain pointers across to go from 11 node to the next. 
+然后维护指针以从11个节点转到下一个节点
+
+743
+00:36:12,200 --> 00:36:13,720
+Or I have to do a depth first search, 
+或者我必须先做深度搜索
+
+744
+00:36:13,730 --> 00:36:16,590
+I got to burst down here and then come back up, right?
+我必须在这里爆炸 然后再回来 对吗
+
+745
+00:36:16,970 --> 00:36:18,660
+And that's how I scan along you all the leaf nodes. 
+这就是我扫描所有叶节点的方法
+
+746
+00:36:19,120 --> 00:36:21,280
+All that back and forth is very costly. 
+所有这些来回都是非常昂贵的
+
+747
+00:36:21,860 --> 00:36:22,540
+In a superscalar, 
+在超标量CPU中
+
+748
+00:36:22,550 --> 00:36:27,150
+cpu where you don't want to have stalls in your obstruction pipeline, 
+您不希望在阻塞管道中出现停顿
+
+749
+00:36:27,160 --> 00:36:28,970
+because now you're jumping to another location. 
+因为现在您正在跳转到另一个位置
+
+750
+00:36:30,360 --> 00:36:30,870
+So also, 
+所以
+
+751
+00:36:31,580 --> 00:36:35,100
+more recently, zone map says if you have all you're writing,
+最近 区域地图说 如果你有你正在写的所有东西
+
+752
+00:36:35,110 --> 00:36:38,060
+so we can give one of them before these one. 
+那么我们可以在这些之前给他们一个
+
+753
+00:36:39,100 --> 00:36:40,940
+You're missing production of space, right?
+你错过了空间的生产 对吗
+
+754
+00:36:43,060 --> 00:36:43,770
+So a statement is, 
+所以一个陈述是
+
+755
+00:36:45,110 --> 00:36:47,260
+if it's, again,
+如果它是 再一次
+
+756
+00:36:47,430 --> 00:36:49,540
+it's the enum category of value issue, right?
+它是值问题的枚举类别 对吗
+
+757
+00:36:49,550 --> 00:36:50,660
+If everything's one, 
+如果一切都是一
+
+758
+00:36:50,670 --> 00:36:55,150
+then this41 to the one. 
+那么这41就是一
+
+759
+00:36:57,590 --> 00:36:58,720
+So like in this case, 
+就像在这种情况下
+
+760
+00:36:58,730 --> 00:37:01,720
+if if at least one value, 
+如果至少有一个值
+
+761
+00:37:02,610 --> 00:37:03,640
+a in a node is one, 
+节点中的A是1
+
+762
+00:37:03,650 --> 00:37:05,200
+then I have to maintain the tree structure. 
+那么我必须保持树结构
+
+763
+00:37:05,830 --> 00:37:07,120
+These nodes are really big. 
+这些节点真的很大
+
+764
+00:37:07,130 --> 00:37:09,060
+I'm showing 44 bits per node, 
+我显示的是每个节点44位
+
+765
+00:37:09,070 --> 00:37:10,700
+because I make it fit in powerpoint. 
+因为我让它适合PowerPoint
+
+766
+00:37:10,980 --> 00:37:13,780
+Like if it's something larger as it should be, 
+就像如果它是更大的东西
+
+767
+00:37:14,900 --> 00:37:17,210
+a like a cache line size, 64 bytes,
+就像缓存线大小 64个字节
+
+768
+00:37:17,570 --> 00:37:22,260
+then the likelihood that something is going to be one is, yes.
+那么某个东西将是1的可能性是 是
+
+769
+00:37:22,930 --> 00:37:23,130
+Correct. 
+正确的
+
+770
+00:37:23,140 --> 00:37:23,410
+Yes. 
+是的
+
+771
+00:37:26,030 --> 00:37:26,240
+Right. 
+对的
+
+772
+00:37:26,250 --> 00:37:27,360
+So he's basically saying, again,
+所以他基本上又在说
+
+773
+00:37:29,090 --> 00:37:31,830
+just i've got 1 bit set to true, 
+我只是将1位设置为真
+
+774
+00:37:32,220 --> 00:37:33,800
+and i've got to store the entire node. 
+并且我必须存储整个节点
+
+775
+00:37:34,320 --> 00:37:35,610
+And the nodes are going to be kind of large. 
+节点会很大
+
+776
+00:37:35,930 --> 00:37:36,020
+Right? 
+对的
+
+777
+00:37:36,030 --> 00:37:37,020
+Probably a cache line. 
+可能是缓存线
+
+778
+00:37:38,950 --> 00:37:41,270
+So again, this is seems cool, seems clever.
+再一次 这看起来很酷 很聪明
+
+779
+00:37:42,740 --> 00:37:43,740
+The savings is real. 
+节省下来的钱是真的
+
+780
+00:37:43,750 --> 00:37:46,220
+Are we go from 8 bytes to 4 bytes? 
+我们是从8字节到4字节吗
+
+781
+00:37:47,810 --> 00:37:49,460
+But again, in a modern cp architecture,
+但是 在现代CP体系结构中
+
+782
+00:37:51,160 --> 00:37:53,780
+this is going to be bad or better off just applying the data ripping
+这将是不好的
+
+783
+00:37:53,790 --> 00:37:54,140
+through it. 
+或者更好的是通过它来应用数据
+
+784
+00:37:57,400 --> 00:38:02,790
+Let me show you another variation to bit slicing another way to encode things. 
+让我向你们展示位片的另一种变体 另一种编码方式
+
+785
+00:38:03,790 --> 00:38:04,420
+For this one, again,
+对于这个
+
+786
+00:38:04,430 --> 00:38:09,190
+we're going to have our original table is going to have this idid field. 
+同样 我们将有我们的原始表 将有这个idid字段
+
+787
+00:38:09,680 --> 00:38:11,570
+And everyone have a zip code column. 
+每个人都有一个邮政编码栏
+
+788
+00:38:11,920 --> 00:38:12,930
+These are actually all the zip codes, 
+这些实际上是所有的邮政编码
+
+789
+00:38:12,940 --> 00:38:14,450
+the places i've lived before in my life. 
+我以前住过的地方
+
+790
+00:38:15,630 --> 00:38:18,070
+I grew up in maryland in the pittsburgh now, compton,
+我在马里兰长大 现在在匹兹堡
+
+791
+00:38:18,450 --> 00:38:19,920
+wisconsin, and so forth.
+康普顿 威斯康星等等
+
+792
+00:38:20,180 --> 00:38:20,460
+Right? 
+对的
+
+793
+00:38:21,280 --> 00:38:26,830
+What we're going to do now is we're going to flip around how we're
+我们现在要做的是
+
+794
+00:38:26,840 --> 00:38:28,530
+actually going to be storing
+我们要翻转一下我们实际上是如何将数据存储在值本身中的
+
+795
+00:38:29,310 --> 00:38:33,050
+the data within the values themselves instead of having this bit map to say, 
+而不是用这个位图来表示
+
+796
+00:38:34,650 --> 00:38:37,070
+this bit map corresponds to 15217. 
+该位图对应于15217
+
+797
+00:38:37,600 --> 00:38:39,460
+And there's a one in that bit map. 
+在位图中有一个1
+
+798
+00:38:39,790 --> 00:38:40,820
+If the people has that, 
+如果人们有的话
+
+799
+00:38:41,210 --> 00:38:46,030
+we're now actually going to store the values themselves in bit maps
+我们现在实际上要把值本身存储在位图中
+
+800
+00:38:46,310 --> 00:38:49,100
+at a sort of single rate of single in a bit wide manner. 
+以一种单一的速率 以一种有点宽的方式
+
+801
+00:38:50,090 --> 00:38:52,240
+And then that's going to open up opportunities when we start doing
+然后 当我们开始进行谓词评估时
+
+802
+00:38:52,250 --> 00:38:53,400
+predicate evaluation, 
+这将打开机会
+
+803
+00:38:53,690 --> 00:38:56,520
+to do early pruning and identifying things that we don't actually need to read. 
+进行早期修剪和识别我们实际上不需要阅读的内容
+
+804
+00:38:56,530 --> 00:38:57,960
+So again, 
+所以 再一次
+
+805
+00:38:57,970 --> 00:39:01,990
+think of this as like you wouldn't want to store the table itself like this. 
+把它想象成你不想像这样存储表本身
+
+806
+00:39:02,540 --> 00:39:05,410
+This would be an auxiliary data structure like an index that we
+这将是一个辅助数据结构
+
+807
+00:39:05,420 --> 00:39:08,820
+can then identify what offsets in the column and the original table
+类似于索引
+
+808
+00:39:08,830 --> 00:39:09,500
+are matching. 
+然后我们可以识别列中的哪些偏移量与原始表匹配
+
+809
+00:39:09,910 --> 00:39:13,410
+Therefore, we then will need to go get the full data of the columns,
+因此 我们需要获取列的完整数据
+
+810
+00:39:13,420 --> 00:39:14,810
+get the process of the query. 
+获取查询的过程
+
+811
+00:39:16,770 --> 00:39:16,920
+Again, 
+同样
+
+812
+00:39:16,930 --> 00:39:20,210
+the way to think about bit slicing is that it's like when we took
+考虑位切片的方法是
+
+813
+00:39:20,220 --> 00:39:22,010
+a row store and convert it to a column store. 
+就像我们将行存储转换为列存储一样
+
+814
+00:39:22,430 --> 00:39:25,540
+But now we're taking the bits that we're storing for each value
+但现在我们将为每个值存储的位转换
+
+815
+00:39:26,000 --> 00:39:27,320
+And flipping that to be a column store. 
+为列存储
+
+816
+00:39:30,110 --> 00:39:31,100
+This is an old idea. 
+这是一个古老的想法
+
+817
+00:39:31,110 --> 00:39:35,800
+I think it comes back to actually forget it for the 90s. 
+我认为它回到了90年代 实际上忘记了它
+
+818
+00:39:36,990 --> 00:39:40,140
+Let's take the first value here, 21, 042, where I was born.
+让我们在这里取第一个值 21 042 我出生的地方
+
+819
+00:39:41,580 --> 00:39:43,570
+If we just convert that to its binary form, 
+如果我们把它转换成二进制形式
+
+820
+00:39:43,580 --> 00:39:45,060
+we end up with this bit string here. 
+我们就会得到这个位串
+
+821
+00:39:47,150 --> 00:39:49,050
+Again, I realize in a for,
+再一次 我意识到在一个for中
+
+822
+00:39:49,360 --> 00:39:50,630
+I showed that the table schema, 
+我展示了表模式
+
+823
+00:39:51,190 --> 00:39:54,700
+32 bit integer, we're going to show 17 bits, just they make it fit.
+32位整数 我们将展示17位 只是他们使它适合
+
+824
+00:39:55,190 --> 00:39:59,250
+So we're going to have17 bits for the actual data itself. 
+所以我们将用17位来表示实际数据本身
+
+825
+00:39:59,590 --> 00:40:04,280
+Then we'll have one bit map for to identify whether a value is null or not. 
+然后 我们将有一个位图来标识一个值是否为空
+
+826
+00:40:05,120 --> 00:40:05,780
+In this case here, 
+在这种情况下
+
+827
+00:40:06,870 --> 00:40:08,700
+the value is not null, that's set to zero.
+值不为空 即设置为零
+
+828
+00:40:09,450 --> 00:40:10,280
+Then, again,
+然后 再一次
+
+829
+00:40:10,290 --> 00:40:14,130
+for every single bit along and the binary representation of the value, 
+对于每一个单独的位和值的二进制表示
+
+830
+00:40:14,140 --> 00:40:17,250
+we're going to store it in a bit map like this. 
+我们将把它存储在这样的位图中
+
+831
+00:40:17,910 --> 00:40:23,290
+The bit map is going down not across with any single position in the value
+位图向下移动
+
+832
+00:40:23,860 --> 00:40:24,890
+of the attribute. 
+而不是与属性值中的任何单个位置交叉
+
+833
+00:40:25,700 --> 00:40:27,650
+Here's all the bits for all the two poles. 
+这是所有两极的所有比特
+
+834
+00:40:29,630 --> 00:40:31,580
+If you do the same thing for all the others. 
+如果你对所有其他人做同样的事
+
+835
+00:40:32,270 --> 00:40:32,650
+Right? 
+对的
+
+836
+00:40:34,190 --> 00:40:35,460
+Now, if our query comes along,
+现在 如果我们的查询出现
+
+837
+00:40:35,470 --> 00:40:39,910
+find all the customers that are in a zip code less than 15217. 
+请查找邮政编码小于15217的所有客户
+
+838
+00:40:40,990 --> 00:40:47,030
+What we can do is we can look at what is for this value here. 
+我们可以做的是 我们可以看看这个值是什么
+
+839
+00:40:47,040 --> 00:40:52,630
+What is the first position where in the binary representation of the value? 
+值的二进制表示中的第一个位置是什么
+
+840
+00:40:52,940 --> 00:40:55,280
+What is the first position of the one? 
+一号的第一个位置是什么
+
+841
+00:40:56,140 --> 00:40:56,500
+I therefore, 
+因此
+
+842
+00:40:56,510 --> 00:40:59,800
+we know that anything before that is going to be zero and anything that, 
+我们知道在此之前的任何东西都是零
+
+843
+00:40:59,810 --> 00:41:00,360
+therefore, 
+因此
+
+844
+00:41:01,240 --> 00:41:04,020
+is not zero within those first positions. 
+在这些第一个位置内的任何东西都不是零
+
+845
+00:41:04,300 --> 00:41:05,250
+We can throw it entirely. 
+我们可以把它完全扔掉
+
+846
+00:41:07,230 --> 00:41:07,440
+Right? 
+对的
+
+847
+00:41:07,450 --> 00:41:11,090
+So i'm going to basically walk through each slice and construct
+所以我基本上要浏览每一片
+
+848
+00:41:11,100 --> 00:41:15,180
+a a little bit and say whether a what two boy
+并构建一点
+
+849
+00:41:15,190 --> 00:41:17,630
+different positions in each row matches. 
+并说每一行中的两个不同位置是否匹配
+
+850
+00:41:18,840 --> 00:41:19,000
+Right? 
+对的
+
+851
+00:41:19,010 --> 00:41:22,640
+So15217 is this value here. 
+SO15217是这里的值
+
+852
+00:41:23,410 --> 00:41:24,800
+The first three bits are zero, 
+前三位是0
+
+853
+00:41:24,810 --> 00:41:25,840
+and then we have the one. 
+然后是1
+
+854
+00:41:26,350 --> 00:41:28,010
+What we need to do is we need to examine, 
+我们需要做的是检查
+
+855
+00:41:28,020 --> 00:41:34,230
+find all the entries here where the first 3 bits are not zero. 
+找出前三位不为零的所有条目
+
+856
+00:41:34,940 --> 00:41:36,960
+Therefore, we know we can throw them out immediately.
+因此 我们知道我们可以立即把它们扔出去
+
+857
+00:41:38,990 --> 00:41:39,080
+Right? 
+对的
+
+858
+00:41:39,250 --> 00:41:42,640
+Again, this is we can go in using vectors instructions.
+同样 我们可以使用向量指令
+
+859
+00:41:42,950 --> 00:41:46,010
+We can do this evaluation very quickly across these bits. 
+我们可以非常快速地对这些位进行评估
+
+860
+00:41:46,900 --> 00:41:49,500
+And then we can sort of keep marching along, going down to the end.
+然后我们可以继续前进 走到最后
+
+861
+00:41:49,510 --> 00:41:52,730
+And at some point, we realized there's recently and we're done,
+在某种程度上 我们意识到最近我们已经完成了
+
+862
+00:41:53,070 --> 00:41:55,220
+or there's no matches having a stop early. 
+或者没有比赛可以提前结束
+
+863
+00:41:57,320 --> 00:41:57,450
+Right? 
+对的
+
+864
+00:41:57,460 --> 00:42:01,810
+So this is a different way to think about how to evaluate two poles. 
+所以这是一种不同的方式来思考如何评估两极
+
+865
+00:42:01,820 --> 00:42:03,670
+Then, like, here's for loop,
+然后 像这里的for循环
+
+866
+00:42:03,680 --> 00:42:05,510
+for every single tubal apply a predicate. 
+对每一个tubal应用一个谓词
+
+867
+00:42:05,890 --> 00:42:08,280
+Now we're looking a batch of two balls all at once, 
+现在我们一次看一批两个球
+
+868
+00:42:08,850 --> 00:42:13,530
+while we're doing this by bit across all of them. 
+同时我们在所有的球上做这个
+
+869
+00:42:18,990 --> 00:42:20,810
+So bit slices can be, again,
+因此
+
+870
+00:42:20,820 --> 00:42:22,910
+are used for efficient aggregate computations, 
+位片可以再次用于有效的聚合计算
+
+871
+00:42:24,000 --> 00:42:25,290
+like a really simple trick. 
+就像一个非常简单的把戏
+
+872
+00:42:25,750 --> 00:42:27,560
+If you want to do a summation on a column, 
+如果你想在一列上求和
+
+873
+00:42:27,570 --> 00:42:29,140
+you can use the hamming weight, 
+你可以使用汉明重量
+
+874
+00:42:29,150 --> 00:42:31,310
+which is just the or hamming distance. 
+它就是或汉明距离
+
+875
+00:42:31,320 --> 00:42:33,110
+It's the number of ones, 
+它是1的数量
+
+876
+00:42:33,120 --> 00:42:37,820
+the number of you count the number of non 0 bits, 
+你计算非0位的数量
+
+877
+00:42:37,830 --> 00:42:40,510
+which is one number of ones within a string of bits. 
+也就是一串位中1的数量
+
+878
+00:42:42,490 --> 00:42:46,590
+You walk along the slice and then count all the number ones in the first slice, 
+你沿着切片走 然后数第一个切片中所有的数字1
+
+879
+00:42:47,180 --> 00:42:49,240
+and then multiply by two to the 17, right?
+然后乘以2得到17 对吗
+
+880
+00:42:49,250 --> 00:42:50,280
+Because that's their position. 
+因为那是他们的立场
+
+881
+00:42:50,900 --> 00:42:52,090
+In integer form, 
+在整数形式中
+
+882
+00:42:52,430 --> 00:42:55,560
+then you count all the ones in the next slice, multiply 2 to 16,
+然后计算下一个切片中的所有1 将2乘以16
+
+883
+00:42:55,570 --> 00:42:56,040
+and you do this. 
+然后执行此操作
+
+884
+00:42:56,050 --> 00:42:58,470
+All of them go going across 1 by 1. 
+它们都是1乘1穿过的
+
+885
+00:42:58,800 --> 00:42:59,730
+And you add those together, 
+你把它们加在一起
+
+886
+00:43:00,340 --> 00:43:01,200
+you get the summation. 
+你就得到了总和
+
+887
+00:43:02,740 --> 00:43:04,910
+And intel added this pot, count instruction,
+英特尔添加了这个罐子
+
+888
+00:43:04,920 --> 00:43:06,270
+which basically gives you the hamming weight. 
+计数指令 它基本上给你汉明重量
+
+889
+00:43:06,830 --> 00:43:09,300
+You can do this with cindy very efficiently again, 
+你可以用辛迪再一次非常有效地做到这一点
+
+890
+00:43:09,310 --> 00:43:12,360
+instead of having to maintain an integer sum, 
+而不是必须保持一个整数和
+
+891
+00:43:12,370 --> 00:43:14,800
+and then having a four lip looking at every single tube one by one, 
+然后让四个嘴唇一个接一个地看每一个管子
+
+892
+00:43:14,810 --> 00:43:16,610
+you go across these bit slices. 
+你穿过这些位片
+
+893
+00:43:16,970 --> 00:43:18,000
+Do this simple math trick? 
+做这个简单的数学把戏
+
+894
+00:43:18,880 --> 00:43:20,230
+You end up with aggregation very quickly. 
+你很快就会得到聚合
+
+895
+00:43:20,240 --> 00:43:23,210
+All right? 
+好吧
+
+896
+00:43:26,220 --> 00:43:27,780
+So for aggregation, 
+所以对于聚合
+
+897
+00:43:27,790 --> 00:43:28,900
+sure this always works. 
+当然这总是有效的
+
+898
+00:43:28,910 --> 00:43:31,020
+The challenge course is going back here. 
+挑战课程要回到这里
+
+899
+00:43:32,210 --> 00:43:32,620
+For simplicity, 
+为简单起见
+
+900
+00:43:32,630 --> 00:43:36,300
+I said skip any entry where the first three slices have a one in it. 
+我建议跳过前三个切片中包含1的任何条目
+
+901
+00:43:36,810 --> 00:43:40,300
+And I was sort of hand waving how quickly we found that out and how we
+我在挥手示意我们发现这一点的速度有多快
+
+902
+00:43:40,310 --> 00:43:42,020
+actually go from down the line. 
+以及我们实际上是如何沿着这条线走下去的
+
+903
+00:43:42,610 --> 00:43:43,760
+It's not that efficient. 
+效率没那么高
+
+904
+00:43:45,870 --> 00:43:47,980
+If you have to look at all the bit slices, 
+如果你必须看所有的位片
+
+905
+00:43:48,210 --> 00:43:50,090
+if you can throw everything out in the first chunk, 
+如果你能把第一个块中的所有东西都扔掉
+
+906
+00:43:50,100 --> 00:43:51,490
+the first bit slice is fantastic. 
+那么第一个位片就太棒了
+
+907
+00:43:51,780 --> 00:43:52,320
+That's super fast. 
+那是超级快的
+
+908
+00:43:53,210 --> 00:43:54,430
+But for larger values, again,
+但是对于更大的值
+
+909
+00:43:54,440 --> 00:43:55,510
+more than 17 bits, 
+也是大于17位
+
+910
+00:43:57,450 --> 00:43:58,480
+this can get expensive. 
+这可能会很贵
+
+911
+00:43:59,820 --> 00:44:00,780
+Again, you fall back to it.
+再一次 你退回到它
+
+912
+00:44:00,790 --> 00:44:02,580
+Can I just scan the data that would be quicker. 
+我能扫描一下数据吗 那样会更快
+
+913
+00:44:06,170 --> 00:44:07,480
+So any questions about bit slicing? 
+关于比特切片有什么问题吗
+
+914
+00:44:10,920 --> 00:44:12,110
+How big a word is? 
+一个字有多大
+
+915
+00:44:12,810 --> 00:44:15,530
+You still have to have the full word within the cpu register
+您仍然必须在CPU寄存器中拥有完整的字
+
+916
+00:44:15,540 --> 00:44:18,190
+and can only be within the first few bit. 
+并且只能在前几位中
+
+917
+00:44:18,200 --> 00:44:22,280
+So would you really say much because the majority of your cost
+所以你真的会说很多吗
+
+918
+00:44:22,290 --> 00:44:24,790
+in the database goes in terms of this diagram, 
+因为你在数据库中的大部分成本都在这个图表中
+
+919
+00:44:25,440 --> 00:44:28,750
+you still have to bring the whole word in to the memory to the cache. 
+你仍然需要将整个单词放入内存中的缓存中
+
+920
+00:44:29,320 --> 00:44:30,590
+His statement is, 
+他的陈述是
+
+921
+00:44:34,480 --> 00:44:36,990
+statement is, how much is this actually going to save us?
+声明是 这实际上能为我们节省多少
+
+922
+00:44:37,000 --> 00:44:38,540
+Because basically, 
+因为基本上
+
+923
+00:44:38,550 --> 00:44:39,620
+at the end of the day, 
+在一天结束的时候
+
+924
+00:44:39,630 --> 00:44:41,060
+if you have to go get the disk, 
+如果你必须去拿磁盘
+
+925
+00:44:41,070 --> 00:44:43,040
+isn't disk always going to be the main bottleneck? 
+磁盘不总是主要的瓶颈吗
+
+926
+00:44:43,500 --> 00:44:43,840
+Absolutely. 
+绝对地
+
+927
+00:44:45,220 --> 00:44:47,190
+This is sort of assuming once it's in memory, 
+这是一种假设
+
+928
+00:44:47,770 --> 00:44:53,200
+can you quickly rip through the the data that is in memory
+一旦它在内存中
+
+929
+00:44:53,210 --> 00:44:54,400
+without having to go
+你可以快速通过内存中的数据而不必去吗
+
+930
+00:44:55,800 --> 00:44:59,110
+without having to go one tube up by tube or attribute and advocate, 
+不需要一管一管地往上走 也不需要属性和宣传
+
+931
+00:45:01,300 --> 00:45:02,280
+or no way to think about this, too.
+或者也没办法考虑这个
+
+932
+00:45:02,290 --> 00:45:04,360
+Again, we're using this to do data pruning.
+同样 我们使用它来进行数据修剪
+
+933
+00:45:04,370 --> 00:45:08,470
+So going back to that parquet diagram, 
+所以回到那个拼花地板图
+
+934
+00:45:08,710 --> 00:45:11,340
+they have the header has all this information. 
+他们的标题包含了所有这些信息
+
+935
+00:45:11,780 --> 00:45:13,380
+So if I just bring that in, 
+所以如果我把它带进来
+
+936
+00:45:14,070 --> 00:45:14,750
+then I can identify, 
+那么我就可以识别
+
+937
+00:45:15,000 --> 00:45:19,460
+I don't need to read anything else because I had these bit sliced indexes filters. 
+我不需要读取任何其他东西 因为我有这些位片索引过滤器
+
+938
+00:45:19,810 --> 00:45:23,290
+Then I end up reading less data in total, and that's great.
+然后我最终读取的数据总量减少了 这很好
+
+939
+00:45:25,630 --> 00:45:25,950
+Right? 
+对的
+
+940
+00:45:26,340 --> 00:45:27,450
+And then you can play the trick of like, 
+然后你可以玩这样的把戏
+
+941
+00:45:29,550 --> 00:45:29,930
+doesn't it mean? 
+这不是意味着
+
+942
+00:45:30,160 --> 00:45:31,470
+I if I check this index, 
+如果我检查这个索引
+
+943
+00:45:31,910 --> 00:45:34,600
+and then I do have to find something that I got to stall and go fetch why I
+然后我必须找到我要拖延的东西
+
+944
+00:45:34,610 --> 00:45:34,900
+get it. 
+然后去获取我为什么得到它
+
+945
+00:45:36,150 --> 00:45:37,580
+If you have multithreading, 
+如果你有多线程
+
+946
+00:45:37,960 --> 00:45:39,310
+you could bring one piece in, 
+你可以把一块带进来
+
+947
+00:45:40,150 --> 00:45:42,980
+have one thread chop through this, 
+让一个线程穿过这个 而另一个东西在等着把下一块带进来
+
+948
+00:45:43,300 --> 00:45:45,750
+while something else is waiting to bring the next piece in and staging that, 
+并把它放在舞台上
+
+949
+00:45:45,760 --> 00:45:45,940
+right? 
+对吗
+
+950
+00:45:46,540 --> 00:45:49,010
+There's always index to look at if you then have to hand something up, 
+如果你必须提交一些东西 总会有索引可以查看
+
+951
+00:45:49,020 --> 00:45:50,810
+say I do need to read rather this data. 
+比如我确实需要阅读这些数据
+
+952
+00:45:51,680 --> 00:45:53,430
+You can block that thread and run something else. 
+您可以阻止该线程并运行其他线程
+
+953
+00:46:04,040 --> 00:46:05,310
+Let's talk about bit weaving bit. 
+让我们来谈谈比特编织比特
+
+954
+00:46:05,320 --> 00:46:10,550
+Weaving is a modern incarnation of a bit slicing. 
+编织是比特切片的现代化身
+
+955
+00:46:11,280 --> 00:46:18,930
+And it's specifically designed for doing fast evaluation on compressed
+它是专门为使用sim d对压缩的柱状数据进行快速评估而设计的
+
+956
+00:46:18,940 --> 00:46:23,050
+columnar data using sim d is everyone here taking six, 1814?
+这里的每个人都拿6 1814吗
+
+957
+00:46:23,060 --> 00:46:24,290
+Does everyone know what cindy is? 
+大家都知道辛迪是什么吗
+
+958
+00:46:25,950 --> 00:46:26,910
+Who doesn't know what cindy is? 
+谁不知道辛迪是什么
+
+959
+00:46:28,880 --> 00:46:29,740
+Awesome, fantastic.
+太棒了 太棒了
+
+960
+00:46:30,510 --> 00:46:31,460
+First time. 
+第一次
+
+961
+00:46:34,510 --> 00:46:34,650
+Right? 
+对的
+
+962
+00:46:35,610 --> 00:46:38,250
+We'll ignore how we're doing order preserving dictionary encoding
+在下一节课之前
+
+963
+00:46:38,260 --> 00:46:39,170
+until next class. 
+我们将忽略如何进行保序字典编码
+
+964
+00:46:39,510 --> 00:46:40,440
+But basically, what we're doing again,
+但基本上
+
+965
+00:46:40,450 --> 00:46:47,520
+we're trying to get bit level paralysation where we're trying to scan lots
+我们再一次做的是 我们试图得到位级的瘫痪
+
+966
+00:46:47,530 --> 00:46:48,300
+of data, 
+我们试图扫描大量的数据
+
+967
+00:46:48,310 --> 00:46:53,070
+a a lot of attributes at a bit by bit level, 
+在位级上扫描大量的属性
+
+968
+00:46:54,740 --> 00:46:58,170
+and be able to identify quickly whether something's going to match
+并能够快速识别某些内容是否与我们的谓词
+
+969
+00:46:58,180 --> 00:46:58,850
+our predicate or not. 
+匹配
+
+970
+00:47:01,090 --> 00:47:04,210
+So this idea first came from university of wisconsin, 
+所以这个想法首先来自威斯康星大学
+
+971
+00:47:04,220 --> 00:47:07,220
+and it was implemented in a o lab. 
+并在一个实验室中实现
+
+972
+00:47:07,470 --> 00:47:08,990
+A better lab engine called quick step. 
+一个更好的实验室引擎叫做快步
+
+973
+00:47:09,310 --> 00:47:11,880
+Think of like duct db before duct db which isn't called quick step, 
+想想管道数据库之前的管道数据库 它不叫快速步骤
+
+974
+00:47:11,890 --> 00:47:14,520
+but it didn't have sequel, didn't have a parser, didn't have a query planar.
+但它没有sequel 没有解析器 没有查询平面
+
+975
+00:47:15,170 --> 00:47:17,560
+It was like rock stevie, but for analytics,
+这就像罗克·史蒂维 但用于分析
+
+976
+00:47:17,770 --> 00:47:19,430
+but without boarding sequel, 
+但没有登机续集
+
+977
+00:47:21,000 --> 00:47:22,100
+they rolled us at it was constant, 
+他们一直在推动我们
+
+978
+00:47:22,110 --> 00:47:23,940
+became an incubator project for apache, 
+成为阿帕奇的孵化器项目
+
+979
+00:47:23,950 --> 00:47:24,980
+but then in 2016, 
+但在2016年
+
+980
+00:47:24,990 --> 00:47:27,300
+but then it got killed off in 2018. 
+但在2018年 它被淘汰了
+
+981
+00:47:27,310 --> 00:47:28,300
+I forget what happened. 
+我忘了发生了什么
+
+982
+00:47:29,070 --> 00:47:30,420
+He went up and he did a startup. 
+他去做了一家创业公司
+
+983
+00:47:32,350 --> 00:47:35,630
+So this is invented by jeannox, patel.
+这是Jeannox Patel发明的
+
+984
+00:47:36,000 --> 00:47:38,020
+Again, he's probably along with the germans,
+再一次 他可能与德国人
+
+985
+00:47:38,320 --> 00:47:39,470
+thomas norman and germany. 
+托马斯·诺曼和德国人一起
+
+986
+00:47:39,960 --> 00:47:42,490
+Probably one of the best data systems researchers in the world. 
+可能是世界上最好的数据系统研究人员之一
+
+987
+00:47:45,060 --> 00:47:46,540
+He's really cutthroat too. 
+他也很凶残
+
+988
+00:47:46,550 --> 00:47:48,540
+Like every time I showed this picture, 
+就像每次我给他看这张照片的时候
+
+989
+00:47:48,550 --> 00:47:51,060
+I always say like he would tell me stories about him growing up in india
+我总是说他会告诉我他在印度长大的故事
+
+990
+00:47:51,070 --> 00:47:55,210
+where he had to like getting on the bus just go to school every day it was
+在那里他每天都喜欢坐公共汽车去上学
+
+991
+00:47:55,220 --> 00:47:56,990
+really but he's a super mild mannered guy. 
+但他是一个超级温文尔雅的人
+
+992
+00:47:57,000 --> 00:47:58,590
+It was insane when he was telling me anyway. 
+不管怎样 他告诉我的时候真是疯了
+
+993
+00:48:00,460 --> 00:48:00,740
+All right. 
+好吧
+
+994
+00:48:00,750 --> 00:48:02,450
+So there'd be two ways to do this. 
+所以有两种方法可以做到
+
+995
+00:48:02,460 --> 00:48:02,770
+And again, 
+再一次
+
+996
+00:48:04,850 --> 00:48:06,240
+this was in the sketch paper you guys read. 
+这是你们读过的素描纸上的
+
+997
+00:48:06,250 --> 00:48:09,090
+I think they allude to and talk about bit weaving, 
+我认为他们提到并谈论了比特编织
+
+998
+00:48:09,100 --> 00:48:10,410
+but only the vertical approach. 
+但只是垂直的方法
+
+999
+00:48:11,080 --> 00:48:12,510
+So we'll talk about both of them, 
+所以我们会讨论这两个问题
+
+1000
+00:48:12,960 --> 00:48:15,590
+and you'll see why the vertical one is going to be superior. 
+你会明白为什么垂直的会更好
+
+1001
+00:48:15,980 --> 00:48:17,880
+The other thing I also forgot to point out, too,
+我还忘了指出的另一件事是
+
+1002
+00:48:17,890 --> 00:48:22,310
+is this paper came out in 2013. 
+这篇论文是2013年发表的
+
+1003
+00:48:24,560 --> 00:48:26,530
+The time, cindy,
+当时 辛迪
+
+1004
+00:48:26,540 --> 00:48:27,570
+at least on x 86, 
+至少在x86上
+
+1005
+00:48:27,980 --> 00:48:29,660
+didn't have scattering gather operations. 
+没有分散收集操作
+
+1006
+00:48:30,040 --> 00:48:36,820
+They're going to be able to get all the parallelism with vectorization
+在某些情况下
+
+1007
+00:48:37,130 --> 00:48:38,960
+in some cases without cindy entirely. 
+他们将能够在完全没有Cindy的情况下通过矢量化获得所有的并行性
+
+1008
+00:48:39,350 --> 00:48:40,760
+But also if they are using cindy, 
+而且如果他们使用辛迪
+
+1009
+00:48:40,770 --> 00:48:42,200
+they don't require scattering gather. 
+他们不需要分散聚集
+
+1010
+00:48:43,620 --> 00:48:44,890
+Because again, now we have it,
+因为再一次
+
+1011
+00:48:44,900 --> 00:48:48,400
+but back then there are the modern versions that do it, 
+现在我们有了它 但当时有现代版本这样做
+
+1012
+00:48:48,410 --> 00:48:50,300
+take advantage of it, but it doesn't require it.
+利用它 但它不需要它
+
+1013
+00:48:50,950 --> 00:48:52,020
+We'll cover, scatter, gather,
+我们将在本学期晚些时候更详细地讨论 分散
+
+1014
+00:48:52,030 --> 00:48:54,450
+and stevie stuff in more detail later in the semester. 
+收集和stevie的内容
+
+1015
+00:48:56,810 --> 00:48:58,120
+Again, we're doing this.
+再说一次 我们正在做这个
+
+1016
+00:49:00,330 --> 00:49:01,970
+When we talk about the horizontal approach first, 
+当我们首先讨论水平方法时
+
+1017
+00:49:02,530 --> 00:49:04,910
+it's gonna be row based, but again, think of it.
+它将是基于行的 但再次考虑它
+
+1018
+00:49:04,920 --> 00:49:06,810
+It's it's for a single column, 
+它是单列的
+
+1019
+00:49:06,940 --> 00:49:12,980
+even though we're storing the bits within a value in a row oriented manner. 
+即使我们以面向行的方式存储值中的位
+
+1020
+00:49:13,470 --> 00:49:15,030
+It's assumed that it's on a single column, 
+假设它在单个列上
+
+1021
+00:49:15,040 --> 00:49:17,710
+and the column will be stored in a column in our fashion, 
+并且该列将以我们的方式存储在列中
+
+1022
+00:49:17,720 --> 00:49:19,600
+the attributes we stored in the column in our fashion. 
+我们以我们的方式存储在列中的属性
+
+1023
+00:49:21,800 --> 00:49:21,990
+Again, 
+同样
+
+1024
+00:49:22,120 --> 00:49:25,350
+it's a clever way to allow us to get better parallelism through vectors asian, 
+这是一种聪明的方法 允许我们通过vectorsasian获得更好的并行性
+
+1025
+00:49:25,360 --> 00:49:26,430
+because we're organizing bits. 
+因为我们正在组织位
+
+1026
+00:49:28,330 --> 00:49:28,580
+Right? 
+对的
+
+1027
+00:49:28,590 --> 00:49:31,350
+So say we have our two poles here. 
+所以说我们在这里有两个极点
+
+1028
+00:49:33,470 --> 00:49:35,620
+This is just the binary form or whatever the storing. 
+这只是二进制形式或任何存储形式
+
+1029
+00:49:35,790 --> 00:49:39,300
+Here's the actual the numeric value that's being represented by all of these. 
+这是实际的数值 由所有这些表示
+
+1030
+00:49:40,300 --> 00:49:42,370
+We're going to break it up into segments. 
+我们要把它分成几个部分
+
+1031
+00:49:43,860 --> 00:49:45,960
+Think of these again, just like roe groups, as we had before.
+再想想这些 就像Roe集团一样 就像我们以前一样
+
+1032
+00:49:47,020 --> 00:49:49,130
+For each segment, we're going to store.
+对于每个段 我们将存储
+
+1033
+00:49:51,550 --> 00:49:53,970
+We would know how many values we need to store. 
+我们将知道需要存储多少个值
+
+1034
+00:49:54,740 --> 00:49:57,090
+We're going to represent them in sort of this, 
+我们将用这种方式来表示它们 以一种编织的方式
+
+1035
+00:49:57,830 --> 00:50:04,140
+a in a weaved manner where we were stored in the continuous memory
+我们被存储在连续的记忆中
+
+1036
+00:50:04,150 --> 00:50:05,700
+will be have gaps where we
+将会有间隙
+
+1037
+00:50:05,710 --> 00:50:08,060
+would come back around and get the next batch of two balls. 
+我们会回来并得到下一批两个球
+
+1038
+00:50:08,820 --> 00:50:09,910
+So let me show you what I mean by this. 
+所以让我告诉你我的意思
+
+1039
+00:50:10,760 --> 00:50:11,980
+So think of this, 
+所以想想这个
+
+1040
+00:50:11,990 --> 00:50:15,090
+as like this is the start of memory and goes here from here to here. 
+就像这是记忆的开始 从这里到这里
+
+1041
+00:50:15,810 --> 00:50:19,080
+We're going to represent these 3 bit values in 4 bits. 
+我们将用4位来表示这3位值
+
+1042
+00:50:19,640 --> 00:50:21,100
+You actually have the actual value. 
+你实际上有实际的价值
+
+1043
+00:50:21,430 --> 00:50:23,760
+The first one is 0010 is a one here. 
+第一个是0010在这里是一个
+
+1044
+00:50:24,080 --> 00:50:26,150
+But there's always going to be a delimiter that's in front of it. 
+但它前面总会有一个分隔符
+
+1045
+00:50:26,730 --> 00:50:29,130
+That's going to be aa padding bit that's always set to zero. 
+这将是一个始终设置为零的填充位
+
+1046
+00:50:29,900 --> 00:50:31,800
+And we're going to use this to then, 
+我们将使用它
+
+1047
+00:50:32,740 --> 00:50:35,580
+when you start doing the arithmetic to figure out whether something that
+然后当你开始计算是否与谓词
+
+1048
+00:50:35,590 --> 00:50:36,300
+matches the predicate, 
+匹配时
+
+1049
+00:50:36,630 --> 00:50:39,350
+they're going to use this to store whether the triple matches
+他们将使用它来存储输出
+
+1050
+00:50:39,360 --> 00:50:41,170
+or not in the output. 
+中的三元组是否匹配
+
+1051
+00:50:41,180 --> 00:50:42,530
+You see what I mean in a second. 
+你马上就明白我的意思了
+
+1052
+00:50:42,540 --> 00:50:44,370
+And the other thing to point out also, too,
+另一件需要指出的事情是 它的工作方式是从上到下
+
+1053
+00:50:44,380 --> 00:50:48,700
+is that the way it works is we go from top to bottom t this is t zero, 
+这是t0 t1
+
+1054
+00:50:48,710 --> 00:50:50,260
+t one, t two, t three.
+t2 t3
+
+1055
+00:50:50,840 --> 00:50:53,960
+Then we loop back around and then append t four to where t one is the same
+然后我们循环回去 然后把t4附加到t1和t5相同的地方
+
+1056
+00:50:53,970 --> 00:50:55,100
+with t five and so forth. 
+以此类推
+
+1057
+00:50:55,110 --> 00:50:55,290
+Here. 
+这里
+
+1058
+00:50:56,840 --> 00:50:58,030
+We'll do this when we start, 
+我们将在开始时执行此操作
+
+1059
+00:50:58,270 --> 00:51:02,110
+because we need to get convert out or extract out the matching tubes
+因为我们需要将匹配的管道转换或提取到选择向量中
+
+1060
+00:51:02,120 --> 00:51:04,390
+into a selection vector to know what all sets match. 
+以了解所有集合匹配的内容
+
+1061
+00:51:04,820 --> 00:51:07,520
+If we organize it in this way, it'll pop out nicely.
+如果我们以这种方式组织它 它会很好地弹出
+
+1062
+00:51:07,860 --> 00:51:09,180
+You'll see what I mean in a second. 
+你马上就会明白我的意思
+
+1063
+00:51:11,320 --> 00:51:13,830
+Then the same thing for the second segment, we know there's two values.
+第二段也是一样 我们知道有两个值
+
+1064
+00:51:13,840 --> 00:51:16,770
+We only have to store222 poles, 
+我们只需要储存222根杆子
+
+1065
+00:51:17,090 --> 00:51:18,270
+and there's the pen in one after another. 
+一根接一根地放着笔
+
+1066
+00:51:20,470 --> 00:51:22,920
+I'm showing this with 3 bit values, 
+我展示的是3位值
+
+1067
+00:51:23,170 --> 00:51:24,400
+with shortest 4 bits. 
+最短的是4位
+
+1068
+00:51:25,030 --> 00:51:26,660
+We'll say this is a process of word. 
+我们会说这是一个文字的过程
+
+1069
+00:51:28,300 --> 00:51:29,810
+It's just 8 bits on x 86. 
+它在x86上只有8位
+
+1070
+00:51:29,820 --> 00:51:30,530
+I process a word. 
+我处理一个单词
+
+1071
+00:51:30,540 --> 00:51:32,370
+I think it's 16 bits, because that's what it was.
+我认为它是16位 因为它就是16位
+
+1072
+00:51:32,960 --> 00:51:35,240
+Back in the 80s, I think arm is 32 bits.
+回到80年代 我认为ARM是32位的
+
+1073
+00:51:36,320 --> 00:51:38,810
+It doesn't matter to, for simplicity, we're using this.
+这并不重要 为了简单起见 我们使用这个
+
+1074
+00:51:43,730 --> 00:51:43,900
+Here. 
+这里
+
+1075
+00:51:43,910 --> 00:51:45,520
+Here's the little emitter that's always set to zero. 
+这里的小发射器总是设置为零
+
+1076
+00:51:46,940 --> 00:51:48,440
+Let's see how we might use these to match a predicate. 
+让我们看看如何使用它们来匹配谓词
+
+1077
+00:51:49,600 --> 00:51:51,880
+Select start from table where value is less than five. 
+选择从值小于5的表开始
+
+1078
+00:51:52,860 --> 00:51:57,140
+We're just going to deal with just two poles like t one and t four I that I
+我们只需要处理两个极点 就像我在返回之前展示的t1和t4
+
+1079
+00:51:57,150 --> 00:51:58,660
+showed before going back or t zero, 
+或者t0 t4
+
+1080
+00:51:58,670 --> 00:51:58,980
+t four. 
+
+
+1081
+00:51:58,990 --> 00:52:00,420
+We're going to deal with this first one here. 
+我们将在这里处理第一个问题
+
+1082
+00:52:02,230 --> 00:52:06,100
+The x is going to be the actual triple organized in the bit, 
+X将是以位组织的实际三元组
+
+1083
+00:52:06,110 --> 00:52:07,820
+weaving horizontal format. 
+编织水平格式
+
+1084
+00:52:08,360 --> 00:52:10,450
+Then this y vector here, 
+那么这里的y向量
+
+1085
+00:52:10,690 --> 00:52:13,970
+that's just going to be the constant that we're comparing five. 
+就是我们比较的常数
+
+1086
+00:52:16,290 --> 00:52:19,000
+Then there'll be this mass to just zero with a bunch of ones. 
+然后这个质量就会变成零 再加上一堆1
+
+1087
+00:52:19,130 --> 00:52:24,050
+We're going to use that when we do our when we do our arithmetic to figure
+当我们做算术时 我们将使用它来计算出
+
+1088
+00:52:24,060 --> 00:52:24,970
+out whether this thing, 
+这个东西的
+
+1089
+00:52:24,980 --> 00:52:28,590
+whether the value is less than the concept we're looking for. 
+值是否小于我们正在寻找的概念
+
+1090
+00:52:30,160 --> 00:52:32,220
+The way it works is that we have this formula here. 
+它的工作方式是我们在这里有这个公式
+
+1091
+00:52:32,740 --> 00:52:35,390
+We'll have a different formula per based on what the predicate is. 
+根据谓词是什么 我们将有一个不同的公式
+
+1092
+00:52:35,520 --> 00:52:39,120
+This is for less than you take the x core of the x and the mask, 
+这比你取x和掩码的x核心 加上y
+
+1093
+00:52:39,620 --> 00:52:42,250
+add y to it and then end it with a negation of the mask. 
+然后用掩码的否定来结束它
+
+1094
+00:52:43,430 --> 00:52:44,100
+Lo and behold, 
+你瞧
+
+1095
+00:52:44,110 --> 00:52:46,890
+what you get as the output is a selection vector that tells you
+你得到的输出是一个选择向量 它告诉你
+
+1096
+00:52:49,430 --> 00:52:50,910
+whether the 2 point actually matches. 
+2点是否实际匹配
+
+1097
+00:52:51,830 --> 00:52:53,540
+Now, you see in the padding here,
+现在 你可以看到这里的填充
+
+1098
+00:52:53,850 --> 00:52:57,080
+that's where you put, whether the predicate actually was satisfied or not.
+这就是你放的地方 无论谓词实际上是否被满足
+
+1099
+00:52:57,980 --> 00:52:58,920
+You ignore the zeros. 
+你忽略了零
+
+1100
+00:52:58,930 --> 00:53:00,000
+The padding here says one, 
+这里的填充表示1
+
+1101
+00:53:00,010 --> 00:53:01,910
+because t zero is what? 
+因为T0是什么
+
+1102
+00:53:01,920 --> 00:53:04,190
+One and one is less than five, so that matches.
+一加一小于五 所以匹配
+
+1103
+00:53:05,030 --> 00:53:10,060
+And then the second t four is 65 is less than six. 
+然后第二个T4是65小于6
+
+1104
+00:53:10,850 --> 00:53:11,220
+That's false. 
+那是假的
+
+1105
+00:53:11,670 --> 00:53:12,410
+That's set to zero. 
+它被设置为零
+
+1106
+00:53:15,820 --> 00:53:18,000
+What's really cool about this is that it only requires three instructions
+真正酷的是
+
+1107
+00:53:18,010 --> 00:53:19,040
+to evaluate a single word. 
+它只需要三条指令来计算一个单词
+
+1108
+00:53:19,050 --> 00:53:20,970
+It works with any word size. 
+它适用于任何字大小
+
+1109
+00:53:20,980 --> 00:53:22,530
+As I said, these are apite.
+正如我所说 这些是阿皮特
+
+1110
+00:53:22,540 --> 00:53:23,370
+Words can go larger. 
+单词可以变大
+
+1111
+00:53:23,380 --> 00:53:24,010
+It doesn't matter. 
+这不重要
+
+1112
+00:53:24,700 --> 00:53:26,820
+And all these different formulas here, 
+所有这些不同的公式
+
+1113
+00:53:26,830 --> 00:53:28,860
+they're all defined in the paper. 
+都在论文中有定义
+
+1114
+00:53:28,870 --> 00:53:30,360
+They actually didn't invent these. 
+他们实际上并没有发明这些
+
+1115
+00:53:31,660 --> 00:53:31,980
+Actually, 
+实际上
+
+1116
+00:53:31,990 --> 00:53:34,940
+leslie lamport event of these back in the 1970s to do this kind
+莱斯利·兰波特早在20世纪70年代就对这些事件
+
+1117
+00:53:34,950 --> 00:53:36,340
+of these bit wise comparisons. 
+做了一些比较
+
+1118
+00:53:37,250 --> 00:53:40,170
+So again, nothing i'm showing here is actually, cindy,
+所以 我在这里展示的都不是真的 辛迪
+
+1119
+00:53:41,210 --> 00:53:43,090
+this is just doing this mask here. 
+这只是在这里做这个面具
+
+1120
+00:53:43,380 --> 00:53:44,870
+You can use regular 60instructions, 
+您可以使用常规的60条指令
+
+1121
+00:53:46,250 --> 00:53:50,660
+but you're still getting the parallelism because you pack things to fit a
+但是你仍然得到了并行性
+
+1122
+00:53:50,670 --> 00:53:51,500
+in a single word. 
+因为你把东西打包以适应一个单词
+
+1123
+00:53:53,260 --> 00:53:53,670
+Right? 
+对的
+
+1124
+00:53:55,390 --> 00:53:55,980
+This is pretty cool. 
+这很酷
+
+1125
+00:53:55,990 --> 00:53:57,580
+Again, the1970s, cindy,
+同样 在20世纪70年代
+
+1126
+00:53:57,590 --> 00:54:01,160
+I think cindy existed theoretically with flints taxonomy. 
+辛迪 我认为辛迪理论上存在于弗林特的分类法中
+
+1127
+00:54:01,430 --> 00:54:03,500
+But I don't think any cpu back in the 70s supported this, 
+但我不认为70年代的任何CPU都支持这一点
+
+1128
+00:54:03,760 --> 00:54:06,520
+at least not to the extent they do now. 
+至少没有达到现在的程度
+
+1129
+00:54:08,610 --> 00:54:10,800
+So again, 
+再一次 如果你有64位的单词
+
+1130
+00:54:10,810 --> 00:54:13,640
+i'm showing you 8 bit words if you had 64 bit words. 
+我会给你8位的单词
+
+1131
+00:54:13,940 --> 00:54:16,050
+Now you can pack in 16 free byte values, 
+现在 您可以打包16个可用字节值
+
+1132
+00:54:16,060 --> 00:54:20,470
+and you can do this simple arithmetic to compute the comparison very quickly. 
+并且可以执行这个简单的算法来快速计算比较
+
+1133
+00:54:25,740 --> 00:54:26,170
+The question is, 
+问题是
+
+1134
+00:54:26,180 --> 00:54:28,410
+why do they arrange vertically instead of horizontally next slide? 
+为什么他们在下一张幻灯片中垂直排列而不是水平排列
+
+1135
+00:54:28,420 --> 00:54:30,800
+Because we have to at this point here, 
+因为我们必须在这一点上
+
+1136
+00:54:30,810 --> 00:54:32,760
+we just have a one and a zero to say this match. 
+我们只有一个1和一个0来表示这场比赛
+
+1137
+00:54:32,770 --> 00:54:35,120
+We've got to convert this back into what is the offset of the tube bowl. 
+我们必须把它转换回管碗的偏移量
+
+1138
+00:54:35,130 --> 00:54:37,300
+And then it's raising horizontally will solve the problem. 
+然后它的水平上升将解决这个问题
+
+1139
+00:54:40,640 --> 00:54:42,560
+You have one less bit to represent all of your data. 
+你少了一位来表示你所有的数据
+
+1140
+00:54:42,570 --> 00:54:43,560
+Say this does this mean? 
+说这个这是什么意思
+
+1141
+00:54:43,570 --> 00:54:45,560
+You have one less bit to represent all your data, 
+你少了一位来表示你所有的数据
+
+1142
+00:54:47,570 --> 00:54:50,570
+but normally, the americans does the quest 32bits.
+但通常情况下 美国人做的是32位的任务
+
+1143
+00:54:50,580 --> 00:54:54,470
+Now, it can't be put here because this would only be the 31bit.
+现在 它不能放在这里 因为这只是31位
+
+1144
+00:54:54,730 --> 00:54:56,390
+If you had random third cube, 
+如果你有随机的第三个立方体 它就结束了
+
+1145
+00:54:56,400 --> 00:55:01,590
+it ended as wouldn't this actually not work? 
+这不是真的不起作用吗
+
+1146
+00:55:04,110 --> 00:55:05,820
+You'd have to know something about the value domain to say, 
+你必须对价值域有所了解 才能说
+
+1147
+00:55:06,110 --> 00:55:07,180
+what's the minimum you can do? 
+你最少能做什么
+
+1148
+00:55:07,760 --> 00:55:07,770
+Right? 
+对的
+
+1149
+00:55:08,070 --> 00:55:11,250
+This is why they're assuming they're dictionary encoded in order preserving. 
+这就是为什么他们假设他们是按顺序编码的字典
+
+1150
+00:55:12,130 --> 00:55:13,480
+So again, these are a bunch of,
+再一次 这些是一堆
+
+1151
+00:55:14,280 --> 00:55:15,920
+say, the state codes in the united states.
+比如说 美国的州代码
+
+1152
+00:55:16,350 --> 00:55:17,840
+You could represent that in these bits. 
+你可以用这些位来表示
+
+1153
+00:55:19,770 --> 00:55:21,920
+Let me plow ahead and get through to answer her question. 
+让我继续努力 回答她的问题
+
+1154
+00:55:23,610 --> 00:55:28,220
+Yeah, these all are bit weaved packed.
+是的 这些都是编织包装的
+
+1155
+00:55:29,120 --> 00:55:29,630
+I don't say packs. 
+我没说打包
+
+1156
+00:55:29,640 --> 00:55:30,790
+That means that's compression scheme, 
+这意味着这是压缩方案
+
+1157
+00:55:30,800 --> 00:55:32,950
+but these are bit maps. 
+但这些是位图
+
+1158
+00:55:34,020 --> 00:55:37,250
+We can just do all the same comparison that I showed in the last slide. 
+我们可以做我在上一张幻灯片中展示的所有相同的比较
+
+1159
+00:55:37,260 --> 00:55:39,260
+And we have a bunch of vectors like this. 
+我们有一堆这样的向量
+
+1160
+00:55:39,610 --> 00:55:40,630
+Again, in our delimiter,
+同样 在我们的分隔符中
+
+1161
+00:55:40,640 --> 00:55:42,590
+we have set 0to1 based on whether it matched. 
+我们根据它是否匹配将0设置为1
+
+1162
+00:55:43,740 --> 00:55:45,530
+But now we need to convert this back into, 
+但现在我们需要再次将其
+
+1163
+00:55:46,460 --> 00:55:48,210
+again, whether what offset matched.
+转换回偏移是否匹配
+
+1164
+00:55:49,210 --> 00:55:52,990
+You just do simple bit shifting to slide things over based on where you are
+你只需要做一些简单的移动 根据你所处的位置把东西滑过去
+
+1165
+00:55:55,950 --> 00:55:56,740
+in the list. 
+在名单中
+
+1166
+00:55:57,710 --> 00:56:00,250
+Then now when you combine these together, 
+然后现在当你把这些结合在一起时
+
+1167
+00:56:00,570 --> 00:56:03,830
+then you end up with a bit map that says what tubal actually matched. 
+你最终会得到一个位图 说明输卵管实际上匹配的是什么
+
+1168
+00:56:05,070 --> 00:56:08,750
+That's why you have to shift this t what t four was over here. 
+这就是为什么你要移动这个T 这里的T4是什么
+
+1169
+00:56:09,370 --> 00:56:10,770
+When I shifted it over by one, 
+当我把它移动1的时候 当我把它推上去的时候
+
+1170
+00:56:11,030 --> 00:56:19,170
+when I push it up, it lands nicely where t four should be.
+它很好地落在了t4应该在的地方
+
+1171
+00:56:20,640 --> 00:56:21,340
+Is it more efficient? 
+效率更高吗
+
+1172
+00:56:21,870 --> 00:56:25,120
+A statement isn't the one we saw before more I the higher co encoding
+一个声明不是我们之前看到的那个吗
+
+1173
+00:56:25,130 --> 00:56:28,160
+or a bit slicing? 
+更高的Co编码或位切片
+
+1174
+00:56:29,940 --> 00:56:39,340
+Is that more efficient for facing the word and the thing to do in the operation? 
+那是不是在操作中面对这个词和要做的事情更有效率
+
+1175
+00:56:39,850 --> 00:56:43,340
+But not just do you have to face the way? 
+但不只是你要面对的方式
+
+1176
+00:56:44,280 --> 00:56:44,570
+Is it? 
+是吗
+
+1177
+00:56:47,310 --> 00:56:52,510
+The storage of the bit slicing approach is potentially more efficient. 
+位切片方法的存储可能更有效
+
+1178
+00:56:52,520 --> 00:56:54,660
+I because our modeling is obviously, 
+因为我们的建模很明显
+
+1179
+00:56:56,760 --> 00:56:57,800
+yes, I want to reduce.
+是的 我想减少
+
+1180
+00:57:00,110 --> 00:57:06,240
+Yes, but this bit is not another bit,
+是的 但这一点不是另一点
+
+1181
+00:57:06,250 --> 00:57:07,400
+but we're going to face the data as well. 
+但我们也要面对数据
+
+1182
+00:57:08,830 --> 00:57:10,430
+Even if the data is a little bit small, 
+即使数据有点小
+
+1183
+00:57:10,440 --> 00:57:14,500
+and it doesn't matter whether you're catching the 32 bits of the data as well. 
+您是否也捕获32位数据并不重要
+
+1184
+00:57:15,130 --> 00:57:17,850
+Whereas in bit splicing, you're only fetching 1 bit for every 32bit.
+而在位拼接中 每32位只取1位
+
+1185
+00:57:17,860 --> 00:57:19,030
+You understand? 
+你明白吗
+
+1186
+00:57:21,020 --> 00:57:22,740
+Ii had to look at the original paper. 
+我不得不看原始文件
+
+1187
+00:57:22,750 --> 00:57:25,800
+I forget whether think it might have compared against bit slicing, 
+我忘了是否认为它可以与位切片相比
+
+1188
+00:57:25,810 --> 00:57:26,840
+and this is way faster. 
+这是更快的方式
+
+1189
+00:57:28,080 --> 00:57:28,620
+This is faster. 
+这个比较快
+
+1190
+00:57:28,630 --> 00:57:28,940
+Yes. 
+是的
+
+1191
+00:57:29,740 --> 00:57:31,530
+Actually, the vertical one, we'll see next.
+实际上 垂直的那个 我们接下来会看到
+
+1192
+00:57:31,540 --> 00:57:32,450
+That's actually even faster. 
+那实际上更快
+
+1193
+00:57:34,000 --> 00:57:36,550
+That answers your question like why you shift it over and you pop it up. 
+这回答了你的问题 比如为什么你把它移过来 然后把它弹出来
+
+1194
+00:57:36,560 --> 00:57:38,350
+And then that's why they do they arrange it that way. 
+这就是他们这样安排的原因
+
+1195
+00:57:40,780 --> 00:57:42,170
+This is called the selection vector. 
+这称为选择向量
+
+1196
+00:57:42,500 --> 00:57:48,370
+This basically is a bit math that says that is the value for the does
+这基本上是一个小的数学
+
+1197
+00:57:48,620 --> 00:57:49,490
+the tube of this offset? 
+它说这是这个偏移的管的值吗
+
+1198
+00:57:49,500 --> 00:57:50,770
+Did this match our predicate or not? 
+这是否与我们的谓词匹配
+
+1199
+00:57:51,540 --> 00:57:52,660
+But again, it's just a bit map.
+但同样 它只是一张小地图
+
+1200
+00:57:52,670 --> 00:57:55,140
+We've got to convert that back actually to numerical offsets. 
+我们必须将其转换回实际的数字偏移
+
+1201
+00:57:56,340 --> 00:57:56,710
+Right? 
+对的
+
+1202
+00:57:58,120 --> 00:57:59,000
+There's two ways to do this. 
+有两种方法可以做到
+
+1203
+00:57:59,010 --> 00:58:02,720
+One is the new real simple thing would just be take our selection vector
+一个是新的真正简单的东西 就是取我们的选择向量
+
+1204
+00:58:03,370 --> 00:58:04,770
+and just write a for loop and say, 
+写一个for循环
+
+1205
+00:58:04,940 --> 00:58:06,130
+if the bit set to one, 
+如果位设置为1
+
+1206
+00:58:06,530 --> 00:58:08,360
+then I know this is the two ball at this offset. 
+那么我知道这是这个偏移处的两个球
+
+1207
+00:58:08,490 --> 00:58:11,350
+I then I need to consider it'll work. 
+然后我需要考虑它会起作用
+
+1208
+00:58:14,000 --> 00:58:19,250
+So the better approach is to do a precomputed positions table where you
+所以更好的方法是做一个预先计算的位置表
+
+1209
+00:58:19,260 --> 00:58:21,490
+recognize the size of my bit map. 
+你可以识别我的位图的大小
+
+1210
+00:58:21,500 --> 00:58:22,330
+Isn't that big? 
+那不是很大吗
+
+1211
+00:58:23,080 --> 00:58:25,140
+In this case here, it's 8bits.
+在这个例子中 它是8位
+
+1212
+00:58:25,810 --> 00:58:28,950
+That means that there's only two to the eight possible combinations
+这意味着只有两到八种可能的偏移组合
+
+1213
+00:58:28,960 --> 00:58:32,950
+of offsets that could be in this represented by this bit map. 
+可以用这个位图来表示
+
+1214
+00:58:33,810 --> 00:58:38,750
+I can just pre compute that as a giant array where the offset
+我可以将其预先计算为一个巨大的数组
+
+1215
+00:58:38,760 --> 00:58:42,310
+of the integer of the integer representation of the bits corresponds
+其中位的整数表示的整数的偏移量对应于一个偏移
+
+1216
+00:58:42,320 --> 00:58:43,270
+to an offset position table. 
+位置表
+
+1217
+00:58:43,820 --> 00:58:46,210
+Then I have a pre computed vector of the two plus that match. 
+然后我有一个预先计算的向量 两个加上匹配
+
+1218
+00:58:47,720 --> 00:58:48,670
+This is150. 
+这是150
+
+1219
+00:58:48,680 --> 00:58:50,270
+I jump to one position, 150.
+我跳到一个位置 150
+
+1220
+00:58:50,600 --> 00:58:52,130
+And there's my offsets. 
+这是我的补偿
+
+1221
+00:58:53,690 --> 00:58:56,610
+And I can keep that this positions table, 
+我可以保留这个位置表
+
+1222
+00:58:57,850 --> 00:58:58,920
+it's in a low megs. 
+它在低梅格斯
+
+1223
+00:59:00,010 --> 00:59:02,440
+If that I keep this in ll two or l one, 
+如果我把这个放在LL2或L1中
+
+1224
+00:59:04,960 --> 00:59:10,050
+this technique was amended by vector wise in the late2000s. 
+在2000年代后期 Vector Wise对该技术进行了修正
+
+1225
+00:59:10,060 --> 00:59:13,050
+And then we end up using this in our own system for our research
+然后我们最终在我们自己的系统中使用它来研究
+
+1226
+00:59:13,060 --> 00:59:14,610
+on vectors and execution stuff. 
+向量和执行的东西
+
+1227
+00:59:15,220 --> 00:59:16,890
+Paper papers will cover a later semester. 
+纸质论文将涵盖后一个学期
+
+1228
+00:59:18,780 --> 00:59:18,820
+All right. 
+好吧
+
+1229
+00:59:18,910 --> 00:59:19,660
+This is the horizontal. 
+这是水平线
+
+1230
+00:59:28,740 --> 00:59:28,790
+Sorry, 
+抱歉
+
+1231
+00:59:31,460 --> 00:59:33,000
+that's already in the register, right?
+那已经在登记簿上了 对吗
+
+1232
+00:59:34,210 --> 00:59:36,570
+But iii got to go examine the bits. 
+但我得去检查一下
+
+1233
+00:59:38,360 --> 00:59:42,230
+There isn't an instruction that says convert these bits into the integers. 
+没有一条指令说要把这些位转换成整数
+
+1234
+00:59:44,720 --> 00:59:46,380
+You just pre compute this little small table. 
+你只要预先计算这个小表
+
+1235
+00:59:46,730 --> 00:59:47,320
+This is way faster. 
+这要快得多
+
+1236
+00:59:53,330 --> 00:59:54,760
+This is the horizontal representation. 
+这是水平表示
+
+1237
+00:59:56,620 --> 00:59:59,640
+I don't, I don't know whether they actually implemented this in quick step.
+我不知道 我不知道他们是否真的快速实现了这一点
+
+1238
+01:00:00,060 --> 01:00:01,410
+No, the system I know, actually does this.
+不 我知道的系统 实际上是这样做的
+
+1239
+01:00:01,730 --> 01:00:04,500
+I just find this like super cool and super clever like the things you can do. 
+我只是觉得这超级酷 超级聪明 就像你能做的事情一样
+
+1240
+01:00:05,380 --> 01:00:07,970
+The vertical one is the one that showed up in the sketch paper. 
+垂直的那个就是出现在素描纸上的那个
+
+1241
+01:00:07,980 --> 01:00:10,840
+You guys read same thing as before. 
+你们读的东西和以前一样
+
+1242
+01:00:10,850 --> 01:00:14,520
+We're going to split our two balls up into segments or row groups. 
+我们将把两个球分成多个部分或行组
+
+1243
+01:00:15,210 --> 01:00:18,770
+But now what we're going to do is going to journey bit slices
+但现在我们要做的是为所有位置传输位片
+
+1244
+01:00:19,370 --> 01:00:23,470
+for all the positions and store those continuously in memory. 
+并将其连续存储在内存中
+
+1245
+01:00:24,430 --> 01:00:24,670
+Right? 
+对的
+
+1246
+01:00:25,160 --> 01:00:28,150
+Take all on the first column, on the second column, and the third column.
+在第一列 第二列和第三列上全取
+
+1247
+01:00:28,610 --> 01:00:31,090
+And each segment will store those bits. 
+并且每个段将存储这些位
+
+1248
+01:00:33,750 --> 01:00:38,330
+In this case here, even though the second segment only has 22poles,
+在这种情况下 即使第二段只有22个极点
+
+1249
+01:00:38,610 --> 01:00:43,180
+we had to store the entire bit map with much useless data, 
+我们也必须存储包含大量无用数据的整个位图
+
+1250
+01:00:43,190 --> 01:00:46,150
+because we had to make sure that everything fits in up. 
+因为我们必须确保所有内容都符合要求
+
+1251
+01:00:46,450 --> 01:00:47,410
+In our process of words, 
+在我们说话的过程中
+
+1252
+01:00:50,920 --> 01:00:51,670
+what can you do with this? 
+你能用这个做什么
+
+1253
+01:00:55,090 --> 01:00:58,330
+When we want to start doing evaluating two balls, we can use.
+当我们想要开始评估两个球时 我们可以使用
+
+1254
+01:00:58,340 --> 01:00:58,930
+Now, cindy,
+现在
+
+1255
+01:00:59,610 --> 01:01:01,610
+to compare two balls, i'm sorry,
+辛迪 要比较两个球
+
+1256
+01:01:01,620 --> 01:01:07,870
+to compare bits on a bit by bit basis within the value that we're looking for. 
+我很抱歉 要在我们正在寻找的价值范围内逐位比较
+
+1257
+01:01:09,070 --> 01:01:11,860
+Right along in sydney registers without having go to back
+在悉尼寄存器中
+
+1258
+01:01:11,870 --> 01:01:15,530
+to regular cpu registers and compute our predicates very efficiently. 
+无需返回到常规CPU寄存器并非常高效地计算我们的谓词
+
+1259
+01:01:16,550 --> 01:01:19,300
+Say we have now select star from table with value equals two. 
+假设我们现在已经从值等于2的表中选择了STAR
+
+1260
+01:01:19,310 --> 01:01:21,460
+I'm showing over the inequality predicate, 
+为了简单起见 我在上面显示了不等式谓词
+
+1261
+01:01:22,100 --> 01:01:24,580
+just for simplicity, but you can use inequalities as well.
+但您也可以使用不等式
+
+1262
+01:01:25,650 --> 01:01:28,440
+For this one, we're going to represent it in binary form, 010.
+对于这个 我们将用二进制形式表示它 010
+
+1263
+01:01:29,600 --> 01:01:32,230
+We want to do an evaluation of the first bit, 
+我们要对第一个位进行评估
+
+1264
+01:01:32,940 --> 01:01:36,960
+find all the matches within our first bit map vector. 
+找到第一个位图向量中的所有匹配项
+
+1265
+01:01:38,110 --> 01:01:38,940
+In our first slice, 
+在第一个切片中
+
+1266
+01:01:40,480 --> 01:01:42,630
+we throw out this empty zero mass thing. 
+我们把这个空的零质量的东西扔出去
+
+1267
+01:01:42,930 --> 01:01:45,250
+We do our sympathy compare to see whether it's true. 
+我们比较一下我们的同情心 看看这是不是真的
+
+1268
+01:01:45,260 --> 01:01:46,650
+And then we get back, 
+然后我们回来 我们得到一个更好的选择向量
+
+1269
+01:01:47,330 --> 01:01:49,020
+we get better a selected vector like this. 
+就像这样
+
+1270
+01:01:50,040 --> 01:01:50,240
+Right? 
+对的
+
+1271
+01:01:51,440 --> 01:01:53,200
+Then we have to evaluate the second one, 
+然后我们必须评估第二个
+
+1272
+01:01:53,210 --> 01:01:57,100
+but we only want to compare the ones where we know that actually match
+但我们只想比较我们知道实际上与第一个匹配的
+
+1273
+01:01:57,110 --> 01:01:57,780
+the first one. 
+那些
+
+1274
+01:01:58,150 --> 01:01:59,580
+It would be these positions here. 
+就是这里的这些位置
+
+1275
+01:02:00,090 --> 01:02:02,970
+So we'd bring in another mask to do that comparison. 
+所以我们要用另一个面具来做比较
+
+1276
+01:02:03,420 --> 01:02:06,980
+And then this would then produce out a in this case, they're all zeros.
+然后这将产生A 在这种情况下 它们都是零
+
+1277
+01:02:08,070 --> 01:02:10,940
+We just use that pop count thing before when we look at the vector and say, 
+当我们看矢量的时候 我们用到了弹出计数
+
+1278
+01:02:11,210 --> 01:02:12,210
+how many ones are there? 
+有多少个1
+
+1279
+01:02:12,470 --> 01:02:14,740
+As soon as the vector comes out with all zeros, 
+一旦向量全为零 我们就知道我们完成了
+
+1280
+01:02:15,600 --> 01:02:17,390
+we know we're done and we do early pruning. 
+我们进行了早期修剪
+
+1281
+01:02:18,650 --> 01:02:18,730
+Right? 
+对的
+
+1282
+01:02:18,740 --> 01:02:20,490
+So this is basically bit slicing, 
+所以这基本上是位切片
+
+1283
+01:02:20,500 --> 01:02:23,860
+but a way to do it with sigm d efficiently. 
+但这是一种使用SIGM D高效完成的方法
+
+1284
+01:02:27,300 --> 01:02:27,700
+Right? 
+对的
+
+1285
+01:02:29,620 --> 01:02:30,490
+In the case, 
+在这种情况下
+
+1286
+01:02:32,420 --> 01:02:34,570
+in the horizontal coding, we can't do early pruning,
+在水平编码中 我们不能进行早期修剪
+
+1287
+01:02:35,430 --> 01:02:38,090
+because we had to always look at the whole two balls, 
+因为我们必须始终查看整个两个球
+
+1288
+01:02:38,100 --> 01:02:41,420
+the whole bits within the attribute or the value in this case here, 
+属性或值中的所有位（在本例中）
+
+1289
+01:02:41,430 --> 01:02:42,540
+because we slice it up, 
+因为我们将其分割
+
+1290
+01:02:42,890 --> 01:02:44,860
+we can do early stops. 
+所以我们可以进行早期停止
+
+1291
+01:02:46,250 --> 01:02:47,790
+Is this different from this place? 
+这和这个地方不一样吗
+
+1292
+01:02:48,860 --> 01:02:51,510
+It's just showing you how to do it with cindy. 
+它只是向你展示如何与辛迪合作
+
+1293
+01:02:57,410 --> 01:02:57,940
+It's a statement. 
+这是一份声明
+
+1294
+01:02:57,950 --> 01:03:00,660
+You're doing this exact same operation as bit slicing. 
+您正在执行与位切片完全相同的操作
+
+1295
+01:03:01,610 --> 01:03:02,210
+Yes. 
+是的
+
+1296
+01:03:02,640 --> 01:03:06,210
+But like the visual bit slicing paper doesn't say how to do this. 
+但就像视觉切片一样 论文并没有说明如何做到这一点
+
+1297
+01:03:06,220 --> 01:03:12,040
+The difference because it was from the90s. 
+不同之处在于它是90年代的
+
+1298
+01:03:13,060 --> 01:03:13,160
+Right? 
+对的
+
+1299
+01:03:13,490 --> 01:03:19,360
+In this case here, we're able to examine82 poles with two instructions.
+在这种情况下 我们可以用两个指令来检查82个极点
+
+1300
+01:03:20,300 --> 01:03:20,900
+That's insane. 
+这太疯狂了
+
+1301
+01:03:21,550 --> 01:03:21,990
+It's amazing. 
+太神奇了
+
+1302
+01:03:24,090 --> 01:03:28,240
+Again, if you had to do a scruncher scan with a for loop and evaluate2+1×1,
+同样 如果您必须使用for循环和evaluate2+1×1执行scruncher扫描
+
+1303
+01:03:28,710 --> 01:03:29,890
+and there were attributes on the column. 
+并且列上有属性
+
+1304
+01:03:30,220 --> 01:03:32,380
+You're not going to get down to it in two instructions. 
+你不会在两个指令中得到它
+
+1305
+01:03:32,390 --> 01:03:33,100
+It's not entirely true. 
+这并不完全正确
+
+1306
+01:03:33,110 --> 01:03:34,220
+I it's two sydney instructions, 
+这是两个悉尼的指示
+
+1307
+01:03:34,230 --> 01:03:36,260
+but there's instructions to get things in and out of the registers. 
+但有指示把东西从收银机里拿进拿出
+
+1308
+01:03:36,270 --> 01:03:37,020
+You pay that cost. 
+你付这个费用
+
+1309
+01:03:37,720 --> 01:03:38,720
+But we're ignoring that for now, 
+但我们暂时忽略了这一点
+
+1310
+01:03:42,190 --> 01:03:42,260
+right? 
+是吧
+
+1311
+01:03:42,270 --> 01:03:42,620
+That's a lot. 
+那太多了
+
+1312
+01:03:42,870 --> 01:03:44,020
+Where have we gone so far? 
+我们到哪里去了
+
+1313
+01:03:44,030 --> 01:03:44,940
+We've done zone maps bit. 
+我们已经做了一些区域地图
+
+1314
+01:03:44,950 --> 01:03:46,660
+Map index is bit slicing, bit weaving.
+地图索引是位切片 位编织
+
+1315
+01:03:47,290 --> 01:03:49,630
+Then we'll finish up quickly and talk about column imprints
+然后 我们将很快结束
+
+1316
+01:03:50,160 --> 01:03:56,420
+and column sketches all the bit map schemes. 
+并讨论列印记和列草图以及所有的位图方案
+
+1317
+01:03:56,430 --> 01:04:02,100
+I showed you so far about storing exact representations of the data
+到目前为止
+
+1318
+01:04:02,110 --> 01:04:02,820
+within the columns. 
+我向您展示了如何在列中存储数据的精确表示
+
+1319
+01:04:03,710 --> 01:04:04,310
+Meaning, again,
+意思是
+
+1320
+01:04:04,320 --> 01:04:10,720
+I think the simplest case of the basic bit map index with the quality coding, 
+再一次 我认为最简单的情况是基本的位图索引与质量编码
+
+1321
+01:04:11,120 --> 01:04:12,690
+there's a one whether, in a bit map,
+在位图中
+
+1322
+01:04:12,700 --> 01:04:14,450
+whether the value is equivalent or not. 
+值是否相等
+
+1323
+01:04:16,120 --> 01:04:18,160
+Now, the range encoding, you're kind of grouping things together.
+现在 范围编码 你把东西组合在一起
+
+1324
+01:04:18,390 --> 01:04:20,800
+As I said, that's what basically sketching is trying to do.
+正如我所说 这基本上就是素描所要做的
+
+1325
+01:04:21,100 --> 01:04:22,030
+But in a different way. 
+但方式不同
+
+1326
+01:04:22,720 --> 01:04:25,590
+But in general, it's ignoring region coding.
+但总的来说 它忽略了区域编码
+
+1327
+01:04:25,600 --> 01:04:27,200
+If I could check a bit map, 
+如果我能检查一个位图
+
+1328
+01:04:27,730 --> 01:04:30,470
+and it says something it matches, I know it matches.
+并且它说它匹配的东西 我知道它匹配
+
+1329
+01:04:30,480 --> 01:04:34,070
+And i'll have to go double check on the actual tube and make sure I
+我得再检查一遍实际的试管
+
+1330
+01:04:34,080 --> 01:04:34,910
+don't have false positives. 
+确保没有误报
+
+1331
+01:04:36,200 --> 01:04:38,500
+But in some cases, 
+但在某些情况下
+
+1332
+01:04:38,980 --> 01:04:44,310
+if we give up some of this accuracy to support faster evaluation
+如果我们放弃一些精度来支持更快的评估和更紧凑的位图
+
+1333
+01:04:44,320 --> 01:04:47,020
+and maybe more compact bit maps, 
+那么这实际上可能是普通
+
+1334
+01:04:47,770 --> 01:04:50,040
+then that actually might be a big win for the common case. 
+情况下的一大胜利
+
+1335
+01:04:51,100 --> 01:04:53,480
+Again, there's extreme examples as we talked about.
+再一次 正如我们所谈到的 有一些极端的例子
+
+1336
+01:04:53,790 --> 01:04:55,710
+Those may not work perfectly for this, 
+这些可能不能完美地工作
+
+1337
+01:04:56,120 --> 01:04:57,310
+but most data doesn't look like that. 
+但大多数数据看起来并不像那样
+
+1338
+01:04:57,850 --> 01:04:57,960
+Right? 
+对的
+
+1339
+01:04:57,970 --> 01:04:59,280
+Most data is highly skewed. 
+大多数数据是高度扭曲的
+
+1340
+01:05:01,050 --> 01:05:01,400
+Again, 
+同样
+
+1341
+01:05:01,730 --> 01:05:04,650
+we may have to check original data in some cases to make
+在某些情况下 我们可能需要检查原始数据
+
+1342
+01:05:04,660 --> 01:05:05,700
+sure there's no false positives. 
+以确保没有误报
+
+1343
+01:05:05,710 --> 01:05:07,590
+And the case of the range encoding example, 
+在范围编码的例子中
+
+1344
+01:05:07,910 --> 01:05:09,020
+I always had to go check. 
+我总是要去检查
+
+1345
+01:05:10,100 --> 01:05:11,590
+But in the sketch check, in some cases,
+但在草图检查中
+
+1346
+01:05:11,600 --> 01:05:13,630
+I know there will be some times where I don't have to check. 
+在某些情况下 我知道有些时候我不需要检查
+
+1347
+01:05:16,610 --> 01:05:22,900
+Column imprints is a precursor to the column sketches. 
+柱印记是柱草图的前身
+
+1348
+01:05:23,400 --> 01:05:25,800
+The basic idea is that we're going to have a bit map that says
+基本的想法是 我们将有一个位图
+
+1349
+01:05:26,160 --> 01:05:27,520
+whether something could exist. 
+说明某物是否可能存在
+
+1350
+01:05:28,540 --> 01:05:31,860
+It's basically collapsing down the bit slices into a single bit map
+它基本上是将位片折叠成单个位图
+
+1351
+01:05:31,870 --> 01:05:32,860
+instead of multiple slices. 
+而不是多个位片
+
+1352
+01:05:34,630 --> 01:05:37,220
+Same original data is184. 
+相同的原始数据是184
+
+1353
+01:05:38,180 --> 01:05:40,050
+So i've had bit indexes like this. 
+所以我有像这样的位索引
+
+1354
+01:05:41,370 --> 01:05:44,600
+You would see that like for the different possible values that I have, 
+你会看到 对于我所拥有的不同的可能值
+
+1355
+01:05:45,320 --> 01:05:45,940
+there's a bunch of ones. 
+有一大堆
+
+1356
+01:05:45,950 --> 01:05:48,460
+There's a bunch of columns or a bunch of bit maps that are zeros. 
+有一堆列或一堆位图是零
+
+1357
+01:05:49,970 --> 01:05:51,630
+So instead, if I distort imprint,
+相反 如果我扭曲了印记
+
+1358
+01:05:51,640 --> 01:05:55,330
+I just collapse us all down by ordering everything. 
+我就会通过命令一切来瓦解我们所有人
+
+1359
+01:05:56,510 --> 01:06:00,400
+Then I end up with a single bit map called an imprint. 
+最后 我得到了一个称为印记的单个位图
+
+1360
+01:06:01,400 --> 01:06:04,550
+I can use that to then determine whether quickly whether something exists
+我可以用它来快速确定某物是否存在
+
+1361
+01:06:04,560 --> 01:06:04,750
+or not. 
+
+
+1362
+01:06:05,090 --> 01:06:07,860
+And again, if I get a one here or one over here,
+再一次 如果我在这里或这里得到一个1
+
+1363
+01:06:08,160 --> 01:06:11,240
+I got to go check the original two poles and see whether it's
+我必须去检查原来的两个极点
+
+1364
+01:06:11,250 --> 01:06:12,000
+actually a match or not. 
+看看它是否真的匹配
+
+1365
+01:06:12,490 --> 01:06:13,910
+But if i'm landing maybe in here, 
+但如果我降落在这里
+
+1366
+01:06:13,920 --> 01:06:14,990
+I knew this is a zero. 
+我知道这是一个零
+
+1367
+01:06:15,390 --> 01:06:16,290
+I don't have to do anything. 
+我什么都不用做
+
+1368
+01:06:19,360 --> 01:06:20,250
+What's that? 
+那是什么
+
+1369
+01:06:21,080 --> 01:06:21,540
+It's like a balloon. 
+它就像一个气球
+
+1370
+01:06:21,670 --> 01:06:23,220
+It's the same as it's like a bloom filter. 
+这就像布隆过滤器一样
+
+1371
+01:06:27,060 --> 01:06:30,030
+A without, I guess,
+我想
+
+1372
+01:06:30,040 --> 01:06:34,160
+a any sort of false positive rate guarantees or things like that. 
+没有任何形式的误报率保证或类似的东西
+
+1373
+01:06:35,420 --> 01:06:37,780
+We'll cover bloom filters much more detail when we talk about hash joins, 
+当我们讨论哈希连接时 我们将更详细地讨论布隆过滤器
+
+1374
+01:06:37,790 --> 01:06:38,940
+but basically the same idea. 
+但基本上是相同的想法
+
+1375
+01:06:44,610 --> 01:06:44,990
+Good. 
+好
+
+1376
+01:06:46,730 --> 01:06:49,880
+Looking at digesting glen column and print slides. 
+看着消化格伦专栏和打印幻灯片
+
+1377
+01:06:49,890 --> 01:06:50,520
+Yeah. 
+是啊
+
+1378
+01:06:51,980 --> 01:06:56,210
+This was done and this was done in mooney to be again in the early 2000s tense. 
+这是在穆尼完成的 在21世纪初再次紧张
+
+1379
+01:06:57,510 --> 01:07:00,780
+The column sketch paper you guys read is a variation, as I said,
+你们读到的列草图论文是一种变体 正如我所说的
+
+1380
+01:07:00,790 --> 01:07:02,580
+a bit map range, encoded bit maps,
+一个位图范围
+
+1381
+01:07:03,210 --> 01:07:06,650
+where the idea is that we want to maintain aa sketch, 
+编码的位图 其中的想法是我们想要维护一个草图
+
+1382
+01:07:07,370 --> 01:07:07,960
+which is, 
+这就像一个概率数据结构
+
+1383
+01:07:08,750 --> 01:07:10,940
+this is like a probabilistic data structure, kind of like a bloomboat.
+有点像一艘巨大的船
+
+1384
+01:07:11,110 --> 01:07:12,420
+There's county sketches and things like that. 
+有县素描之类的东西
+
+1385
+01:07:12,780 --> 01:07:15,390
+But it's an approximation of what data exists. 
+但它是现有数据的近似值
+
+1386
+01:07:17,510 --> 01:07:22,540
+And it's gonna be the bit will be set the true to determine that there is something, 
+它将被设置为真 以确定有什么东西
+
+1387
+01:07:23,790 --> 01:07:25,020
+it could be something in this range. 
+可能是这个范围内的东西
+
+1388
+01:07:26,060 --> 01:07:31,170
+The idea is that we want to convert our are sort of base values
+这个想法是
+
+1389
+01:07:31,180 --> 01:07:32,850
+into these smaller codes. 
+我们想把我们的基值转换成这些更小的代码
+
+1390
+01:07:33,590 --> 01:07:37,140
+And then we would use those codes to figure out how much data we
+然后我们会使用这些代码来计算出我们实际上需要查看
+
+1391
+01:07:37,150 --> 01:07:37,940
+actually have to look at. 
+多少数据
+
+1392
+01:07:39,820 --> 01:07:39,890
+Now, 
+现在
+
+1393
+01:07:39,900 --> 01:07:42,090
+there's going to be a trade off between the distribution of the values
+在值的分布和紧致性之间
+
+1394
+01:07:42,100 --> 01:07:43,010
+and the compactness. 
+有一个折衷
+
+1395
+01:07:43,370 --> 01:07:46,110
+If our codes are the same size of the original data, 
+如果我们的代码与原始数据的大小相同
+
+1396
+01:07:46,520 --> 01:07:48,260
+then they're going to be very precise. 
+那么它们将非常精确
+
+1397
+01:07:48,610 --> 01:07:48,900
+Of course, 
+当然
+
+1398
+01:07:48,910 --> 01:07:53,830
+that means that we're not going to a throw anything away and waste space
+这意味着我们不会丢弃任何东西
+
+1399
+01:07:53,840 --> 01:07:55,550
+for maintaining using the values twice. 
+也不会浪费空间来维护两次使用值
+
+1400
+01:07:56,620 --> 01:08:01,790
+They will have a special case for the most frequent values to avoid false positives, 
+他们将对最频繁的值进行特殊处理 以避免误报 因为否则的话
+
+1401
+01:08:01,800 --> 01:08:02,470
+because otherwise, 
+如果
+
+1402
+01:08:02,480 --> 01:08:03,830
+if something appears all the time, 
+某个东西总是出现
+
+1403
+01:08:05,660 --> 01:08:08,150
+and they get sort of grouped together, you may have to go,
+它们被分组在一起
+
+1404
+01:08:08,240 --> 01:08:10,350
+we check to see whether the thing actually exists or not. 
+你可能需要去检查 看看这个东西是否真的存在
+
+1405
+01:08:10,950 --> 01:08:11,900
+But if you have a special case, 
+但是如果你有一个特殊的情况
+
+1406
+01:08:11,910 --> 01:08:15,260
+I know this frequent value appears most 99% of the time. 
+我知道这个频繁值出现在大多数99%的时间
+
+1407
+01:08:15,560 --> 01:08:16,880
+Here is the exact value for it. 
+这是它的精确值
+
+1408
+01:08:17,330 --> 01:08:21,850
+I can just do that look ups and avoid having to go read things I don't need. 
+我可以只做查找 避免去读我不需要的东西
+
+1409
+01:08:24,340 --> 01:08:26,010
+Here's a high level overview how it works. 
+这里有一个高层次的概述 它是如何工作的
+
+1410
+01:08:26,230 --> 01:08:27,480
+Say we have our original data, 
+假设我们有原始数据
+
+1411
+01:08:27,820 --> 01:08:29,700
+and we're storing this as aa bit values. 
+并且我们将其存储为AA位值
+
+1412
+01:08:31,870 --> 01:08:34,380
+What they're going to do is basically take a pass over the data. 
+他们要做的基本上是通过数据
+
+1413
+01:08:34,390 --> 01:08:34,700
+Again. 
+又
+
+1414
+01:08:34,710 --> 01:08:35,260
+We can do this. 
+我们能做到的
+
+1415
+01:08:35,750 --> 01:08:37,520
+If we're we're creating an immutable file, 
+如果我们正在创建一个不可变的文件
+
+1416
+01:08:37,530 --> 01:08:40,180
+we've got to read everything in and encode it and write it out. 
+我们必须读入所有内容并对其进行编码 然后将其写出
+
+1417
+01:08:40,610 --> 01:08:45,160
+So they can build a histogram where they want the height of the data
+因此
+
+1418
+01:08:45,170 --> 01:08:48,450
+represented within a range of the histogram within a bucket to be
+他们可以构建一个直方图
+
+1419
+01:08:48,460 --> 01:08:49,010
+equivalent. 
+其中他们希望在桶内的直方图范围内表示的数据的高度是相等的
+
+1420
+01:08:50,740 --> 01:08:54,640
+You want the you don't have one range, 
+你想要你没有一个范围
+
+1421
+01:08:54,650 --> 01:08:55,680
+have a lot of skew. 
+有很多倾斜
+
+1422
+01:08:56,430 --> 01:09:00,020
+And therefore, you're doing much of look ups on it for useless data.
+因此 您需要在其中查找大量无用的数据
+
+1423
+01:09:01,310 --> 01:09:03,660
+It's then based on this histogram, again,
+然后基于这个直方图 再一次
+
+1424
+01:09:03,790 --> 01:09:07,620
+the paper sort of describes how you'd actually want to build it. 
+这篇论文描述了你实际上想要如何构建它
+
+1425
+01:09:08,180 --> 01:09:09,580
+You maintain this compression map. 
+您可以维护此压缩映射
+
+1426
+01:09:10,490 --> 01:09:13,110
+The idea is that you would say within this, 
+这个想法是 你会说在这个里面
+
+1427
+01:09:13,200 --> 01:09:14,550
+the values over here, 
+这里的值
+
+1428
+01:09:14,950 --> 01:09:17,350
+it's less than a greater, less than or equal to this.
+它小于一个大于 小于或等于这个
+
+1429
+01:09:17,930 --> 01:09:21,920
+You get mapped to some smaller dictionary code here. 
+在这里 您可以映射到一些较小的字典代码
+
+1430
+01:09:23,550 --> 01:09:28,050
+Then now, when you want to return this column as in the sketch form,
+然后现在 当你想要返回草图形式中的这个列时
+
+1431
+01:09:28,060 --> 01:09:31,450
+you want to store these in these codes here. 
+你想要将这些存储在这些代码中
+
+1432
+01:09:31,460 --> 01:09:32,650
+Instead of actually original values, 
+而不是实际的原始值
+
+1433
+01:09:33,360 --> 01:09:35,230
+say the original values were 8 bits. 
+假设原始值是8位
+
+1434
+01:09:35,770 --> 01:09:37,840
+I can store it now down into 2 bits. 
+我现在可以将其存储为2位
+
+1435
+01:09:40,530 --> 01:09:41,800
+Now, when a query comes along,
+现在
+
+1436
+01:09:41,810 --> 01:09:43,240
+like select star from table, 
+当一个查询出现时
+
+1437
+01:09:43,250 --> 01:09:44,920
+where value is less than 90, 
+比如select star from table
+
+1438
+01:09:44,930 --> 01:09:52,230
+I do a look up in my map and figure out what's the highest
+其中value小于90
+
+1439
+01:09:52,710 --> 01:09:56,510
+the smallest value that will be covered by the thing i'm looking for. 
+我会在我的地图中查找 并找出我要查找的内容所覆盖的最大值和最小值
+
+1440
+01:09:56,890 --> 01:09:59,240
+In this case here, 90 is greater than 60.
+在这种情况下 90大于60
+
+1441
+01:09:59,600 --> 01:10:03,570
+I got to go to the next 11. 30 2 is greater than 90. 
+我要去下一个11 302大于90
+
+1442
+01:10:03,580 --> 01:10:04,810
+So I can stop here. 
+所以我可以在这里停下来
+
+1443
+01:10:05,450 --> 01:10:11,880
+I know I need to consider the values that are encoded by these code values here. 
+我知道我需要考虑由这些代码值编码的值
+
+1444
+01:10:13,230 --> 01:10:17,220
+You basically convert you use the mapping function to convert 90 into 01. 
+你基本上可以使用映射函数将90转换为01
+
+1445
+01:10:18,030 --> 01:10:22,770
+And then I go do a look up in my ii know these are the offsets that
+然后我在我的II中查找
+
+1446
+01:10:22,780 --> 01:10:26,540
+are matching for me in my sketch column. 
+知道这些是在我的草图列中为我匹配的偏移
+
+1447
+01:10:27,540 --> 01:10:29,340
+But because 132, 
+但是因为132
+
+1448
+01:10:29,590 --> 01:10:31,450
+132is greater than 90. 
+132大于90
+
+1449
+01:10:32,520 --> 01:10:35,540
+We don't know whether there might be a value like 91, 
+我们不知道是否有像91
+
+1450
+01:10:35,550 --> 01:10:38,690
+92 that doesn't satisfy our predicate, 
+92这样的值不满足我们的谓词
+
+1451
+01:10:39,000 --> 01:10:43,940
+but is still within the scope that's managed by this code value here. 
+但仍在此代码值管理的范围内
+
+1452
+01:10:44,820 --> 01:10:46,370
+For zero ones, 
+对于零一
+
+1453
+01:10:46,650 --> 01:10:50,860
+we have to go back to the original data and see whether we have
+我们必须回到原始数据
+
+1454
+01:10:50,870 --> 01:10:52,010
+a false positive or not. 
+看看我们是否有假阳性
+
+1455
+01:10:52,020 --> 01:10:53,560
+So in this case here, 
+所以在这里的情况下
+
+1456
+01:10:53,570 --> 01:10:55,280
+but 01.2, 
+但01.2
+
+1457
+01:10:56,220 --> 01:11:00,300
+the code 01 points to 81~140. 81will satisfy our predicate. 
+代码01指向81~140 81将满足我们的谓词
+
+1458
+01:11:00,670 --> 01:11:01,590
+140does not. 
+140没有
+
+1459
+01:11:03,540 --> 01:11:05,160
+There is tactical call error here, 
+这里有战术呼叫错误
+
+1460
+01:11:05,170 --> 01:11:09,960
+because 132 means that like 01 is in the range of 60~132, 
+因为132意味着像01在60~132的范围内
+
+1461
+01:11:11,820 --> 01:11:13,810
+01can't map to 140, 
+01不能映射到140
+
+1462
+01:11:13,820 --> 01:11:16,410
+140should map to 10, isn't it?
+140应该映射到10 不是吗
+
+1463
+01:11:16,460 --> 01:11:17,210
+As a typo? 
+作为一个错别字
+
+1464
+01:11:17,870 --> 01:11:18,400
+That's my fault. 
+那是我的错
+
+1465
+01:11:19,830 --> 01:11:20,390
+Did I screw this up? 
+我搞砸了吗
+
+1466
+01:11:20,560 --> 01:11:20,790
+Apply? 
+申请
+
+1467
+01:11:20,800 --> 01:11:21,630
+I might have typed that wrong. 
+我可能打错了
+
+1468
+01:11:21,640 --> 01:11:22,310
+That's my fault. 
+那是我的错
+
+1469
+01:11:24,170 --> 01:11:26,790
+So i'd say this is hundred 20, 
+所以我会说这是100-20
+
+1470
+01:11:27,080 --> 01:11:34,990
+the type that's the type of in direction that we have to go out of. 
+这是我们必须走出的方向的类型
+
+1471
+01:11:35,900 --> 01:11:37,360
+So it's, david,
+所以 大卫
+
+1472
+01:11:37,530 --> 01:11:39,600
+doesn't this have the same problem as before? 
+这不是和以前一样的问题吗
+
+1473
+01:11:40,210 --> 01:11:40,840
+Where? 
+哪里
+
+1474
+01:11:41,520 --> 01:11:45,340
+Or in direction in terms of traversing the data structure itself
+或者在遍历数据结构本身的方向上
+
+1475
+01:11:45,350 --> 01:11:46,340
+or actually doing this? 
+或者实际上是这样做的
+
+1476
+01:11:46,350 --> 01:11:47,500
+Second, look up over here.
+第二 抬头看这里
+
+1477
+01:11:47,510 --> 01:11:47,820
+Second, 
+第二
+
+1478
+01:11:51,660 --> 01:11:54,170
+you had one for me that you were going to now. 
+你有一个给我 你现在要去
+
+1479
+01:11:55,880 --> 01:11:57,740
+Or do you put up all of them together and do it? 
+还是你把它们放在一起然后做
+
+1480
+01:11:58,920 --> 01:11:59,120
+Yeah. 
+是啊
+
+1481
+01:11:59,130 --> 01:12:01,080
+So his statement is, 
+所以他的陈述是
+
+1482
+01:12:01,960 --> 01:12:03,570
+when I talked about the hierarchical encoding, 
+当我谈到层次编码时
+
+1483
+01:12:03,580 --> 01:12:07,260
+I talked about how like i've got to go up and down the tree to go find
+我谈到我必须在树中上下移动才能找到所有的位
+
+1484
+01:12:07,270 --> 01:12:10,500
+all the bits that was just trying to find the matches from the bits, 
+这只是试图从位中找到匹配
+
+1485
+01:12:10,510 --> 01:12:12,540
+like when they were set to one, 
+就像当它们被设置为1时
+
+1486
+01:12:12,790 --> 01:12:16,780
+then I go look out and get the actual two balls themselves in the table. 
+然后我去看看 把真正的两个球放到桌子上
+
+1487
+01:12:18,690 --> 01:12:19,780
+In this case here, 
+在这种情况下
+
+1488
+01:12:20,070 --> 01:12:22,260
+I can scan through this column quickly, 
+我可以快速浏览这一列 找到所有位置
+
+1489
+01:12:23,260 --> 01:12:26,600
+find all the positions where it's either 0001. 
+它要么是0001
+
+1490
+01:12:27,830 --> 01:12:29,900
+Then for the ones that are 01, 
+然后对于那些01
+
+1491
+01:12:29,910 --> 01:12:32,020
+it depends on what the query actually needs. 
+这取决于查询实际需要什么
+
+1492
+01:12:32,620 --> 01:12:35,060
+I then do my batch look up to go get the actual look at the exam
+然后我进行批量查找
+
+1493
+01:12:35,070 --> 01:12:36,380
+and the actual the data itself. 
+以获得考试的实际情况和数据本身的实际情况
+
+1494
+01:12:37,520 --> 01:12:38,670
+You would scan this thing first, 
+你应该先扫描这个东西
+
+1495
+01:12:38,680 --> 01:12:39,750
+get all the offsets. 
+得到所有的偏移量
+
+1496
+01:12:41,590 --> 01:12:42,430
+You could use ap community table. 
+您可以使用AP社区表
+
+1497
+01:12:42,440 --> 01:12:43,710
+If you want it to, it doesn't matter.
+如果你愿意 这并不重要
+
+1498
+01:12:44,010 --> 01:12:48,470
+Get all the offsets where this that where it satisfies my code, 
+得到满足我的代码的所有偏移量
+
+1499
+01:12:48,480 --> 01:12:50,540
+where it's less than or equal to 01. 
+小于或等于01
+
+1500
+01:12:50,550 --> 01:12:54,760
+I've got to maybe get the data anyway, because in this case here,
+我可能无论如何都要得到数据
+
+1501
+01:12:54,770 --> 01:12:55,680
+it's like star. 
+因为在这里的情况下 它就像星星一样
+
+1502
+01:12:56,210 --> 01:12:57,710
+I've got to go get all the values anyway. 
+无论如何 我得去得到所有的值
+
+1503
+01:12:58,450 --> 01:13:01,290
+Then I do an extra check there before I shut up to the next operator
+然后 在关闭下一个操作符和查询计划之前
+
+1504
+01:13:01,300 --> 01:13:01,930
+and the query plan. 
+我在那里做了额外的检查
+
+1505
+01:13:06,450 --> 01:13:08,320
+Other than the type of the abbey picked out. 
+除了挑选出来的修道院的类型
+
+1506
+01:13:08,330 --> 01:13:08,760
+Thank you. 
+谢谢
+
+1507
+01:13:09,850 --> 01:13:10,680
+Any questions about this? 
+对此有什么问题吗
+
+1508
+01:13:12,860 --> 01:13:17,530
+Isn't the main optimization that if it isn't on that boundary, but the 01,
+不是主要的优化 如果它不在那个边界上 而是01 是00
+
+1509
+01:13:18,000 --> 01:13:19,720
+is it 00 you're going to have to do? 
+你必须做的吗
+
+1510
+01:13:19,730 --> 01:13:25,590
+The his statement is11 of the organizations you would get is
+他的陈述是你会得到的11个组织
+
+1511
+01:13:27,940 --> 01:13:30,390
+I only have to check for 01 to avoid false positives. 
+我只需要检查01以避免误报
+
+1512
+01:13:30,690 --> 01:13:32,040
+And in case it's 00, 
+如果它是00
+
+1513
+01:13:32,390 --> 01:13:34,890
+I don't have to go check it again, 
+我不需要再去检查它
+
+1514
+01:13:34,900 --> 01:13:38,730
+like depends on what the query is. 
+这取决于查询是什么
+
+1515
+01:13:39,120 --> 01:13:41,090
+If it's a count, then I go check these,
+如果它是一个计数
+
+1516
+01:13:41,350 --> 01:13:42,840
+but I count it all together. 
+那么我去检查这些 但我一起数它
+
+1517
+01:13:43,160 --> 01:13:46,630
+If I need to do like a join where I do need, maybe the column,
+如果我需要在我确实需要的地方做一个连接
+
+1518
+01:13:46,980 --> 01:13:47,910
+I had to go fetch it anyway, 
+也许是列 我无论如何都要去获取它 但我不需要做比较
+
+1519
+01:13:47,920 --> 01:13:51,250
+but I don't have to do the comparison because I know it satisfies my predicate. 
+因为我知道它满足我的谓词
+
+1520
+01:13:55,940 --> 01:13:56,520
+All right, cool.
+好的 酷
+
+1521
+01:13:57,170 --> 01:13:57,800
+And on time, 
+而且很准时
+
+1522
+01:14:01,100 --> 01:14:02,090
+those amounts, as I said,
+正如我所说
+
+1523
+01:14:02,100 --> 01:14:04,610
+are the most widely used method to accelerate sequential scans. 
+这些数量是加速顺序扫描最广泛使用的方法
+
+1524
+01:14:05,220 --> 01:14:07,690
+It's pretty much what everyone will give you. 
+这几乎是每个人都会给你的
+
+1525
+01:14:07,700 --> 01:14:08,610
+I think parquet actually, 
+我认为拼花实际上
+
+1526
+01:14:08,970 --> 01:14:11,900
+I know my work and this is what parquet the only thing parquet has. 
+我知道我的工作 这是拼花唯一的东西
+
+1527
+01:14:13,360 --> 01:14:19,220
+Bit map indexes are more common in the sort of the enterprise row stores honestly. 
+老实说 位图索引在企业行存储中更为常见
+
+1528
+01:14:19,660 --> 01:14:20,980
+Postcards lessons themselves enterprise, 
+明信片课程本身是企业
+
+1529
+01:14:20,990 --> 01:14:23,430
+but I like the oracles and sequel servers, 
+但我喜欢神谕和续集服务器
+
+1530
+01:14:23,440 --> 01:14:24,510
+things that cost a lot of money. 
+这些东西要花很多钱
+
+1531
+01:14:25,720 --> 01:14:25,990
+Because again, 
+因为再一次
+
+1532
+01:14:26,000 --> 01:14:31,260
+they were trying to get the benefits of sort of columnar processing or data
+他们试图获得某种柱状处理或数据的好处
+
+1533
+01:14:31,570 --> 01:14:34,760
+without having to to have a whole columnist or engine, 
+而不必拥有一个完整的专栏作家或引擎
+
+1534
+01:14:34,770 --> 01:14:36,200
+which they all eventually built anyway. 
+他们最终都建立了
+
+1535
+01:14:36,860 --> 01:14:37,330
+As I said, 
+正如我所说
+
+1536
+01:14:37,340 --> 01:14:40,130
+we're completely ignoring multi dimensional indexes and vertical indexes. 
+我们完全忽略了多维索引和垂直索引
+
+1537
+01:14:41,520 --> 01:14:42,890
+I don't think they teach a 26 anymore, 
+我想他们不再教26了
+
+1538
+01:14:42,900 --> 01:14:45,010
+but that whole class was about this kind of stuff. 
+但整堂课都是关于这种东西
+
+1539
+01:14:45,290 --> 01:14:46,940
+Kd trees are trees and so forth. 
+KD树是树等等
+
+1540
+01:14:47,390 --> 01:14:48,720
+We can ignore that geo spatial things. 
+我们可以忽略地理空间的东西
+
+1541
+01:14:48,730 --> 01:14:49,410
+We ignore that. 
+我们忽略了这一点
+
+1542
+01:14:49,690 --> 01:14:55,020
+And then our verte index is just like a mapping from a word or an n graham
+然后我们的verte索引就像是从文本字段中的一个单词或一个n
+
+1543
+01:14:55,030 --> 01:14:57,750
+within a text field to the extra tubes that match. 
+graham到匹配的额外管道的映射
+
+1544
+01:15:01,300 --> 01:15:01,850
+Next class. 
+下节课
+
+1545
+01:15:01,860 --> 01:15:03,250
+We'll talk about data compression. 
+我们将讨论数据压缩
+
+1546
+01:15:03,700 --> 01:15:05,290
+We'll spend most of the time talking about two poles. 
+我们将花大部分时间讨论两极
+
+1547
+01:15:05,690 --> 01:15:09,490
+We'll also talk about how we actually compress these bit maps
+我们还将讨论如何实际压缩这些位图
+
+1548
+01:15:09,500 --> 01:15:11,530
+as well beyond the things we talked about before. 
+以及我们之前讨论的内容
+
+1549
+01:15:14,060 --> 01:15:16,930
+So quickly, I want to talk about project one, which is out,
+很快 我想谈谈项目一 它已经出来了
+
+1550
+01:15:17,350 --> 01:15:19,790
+thank you for win for updating everyone at piazza. 
+感谢win为piazza的每个人提供最新信息
+
+1551
+01:15:20,600 --> 01:15:23,180
+So for the first project, 
+对于第一个项目
+
+1552
+01:15:24,090 --> 01:15:28,450
+you guys will be writing a foreign data wrapper for postcards to access, 
+你们将为明信片访问编写一个外来数据包装器
+
+1553
+01:15:29,960 --> 01:15:34,530
+to access the columnar data stored in a file format that we invented. 
+访问以我们发明的文件格式存储的分栏式数据
+
+1554
+01:15:34,980 --> 01:15:36,860
+The reason why we didn't choose parquet or work
+我们之所以没有选择Parquet或Work
+
+1555
+01:15:36,870 --> 01:15:42,240
+because there's existing libraries to access them, 
+是因为有现有的库可以访问它们
+
+1556
+01:15:42,250 --> 01:15:45,500
+and they basically care of all the complexity for you. 
+它们基本上为您解决了所有的复杂性
+
+1557
+01:15:46,510 --> 01:15:49,440
+And it's way more complicated, also bring it in these other libraries.
+它更复杂 也把它带到其他库中
+
+1558
+01:15:49,450 --> 01:15:53,230
+So we just gave you something really simple and hear about that. 
+所以我们只是给了你一些非常简单的东西 并听到了
+
+1559
+01:15:53,510 --> 01:15:55,900
+A foreign data rapper is basically a way to have if you're
+外国数据说唱基本上是一种方式
+
+1560
+01:15:55,910 --> 01:15:56,700
+from your sequel light, 
+如果你从你的续集轻
+
+1561
+01:15:56,710 --> 01:15:57,700
+it's got a virtual table. 
+它有一个虚拟的表
+
+1562
+01:15:58,040 --> 01:15:59,970
+It's a way to basically sometimes called a connector. 
+这是一种基本上有时被称为连接器的方法
+
+1563
+01:16:00,340 --> 01:16:04,960
+But it's basically it's a way to have lincoln a shared object to postgres
+但它基本上是一种让Lincoln成为Postgres的共享对象的方法
+
+1564
+01:16:05,650 --> 01:16:07,560
+that allows you override
+它允许您覆盖
+
+1565
+01:16:08,980 --> 01:16:13,450
+scan operators on a table to go to whatever that shared object wants to support, 
+扫描表上的操作符 以转到共享对象想要支持的任何内容
+
+1566
+01:16:13,460 --> 01:16:16,130
+rather than always go into their internal base tables. 
+而不是总是转到其内部基表
+
+1567
+01:16:17,770 --> 01:16:20,000
+There's foreign data rappers to read csv files, 
+有外国数据说唱歌手读取CSV文件
+
+1568
+01:16:20,620 --> 01:16:21,960
+foreign data rappers to read. 
+外国数据说唱歌手读取
+
+1569
+01:16:23,120 --> 01:16:25,150
+We connect to another database system, right?
+我们连接到另一个数据库系统 对吗
+
+1570
+01:16:25,700 --> 01:16:27,080
+Postcards is actually really extensible. 
+明信片实际上是可扩展的
+
+1571
+01:16:27,570 --> 01:16:28,360
+It's very amazing. 
+这是非常惊人的
+
+1572
+01:16:28,370 --> 01:16:29,120
+It's an amazing, 
+这是一个令人惊叹的数据系统
+
+1573
+01:16:29,910 --> 01:16:31,430
+it's amazing data system, but it's also very extensible,
+但它也是非常可扩展的
+
+1574
+01:16:31,440 --> 01:16:32,230
+which is pretty cool. 
+这非常酷
+
+1575
+01:16:33,500 --> 01:16:37,700
+So there's actually commercial products that build foreign data wrappers
+所以实际上有商业产品为明信片构建外国数据包装器
+
+1576
+01:16:38,610 --> 01:16:39,160
+for postcards, 
+比如时标
+
+1577
+01:16:39,170 --> 01:16:41,360
+like time scale is makes heavy use of this. 
+就大量使用了这一点
+
+1578
+01:16:42,230 --> 01:16:42,540
+But again, 
+但是再一次
+
+1579
+01:16:43,710 --> 01:16:45,780
+from the segal perspective, it looks like a regular table,
+从segal的角度来看 它看起来就像一个普通的表
+
+1580
+01:16:45,790 --> 01:16:47,140
+even though it's going to go through your code. 
+尽管它要遍历您的代码
+
+1581
+01:16:48,630 --> 01:16:51,370
+The goal of this is get you familiar with how to extend progress, 
+这样做的目的是让你们熟悉如何扩展进度
+
+1582
+01:16:51,380 --> 01:16:52,890
+because you could use that for project three, 
+因为你可以在项目三中使用它
+
+1583
+01:16:53,670 --> 01:16:56,510
+but also to actually implement the things that we're talking
+但也可以实际实现我们今天在课堂上讨论的东西
+
+1584
+01:16:56,520 --> 01:16:59,960
+about in class today in the last couple classes of how she had a scan
+在最后几节课中
+
+1585
+01:16:59,970 --> 01:17:00,840
+through kilometer data. 
+她如何扫描公里数据
+
+1586
+01:17:02,040 --> 01:17:04,820
+The file format that when developed pretty basic, 
+文件格式在开发时非常基本
+
+1587
+01:17:04,830 --> 01:17:05,860
+we're not doing any compression. 
+我们不做任何压缩
+
+1588
+01:17:06,210 --> 01:17:08,640
+It's just storing things in columnar data and columnar format. 
+它只是以分栏式数据和分栏格式存储内容
+
+1589
+01:17:10,220 --> 01:17:10,460
+Sorry, 
+抱歉
+
+1590
+01:17:10,470 --> 01:17:13,090
+the footer has jason metadata about where to find the offsets
+页脚包含有关在何处查找不同类型数据的
+
+1591
+01:17:13,260 --> 01:17:14,410
+for different types of data. 
+偏移量的jason元数据
+
+1592
+01:17:15,680 --> 01:17:16,830
+I bumped the deadline up. 
+我把最后期限提前了
+
+1593
+01:17:16,840 --> 01:17:17,190
+I don't know. 
+我不知道
+
+1594
+01:17:17,200 --> 01:17:19,310
+I think it was due the 16th or something. 
+我想应该是16号什么的
+
+1595
+01:17:19,320 --> 01:17:21,310
+And now it's due to the 26th, which is a sunday.
+现在是26号 也就是星期天
+
+1596
+01:17:21,770 --> 01:17:24,460
+And all the information is on the project website now. 
+现在所有的信息都在项目网站上
+
+1597
+01:17:25,120 --> 01:17:26,390
+And then i'll post on piazza, 
+然后我会在piazza上
+
+1598
+01:17:26,840 --> 01:17:27,950
+a spreadsheet. 
+发布一个电子表格
+
+1599
+01:17:28,810 --> 01:17:34,490
+So I I already know everyone's andrew idi i'm gonna fill out a form to get
+所以我已经知道每个人都是安德鲁·伊迪
+
+1600
+01:17:34,780 --> 01:17:36,490
+aws credits. 
+我要填写一份表格来获得AWS学分
+
+1601
+01:17:36,880 --> 01:17:37,870
+Then i'll send everyone an email. 
+然后我会给每个人发一封电子邮件
+
+1602
+01:17:37,880 --> 01:17:41,830
+If you're enrolled in the class code for like $100 from amazon, 
+如果你从亚马逊注册了100美元的课程代码
+
+1603
+01:17:41,840 --> 01:17:43,230
+you can use that for development. 
+你可以用它来开发
+
+1604
+01:17:43,240 --> 01:17:43,590
+If you want. 
+如果你想的话
+
+1605
+01:17:44,730 --> 01:17:45,920
+You use it for bit coin mining. 
+你用它来挖比特币
+
+1606
+01:17:45,930 --> 01:17:46,550
+If you want. 
+如果你想的话
+
+1607
+01:17:47,120 --> 01:17:48,510
+Go ahead, I don't care.
+去吧 我不在乎
+
+1608
+01:17:50,430 --> 01:17:53,990
+So anyway, like we you can make it work on your laptop,
+总之 就像我们一样 你可以让它在你的笔记本电脑上工作
+
+1609
+01:17:54,000 --> 01:17:54,870
+make it work on ec two. 
+让它在ec2上工作
+
+1610
+01:17:54,880 --> 01:17:58,100
+An end of the day has to compile and work on aws sorry, 
+一天结束时 必须在aws上编译和工作
+
+1611
+01:17:58,110 --> 01:17:58,820
+i'm on grade school. 
+对不起 我在上小学
+
+1612
+01:17:58,830 --> 01:18:00,460
+This is how you submit this. 
+这就是你提交这个的方式
+
+1613
+01:18:02,720 --> 01:18:04,870
+Again, we've already provided you a basic file format.
+同样 我们已经为您提供了一个基本的文件格式
+
+1614
+01:18:06,750 --> 01:18:08,940
+There's instructions on what it actually looks like. 
+有说明它实际上是什么样子的
+
+1615
+01:18:09,390 --> 01:18:10,540
+It's not super sophisticated. 
+它不是超级复杂的
+
+1616
+01:18:10,550 --> 01:18:11,900
+It's not doing any compression. 
+它没有进行任何压缩
+
+1617
+01:18:12,590 --> 01:18:16,780
+It's literally just storing data in binary form and in common and common arrangement. 
+从字面上看 它只是以二进制形式和常见的排列方式存储数据
+
+1618
+01:18:17,740 --> 01:18:21,130
+So the first step you want to do is just write a parse over this file, 
+所以你要做的第一步是在这个文件上写一个解析
+
+1619
+01:18:21,660 --> 01:18:24,150
+just to scan image of columns and try to stitch two balls back together. 
+扫描列的图像 并尝试将两个球重新缝合在一起
+
+1620
+01:18:24,520 --> 01:18:26,510
+When you process when you read the metadata, 
+当你处理时 当你读取元数据时
+
+1621
+01:18:26,520 --> 01:18:27,710
+I understand what the offsets are. 
+我明白偏移是什么
+
+1622
+01:18:27,940 --> 01:18:30,180
+Know how to put two bulls back together. 
+知道如何把两头牛重新组合起来
+
+1623
+01:18:30,790 --> 01:18:36,200
+Then you want to integrate this in postgres in using the foreign data wrapper, 
+然后你想把它集成到postgres中
+
+1624
+01:18:36,210 --> 01:18:40,200
+api I think when we provide them some basic skeleton code already, right?
+使用外部数据包装器 我想当我们已经为他们提供了一些基本的框架代码时 对吗
+
+1625
+01:18:40,930 --> 01:18:41,950
+There's some basic skeleton code, 
+有一些基本的框架代码
+
+1626
+01:18:41,960 --> 01:18:43,190
+some functions you've got to fill out, 
+一些你必须填写的函数
+
+1627
+01:18:43,420 --> 01:18:46,090
+and then instructions on the website how to actually compile and then link
+然后在网站上说明如何实际编译
+
+1628
+01:18:46,100 --> 01:18:47,250
+it into progress. 
+然后将其链接到进度中
+
+1629
+01:18:48,820 --> 01:18:53,020
+And then the last step is then you want to actually support predicate evaluation. 
+最后一步是你想要真正支持谓词求值
+
+1630
+01:18:53,430 --> 01:18:54,570
+So you can have postgraduates, 
+所以你可以有研究生
+
+1631
+01:18:54,580 --> 01:18:55,810
+take the where calls. 
+接电话
+
+1632
+01:18:56,170 --> 01:18:58,450
+We're not trying to support all everything you can possibly do in a where clause, 
+我们并没有试图支持你在where子句中可能做的所有事情
+
+1633
+01:18:58,930 --> 01:19:03,310
+some basic comparison operators that'll get passed to you in what the post
+一些基本的比较操作符将在帖子中传递给你
+
+1634
+01:19:03,320 --> 01:19:03,790
+got struck. 
+
+
+1635
+01:19:04,300 --> 01:19:07,360
+And you want to then apply the predicate as you scan the data. 
+然后在扫描数据时应用谓词
+
+1636
+01:19:12,270 --> 01:19:13,180
+You have to join us. 
+你必须加入我们
+
+1637
+01:19:16,560 --> 01:19:17,150
+It's hard. 
+这个很难
+
+1638
+01:19:17,810 --> 01:19:20,740
+It was surprisingly difficult enough just to do the scan. 
+令人惊讶的是 光是做扫描就够困难的了
+
+1639
+01:19:20,920 --> 01:19:21,460
+As a foreign driver. 
+作为一名外国司机
+
+1640
+01:19:21,470 --> 01:19:25,450
+I suppose I say process is extensible. 
+我想我说过程是可扩展的
+
+1641
+01:19:25,460 --> 01:19:25,810
+That's great. 
+那很棒
+
+1642
+01:19:25,820 --> 01:19:26,970
+I never said it's easy to extend. 
+我从来没有说过它很容易扩展
+
+1643
+01:19:26,980 --> 01:19:28,170
+You can't extend it, right?
+你不能延长它 对吗
+
+1644
+01:19:33,080 --> 01:19:35,470
+The way to get started, as I said, start with the this,
+开始的方法 正如我所说的 从这个开始
+
+1645
+01:19:35,710 --> 01:19:37,400
+Writing the parcel code without any post graphs. 
+编写没有任何post图的包裹代码
+
+1646
+01:19:37,410 --> 01:19:40,230
+You can just do that locally. 
+你可以在本地做
+
+1647
+01:19:41,560 --> 01:19:42,600
+You should do this in c plus, 
+你应该在c++中做这件事
+
+1648
+01:19:42,610 --> 01:19:47,240
+and we're giving you skeleton code that uses pgxs if you want to do rust, 
+我们会给你使用pgx的框架代码
+
+1649
+01:19:47,760 --> 01:19:48,430
+talk to chi. 
+如果你想做rust 请与chi交谈
+
+1650
+01:19:49,190 --> 01:19:52,190
+He's gonna tell you go away, but like you looked into it, right?
+他会让你走开 但就像你调查过一样 对吧
+
+1651
+01:19:52,200 --> 01:19:52,910
+Or Wayne looked at it. 
+或者韦恩看着它
+
+1652
+01:19:53,240 --> 01:19:54,590
+We don't think you can do it. 
+我们认为你做不到
+
+1653
+01:19:55,510 --> 01:20:00,810
+But you he can do it because because he's all right. 
+但你他能做到 因为因为他很好
+
+1654
+01:20:01,650 --> 01:20:02,520
+Offering that out. 
+把那个拿出来
+
+1655
+01:20:02,530 --> 01:20:02,880
+All right? 
+好吧
+
+1656
+01:20:02,890 --> 01:20:06,160
+So just like the interclass, 
+所以就像班级之间一样
+
+1657
+01:20:08,060 --> 01:20:09,650
+make sure you all your button locally, 
+确保你所有的按钮都在本地
+
+1658
+01:20:12,010 --> 01:20:13,320
+you write your own local tests, 
+如果您编写自己的本地测试
+
+1659
+01:20:13,690 --> 01:20:14,860
+don't use gray scope to do this, 
+请不要使用灰色范围来执行此操作
+
+1660
+01:20:15,570 --> 01:20:16,440
+because it's going to be slow. 
+因为这样会很慢
+
+1661
+01:20:18,480 --> 01:20:21,350
+Don't change any of the files that we don't other than the ones that use
+除了使用on grade范围的文件外
+
+1662
+01:20:22,240 --> 01:20:23,860
+the on grade scope, 
+不要更改任何我们不会更改的文件
+
+1663
+01:20:23,870 --> 01:20:27,060
+because those will get wiped one compile and link it on grade scope. 
+因为这些文件将在编译后被擦除 并将其链接到grade范围
+
+1664
+01:20:27,580 --> 01:20:29,300
+Make sure you fork our version of progress, 
+确保你派生了我们的Progress版本
+
+1665
+01:20:29,310 --> 01:20:32,220
+because it already has the scaffolding code that win has set up. 
+因为它已经有了Win建立的脚手架代码
+
+1666
+01:20:32,590 --> 01:20:36,610
+And it's all sort of set up for you to like compile from the command line
+它的所有设置都是为了让你喜欢从命令行或vs
+
+1667
+01:20:36,620 --> 01:20:39,800
+or vs code or whatever sea line he's using. 
+代码或他使用的任何海线进行编译
+
+1668
+01:20:40,340 --> 01:20:40,600
+That's in there. 
+那是在那里
+
+1669
+01:20:40,610 --> 01:20:41,860
+And then it'll be able to link it in. 
+然后它就能把它连接起来
+
+1670
+01:20:41,870 --> 01:20:43,540
+You don't have to figure that out yourself, which is not trivial.
+你不需要自己去弄清楚 这不是小事
+
+1671
+01:20:44,050 --> 01:20:47,020
+And then please post questions on piazza or come to piazo office hours. 
+然后请在Piazza上张贴问题或到Piazo办公时间
+
+1672
+01:20:47,410 --> 01:20:47,770
+Ok. 
+好吧
+
+1673
+01:20:49,110 --> 01:20:51,060
+There are example, 
+有一个例子
+
+1674
+01:20:51,500 --> 01:20:55,240
+farm data rappers that are in the write up that Wayne is linked to. 
+农场数据说唱歌手在韦恩被链接的文章中
+
+1675
+01:20:56,850 --> 01:20:58,650
+There's the parquet one, 
+这是镶木地板的
+
+1676
+01:20:58,660 --> 01:20:59,810
+and then it's the slightest one. 
+这是最小的
+
+1677
+01:21:03,700 --> 01:21:06,170
+Some of the scaffolding code will look very similar. 
+一些脚手架代码看起来非常相似
+
+1678
+01:21:07,090 --> 01:21:08,320
+It won't be entirely useful to you, 
+它不会对你完全有
+
+1679
+01:21:08,330 --> 01:21:11,630
+but you can just look at it as a reference, but avoid copying wholesale.
+用但你可以把它作为参考 但要避免大量复制
+
+1680
+01:21:12,140 --> 01:21:13,660
+Without attribution from existing cute, 
+如果没有现有可爱的归属
+
+1681
+01:21:13,670 --> 01:21:15,720
+you may find and also, too,
+你可能会发现
+
+1682
+01:21:15,730 --> 01:21:18,480
+because there's always random people on the internet that see the videos
+而且 因为总是有随机的人在互联网上看到视频
+
+1683
+01:21:18,490 --> 01:21:19,640
+and try to implement themselves, 
+并试图实现自己
+
+1684
+01:21:20,010 --> 01:21:20,870
+avoid their stuff. 
+避免他们的东西
+
+1685
+01:21:21,930 --> 01:21:22,770
+It's usually crap. 
+通常都是废话
+
+1686
+01:21:23,050 --> 01:21:23,810
+I'm not going to lie, 
+我不想撒谎
+
+1687
+01:21:25,740 --> 01:21:26,090
+right? 
+是吧
+
+1688
+01:21:26,100 --> 01:21:26,890
+Any questions? 
+有什么问题吗
+
+1689
+01:21:27,700 --> 01:21:29,890
+Ha ha, that's my favorite.
+哈哈 那是我的最爱
+
+1690
+01:21:29,900 --> 01:21:30,850
+All that are. 
+所有这些都是
+
+1691
+01:21:33,200 --> 01:21:33,670
+What is it? 
+那是什么
+
+1692
+01:21:34,560 --> 01:21:36,070
+It's the SP cricket, 
+这是sp板球
+
+1693
+01:21:36,080 --> 01:21:41,150
+idesi make a mess unless I could do it like a deal, 
+除非我能像交易一样做 否则我会搞得一团糟
+
+1694
+01:21:41,290 --> 01:21:44,720
+ice cube with the g to the e to the t it comes. 
+冰块从g到e到t 它来了
+
+1695
+01:21:44,730 --> 01:21:46,000
+Do I play the game? 
+我玩这个游戏吗
+
+1696
+01:21:46,010 --> 01:21:46,920
+Where's no roof? 
+哪里没有屋顶
+
+1697
+01:21:47,250 --> 01:21:48,080
+He's on the custody. 
+他被拘留了
+
+1698
+01:21:48,090 --> 01:21:49,600
+I'm a focus on drink fruit, 
+我一个人专注地喝着水果
+
+1699
+01:21:49,610 --> 01:21:51,840
+put the bus a cap on the ice road, 
+把公车上的冰帽扣在路上
+
+1700
+01:21:51,850 --> 01:21:55,440
+bush week on the go with a blow to the eyes come. 
+一周一周地走着 眼睛被打了过来
+
+1701
+01:21:56,130 --> 01:21:56,560
+Indeed, 
+事实上
+
+1702
+01:21:56,570 --> 01:22:01,840
+that's me rolling with 5th what's up park and south central g and thank us
+这是我与第五届What ' s Up Park和South Central G一起举办的活动
+
+1703
+01:22:01,850 --> 01:22:02,920
+when I party. 
+并在聚会时感谢我们
+
+1704
+01:22:03,260 --> 01:22:05,890
+By the 12 pack case on the 46 pack, 
+在46包的12包箱子里
+
+1705
+01:22:05,900 --> 01:22:07,890
+48 gets the real Paris. 
+48包得到了真正的巴黎
+
+1706
+01:22:08,170 --> 01:22:10,920
+I drink fruit, but you are drinking Bob 12,
+我喝水果 但你喝鲍勃12
+
+1707
+01:22:10,930 --> 01:22:13,040
+but they say bill makes you fat, 
+但他们说比尔让你发胖
+
+1708
+01:22:13,050 --> 01:22:14,520
+but saying eyes is straight, 
+但说眼睛是直的
+
+1709
+01:22:14,530 --> 01:22:16,120
+so it really don't matter. 
+所以这真的没关系
