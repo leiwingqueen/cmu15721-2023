@@ -3884,11 +3884,11 @@ For for a bunch of prototypes,
 
 972
 00:44:05,420 --> 00:44:07,830
-integers begins and floats and reels. 
+integers bigint and floats and real. 
 
 973
 00:44:08,360 --> 00:44:11,460
-We'll just use what's in the I triple east, 74 standard.
+We'll just use what's in the IEEE,-754 standard.
 
 974
 00:44:11,780 --> 00:44:14,490
@@ -3908,7 +3908,7 @@ like integers.
 
 978
 00:44:23,320 --> 00:44:25,870
-You can think of like I allocate a variable in c plus for an integer. 
+You can think of like I allocate a variable in c++ for an integer. 
 
 979
 00:44:25,880 --> 00:44:27,880
@@ -3928,7 +3928,7 @@ And they'll be instructions.
 
 983
 00:44:32,920 --> 00:44:37,550
-And registers should actually store this data accordingly for time stamps, 
+And registers should actually store this data accordingly. for time stamps, 
 
 984
 00:44:38,500 --> 00:44:40,390
@@ -3972,7 +3972,7 @@ Again,
 
 994
 00:45:05,330 --> 00:45:10,970
-most systems are going to use dictionary compression for watch rs to make
+most systems are going to use dictionary compression for varchars to make
 
 995
 00:45:10,980 --> 00:45:11,650
@@ -3984,7 +3984,7 @@ or the address itself to the off load storage.
 
 997
 00:45:15,200 --> 00:45:16,340
-Overflow storage will be fixing. 
+Overflow storage will be fixed-length. 
 
 998
 00:45:17,880 --> 00:45:21,850
@@ -4004,7 +4004,7 @@ that like,
 
 1002
 00:45:32,240 --> 00:45:34,900
-do we want to have let the harvard handle the decimals for us? 
+do we want to have let the hardware handle the decimals for us? 
 
 1003
 00:45:34,910 --> 00:45:37,360
@@ -4016,7 +4016,7 @@ The tradeoff is going to be if we let the hardware manage it as defined
 
 1005
 00:45:42,630 --> 00:45:46,700
-by the 74 standard for either 32 bit or 664 for bit floating number, 
+by the 754 standard for either 32 bit or 664 for bit floating number, 
 
 1006
 00:45:46,710 --> 00:45:47,420
@@ -4024,7 +4024,7 @@ floating point number,
 
 1007
 00:45:48,830 --> 00:45:51,360
-is going to be faster because the hallmark can support it natively. 
+is going to be faster because the hardware can support it natively. 
 
 1008
 00:45:52,090 --> 00:45:54,760
@@ -4036,7 +4036,7 @@ Did noah used to be that case that came out on the 90s
 
 1010
 00:45:57,630 --> 00:46:00,060
-with floated point units in the cp us? 
+with floated point units in the cpu? 
 
 1011
 00:46:00,530 --> 00:46:02,060
@@ -4048,7 +4048,7 @@ But the problem is is going to be that they don't guarantee exact values.
 
 1013
 00:46:08,220 --> 00:46:10,940
-So I wanted to write this in rust for chi, but it didn't have time,
+So I wanted to write this in rust(for chi?), but it didn't have time,
 
 1014
 00:46:11,310 --> 00:46:14,270
@@ -4212,7 +4212,7 @@ decimal without any rounding errors.
 
 1054
 00:47:53,630 --> 00:47:57,990
-The segal standard you would define this for 30 bits would be numeric or decimal. 
+The sql standard you would define this for 30 bits would be numeric or decimal. 
 
 1055
 00:47:58,400 --> 00:48:00,710
@@ -4716,7 +4716,7 @@ You think it's so terrible who would ever actually do this.
 
 1180
 00:53:37,550 --> 00:53:38,370
-Mem segal used to. 
+mysql used to. 
 
 1181
 00:53:39,090 --> 00:53:40,080
@@ -4764,7 +4764,7 @@ But if it could be null,
 
 1192
 00:54:02,670 --> 00:54:04,890
-then they have to store that as2 bytes. 
+then they have to store that as 2 bytes. 
 
 1193
 00:54:07,250 --> 00:54:09,450
@@ -4796,7 +4796,7 @@ nicely memory aligned,
 
 1200
 00:54:26,620 --> 00:54:29,280
-that we don't try to access a two pole that is or a value that
+that we don't try to access a two tuple that is or a value that
 
 1201
 00:54:29,290 --> 00:54:30,640
@@ -4836,7 +4836,7 @@ Is that a good idea?
 
 1210
 00:54:50,110 --> 00:54:51,130
-We've covered calm stores, 
+We've covered column stores, 
 
 1211
 00:54:51,140 --> 00:54:52,650
@@ -4860,7 +4860,7 @@ Data is considered hot when it first enters a database system.
 
 1216
 00:55:06,290 --> 00:55:08,120
-This is, in general, not just for a lab system,
+This is, in general, not just for olap system,
 
 1217
 00:55:08,130 --> 00:55:10,150
@@ -4876,7 +4876,7 @@ I don't know,
 
 1220
 00:55:13,450 --> 00:55:16,500
-twitter or tick tock, whatever the hottest be real, whatever,
+twitter or tiktok, whatever the hottest be real, whatever,
 
 1221
 00:55:18,210 --> 00:55:20,010
@@ -4940,7 +4940,7 @@ Well, to be kind of queries.
 
 1236
 00:55:57,170 --> 00:56:00,510
-Then over time we want to migrate it to aaa coral storage system. 
+Then over time we want to migrate it to a colum storage system. 
 
 1237
 00:56:02,300 --> 00:56:03,950
@@ -5060,7 +5060,7 @@ And the idea is that we're basically going to store a second copy
 
 1266
 00:57:22,440 --> 00:57:26,720
-of the database in a calm store that we automatically updated, 
+of the database in a column store that we automatically updated, 
 
 1267
 00:57:26,810 --> 00:57:27,600
@@ -5068,7 +5068,7 @@ as I said.
 
 1268
 00:57:28,580 --> 00:57:29,950
-So you have your rose store. 
+So you have your row store. 
 
 1269
 00:57:30,240 --> 00:57:31,750
@@ -5156,15 +5156,15 @@ I so I would say this is used in in oracles has a memory combinator accelerator.
 
 1290
 00:58:34,600 --> 00:58:35,790
-Sequel servers hard to keep track of. 
+sql servers hard to keep track of. 
 
 1291
 00:58:35,800 --> 00:58:37,830
-They have a bunch of versions of sequel server. 
+They have a bunch of versions of sql server. 
 
 1292
 00:58:38,240 --> 00:58:42,860
-I think they have an olf index or apollo engine that uses this ibm blue
+I think they have an olap index or apollo engine that uses this ibm blue
 
 1293
 00:58:42,870 --> 00:58:43,900
@@ -5228,11 +5228,11 @@ they will migrate it to the historical data set and the column store.
 
 1308
 00:59:26,570 --> 00:59:28,060
-A tubal can only exist. 
+A tuple can only exist. 
 
 1309
 00:59:29,980 --> 00:59:34,030
-The source of truth of the most recent version of a tubal can only exist
+The source of truth of the most recent version of a tuple can only exist
 
 1310
 00:59:34,240 --> 00:59:35,030
@@ -5276,7 +5276,7 @@ and then merge the results together.
 
 1320
 00:59:57,850 --> 00:59:59,640
-Again, if I update the tube that i've already migrated,
+Again, if I update the tuple that i've already migrated,
 
 1321
 00:59:59,650 --> 01:00:02,490
@@ -5544,7 +5544,7 @@ I guess a could you have a single system that supports like both of us run
 
 1387
 01:03:26,600 --> 01:03:27,150
-a calm store? 
+a column store? 
 
 1388
 01:03:28,530 --> 01:03:31,720
@@ -5632,7 +5632,7 @@ it's storing delta records.
 
 1409
 01:04:16,140 --> 01:04:22,270
-So if I have a bunch of delta as i'm updating for nvcc ted can use a row store. 
+So if I have a bunch of delta as i'm updating for mvcc technically can use a row store. 
 
 1410
 01:04:25,800 --> 01:04:28,190
@@ -5648,15 +5648,15 @@ And then his question is, in both of these cases,
 
 1413
 01:04:31,440 --> 01:04:32,430
-we're not doing taxes anywhere. 
+we're not doing pax anywhere. 
 
 1414
 01:04:32,610 --> 01:04:34,230
-No, let's assume this is packs.
+No, let's assume this is pax.
 
 1415
 01:04:35,380 --> 01:04:38,670
-I say dsm but columns for packs, 
+I say dsm but columns for pax, 
 
 1416
 01:04:39,880 --> 01:04:41,320
@@ -5664,7 +5664,7 @@ again, for the purpose is going for this semester.
 
 1417
 01:04:41,330 --> 01:04:43,440
-When I say column store, i'm going to mean packs.
+When I say column store, i'm going to mean pax.
 
 1418
 01:04:44,560 --> 01:04:46,810
@@ -5732,7 +5732,7 @@ can take advantage of parallelism.
 
 1434
 01:05:42,020 --> 01:05:44,970
-Even though I showed, when we talk about packs, there's a single file,
+Even though I showed, when we talk about pax, there's a single file,
 
 1435
 01:05:44,980 --> 01:05:45,810
@@ -5776,7 +5776,7 @@ we couldn't grow that.
 
 1445
 01:06:07,810 --> 01:06:08,920
-So in the no segal world, 
+So in the no sql world, 
 
 1446
 01:06:08,930 --> 01:06:10,440
@@ -6000,7 +6000,7 @@ but that would be,
 
 1501
 01:08:24,190 --> 01:08:26,600
-I could define aware clause to say, 
+I could define where clause to say, 
 
 1502
 01:08:27,480 --> 01:08:29,630
@@ -6332,7 +6332,7 @@ It not just applies for otv workloads.
 
 1584
 01:12:10,370 --> 01:12:12,910
-We need it for overlap because and the day it's gonna be for the joins
+We need it for olap because and the day it's gonna be for the joins
 
 1585
 01:12:12,920 --> 01:12:14,790
@@ -6352,7 +6352,7 @@ as I said, multiple times,
 
 1589
 01:12:20,890 --> 01:12:22,780
-every modern ellipse system today, 
+every modern olap system today, 
 
 1590
 01:12:23,260 --> 01:12:24,740
@@ -6368,11 +6368,11 @@ I can't imagine anyone area that says that a column store is going to be
 
 1593
 01:12:32,300 --> 01:12:33,010
-using packs. 
+using pax. 
 
 1594
 01:12:34,370 --> 01:12:38,090
-The key idea about packs is that all the data has to be fixed lines. 
+The key idea about pax is that all the data has to be fixed lines. 
 
 1595
 01:12:38,100 --> 01:12:39,330
@@ -6380,7 +6380,7 @@ The key idea in a column store,
 
 1596
 01:12:39,810 --> 01:12:40,630
-especially in impact as well, 
+especially in pax as well, 
 
 1597
 01:12:40,640 --> 01:12:43,050
@@ -6400,7 +6400,7 @@ so that we can jump to offsets,
 
 1601
 01:12:49,570 --> 01:12:51,720
-just doing simple arithmetic to identify two balls. 
+just doing simple arithmetic to identify two tuples. 
 
 1602
 01:12:53,520 --> 01:12:55,590
@@ -6428,7 +6428,7 @@ Again, we did a survey that shows this is the case,
 
 1608
 01:13:08,230 --> 01:13:12,290
-but most of the data itself is actually going to be bar charts and strings. 
+but most of the data itself is actually going to be varchars and strings. 
 
 1609
 01:13:12,920 --> 01:13:13,750
@@ -6512,7 +6512,7 @@ In the old days, like in the 90s,
 
 1629
 01:14:06,100 --> 01:14:07,810
-you'd have to have our dva to sit down like, 
+you'd have to have our dba to sit down like, 
 
 1630
 01:14:08,140 --> 01:14:12,450
@@ -6548,7 +6548,7 @@ But a lot of people don't have db as at their companies.
 
 1638
 01:14:27,140 --> 01:14:30,940
-They didn't have a bunch of files and they shove an oil lab engine at it. 
+They didn't have a bunch of files and they shove an olap engine at it. 
 
 1639
 01:14:31,850 --> 01:14:34,570
@@ -6664,7 +6664,7 @@ If for real, I'm back in town.
 
 1667
 01:15:49,040 --> 01:15:52,150
-We're going to spend time talking about how to accelerate the lab queries
+We're going to spend time talking about how to accelerate the olap queries
 
 1668
 01:15:52,160 --> 01:15:54,220
