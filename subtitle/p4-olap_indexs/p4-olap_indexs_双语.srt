@@ -35,7 +35,7 @@ The modern columnar databases aren't going to support us.
 
 8
 00:00:26,100 --> 00:00:31,730
-But we'll mostly see the pit map indexes will be mostly used in row store
+But we'll mostly see the bit map indexes will be mostly used in row store
 但是我们将主要看到pit映射索引将主要用于数据库系统中的行存储
 
 9
@@ -70,7 +70,7 @@ of the columnar storage versus row based storage.
 
 15
 00:00:53,470 --> 00:00:57,360
-And I talked about how most modern overlap systems
+And I talked about how most modern olap systems
 我谈到了大多数现代重叠系统将如何实现
 
 16
@@ -125,7 +125,7 @@ we know how to do the simple math to jump to the hunter,
 
 26
 00:01:28,200 --> 00:01:31,560
-offset at the other columns to go stitch two balls back together. 
+offset at the other columns to go stitch two tuples back together. 
 在其他列中偏移来将两个球重新缝合在一起
 
 27
@@ -180,7 +180,7 @@ So the first thing we sort of motivate what we're talking about today is
 
 37
 00:02:10,900 --> 00:02:12,490
-when we talk about o lab indexes, 
+when we talk about olap indexes, 
 当我们讨论实验室索引时
 
 38
@@ -195,7 +195,7 @@ Spout indexes,
 
 40
 00:02:19,030 --> 00:02:20,890
-like, in particular, for b plus trees.
+like, in particular, for b+ trees.
 树的喷口索引
 
 41
@@ -225,12 +225,12 @@ explicitly saying it.
 
 46
 00:02:35,090 --> 00:02:38,480
-These indexes are designed for doing finding individual tubles
+These indexes are designed for doing finding individual tuples
 这些索引设计用于查找单个元组
 
 47
 00:02:38,490 --> 00:02:39,680
-or small number of tubles. 
+or small number of tuples. 
 或少量元组
 
 48
@@ -250,7 +250,7 @@ right?
 
 51
 00:02:47,800 --> 00:02:52,040
-And in the otp world also as well, 
+And in the oltp world also as well, 
 在OTP世界中
 
 52
@@ -330,7 +330,7 @@ assuming that our files are read only.
 
 67
 00:03:36,210 --> 00:03:39,740
-And we typically don't need to find individual tubals, 
+And we typically don't need to find individual tuples, 
 我们通常不需要找到单独的tubal
 
 68
@@ -350,7 +350,7 @@ When we do joins,
 
 71
 00:03:46,570 --> 00:03:48,880
-we have to find individual two poles or values that match. 
+we have to find individual two tuples or values that match. 
 我们必须找到匹配的两个极点或值
 
 72
@@ -385,7 +385,7 @@ like everybody lives in pittsburgh.
 
 78
 00:04:03,520 --> 00:04:06,030
-The data structure that we would use to make otp workloads run
+The data structure that we would use to make oltp workloads run
 我们用来使otp工作负载运行得
 
 79
@@ -400,7 +400,7 @@ for for analytical queries.
 
 81
 00:04:12,590 --> 00:04:18,300
-So the question is, what can we actually do to speed up spectral scans?
+So the question is, what can we actually do to speed up sequential scans?
 所以问题是 我们实际上能做什么来加速光谱扫描
 
 82
@@ -440,7 +440,7 @@ Instead of stalling, every single time i've got to go get new data.
 
 89
 00:04:37,710 --> 00:04:39,130
-If I know i'm going to squash squat, 
+If I know i'm going to sequential scan, 
 如果我知道我会被压扁
 
 90
@@ -1480,7 +1480,7 @@ that most systems use,
 
 297
 00:14:07,950 --> 00:14:08,910
-where the left system is used. 
+where the olap system is used. 
 其中使用了左侧系统
 
 298
@@ -1535,7 +1535,7 @@ Right?
 
 308
 00:14:35,160 --> 00:14:40,860
-So say a sample column, it has52 poles with this consuming a single table,
+So say a sample column, it has52 tuple with this consuming a single table,
 比如说一个样本列 它有52个极点
 
 309
@@ -2160,7 +2160,7 @@ an index.
 
 433
 00:20:32,440 --> 00:20:33,630
-For o lab workloads, 
+For olap workloads, 
 对于O Lab工作负载
 
 434
@@ -2180,7 +2180,7 @@ because those are sort of different types of queries.
 
 437
 00:20:43,680 --> 00:20:46,900
-Think of things like select start from table where attribute
+Think of things like select * from table where attribute
 想想像SELECT START FROM TABLE这样的东西
 
 438
@@ -2215,7 +2215,7 @@ we're going to maintain a separate vector with a bit set to one,
 
 444
 00:21:12,340 --> 00:21:16,620
-whether a tubal at that offset has that particular value. 
+whether a tuple at that offset has that particular value. 
 其中一个位设置为1 无论该偏移处的tubal是否具有该特定值
 
 445
@@ -2235,7 +2235,7 @@ in the actual data columns themselves.
 
 448
 00:21:25,950 --> 00:21:28,980
-I th position in the bit map corresponds to the I th position in the two bone. 
+I th position in the bit map corresponds to the I th position in the tuple. 
 位图中的第I个位置对应于两个骨骼中的第I个位置
 
 449

@@ -28,7 +28,7 @@ The modern columnar databases aren't going to support us.
 
 8
 00:00:26,100 --> 00:00:31,730
-But we'll mostly see the pit map indexes will be mostly used in row store
+But we'll mostly see the bit map indexes will be mostly used in row store
 
 9
 00:00:31,740 --> 00:00:35,580
@@ -56,7 +56,7 @@ of the columnar storage versus row based storage.
 
 15
 00:00:53,470 --> 00:00:57,360
-And I talked about how most modern overlap systems
+And I talked about how most modern olap systems
 
 16
 00:00:57,370 --> 00:00:59,520
@@ -100,7 +100,7 @@ we know how to do the simple math to jump to the hunter,
 
 26
 00:01:28,200 --> 00:01:31,560
-offset at the other columns to go stitch two balls back together. 
+offset at the other columns to go stitch two tuples back together. 
 
 27
 00:01:31,570 --> 00:01:36,600
@@ -144,7 +144,7 @@ So the first thing we sort of motivate what we're talking about today is
 
 37
 00:02:10,900 --> 00:02:12,490
-when we talk about o lab indexes, 
+when we talk about olap indexes, 
 
 38
 00:02:12,980 --> 00:02:16,370
@@ -156,7 +156,7 @@ Spout indexes,
 
 40
 00:02:19,030 --> 00:02:20,890
-like, in particular, for b plus trees.
+like, in particular, for b+ trees.
 
 41
 00:02:20,900 --> 00:02:22,280
@@ -180,11 +180,11 @@ explicitly saying it.
 
 46
 00:02:35,090 --> 00:02:38,480
-These indexes are designed for doing finding individual tubles
+These indexes are designed for doing finding individual tuples
 
 47
 00:02:38,490 --> 00:02:39,680
-or small number of tubles. 
+or small number of tuples. 
 
 48
 00:02:40,240 --> 00:02:42,310
@@ -200,7 +200,7 @@ right?
 
 51
 00:02:47,800 --> 00:02:52,040
-And in the otp world also as well, 
+And in the oltp world also as well, 
 
 52
 00:02:52,390 --> 00:02:54,440
@@ -264,7 +264,7 @@ assuming that our files are read only.
 
 67
 00:03:36,210 --> 00:03:39,740
-And we typically don't need to find individual tubals, 
+And we typically don't need to find individual tuples, 
 
 68
 00:03:39,750 --> 00:03:42,920
@@ -280,7 +280,7 @@ When we do joins,
 
 71
 00:03:46,570 --> 00:03:48,880
-we have to find individual two poles or values that match. 
+we have to find individual two tuples or values that match. 
 
 72
 00:03:49,400 --> 00:03:50,950
@@ -308,7 +308,7 @@ like everybody lives in pittsburgh.
 
 78
 00:04:03,520 --> 00:04:06,030
-The data structure that we would use to make otp workloads run
+The data structure that we would use to make oltp workloads run
 
 79
 00:04:06,040 --> 00:04:08,600
@@ -320,7 +320,7 @@ for for analytical queries.
 
 81
 00:04:12,590 --> 00:04:18,300
-So the question is, what can we actually do to speed up spectral scans?
+So the question is, what can we actually do to speed up sequential scans?
 
 82
 00:04:20,950 --> 00:04:21,690
@@ -352,7 +352,7 @@ Instead of stalling, every single time i've got to go get new data.
 
 89
 00:04:37,710 --> 00:04:39,130
-If I know i'm going to squash squat, 
+If I know i'm going to sequential scan, 
 
 90
 00:04:39,140 --> 00:04:42,000
@@ -1184,7 +1184,7 @@ that most systems use,
 
 297
 00:14:07,950 --> 00:14:08,910
-where the left system is used. 
+where the olap system is used. 
 
 298
 00:14:09,180 --> 00:14:11,700
@@ -1228,7 +1228,7 @@ Right?
 
 308
 00:14:35,160 --> 00:14:40,860
-So say a sample column, it has52 poles with this consuming a single table,
+So say a sample column, it has52 tuple with this consuming a single table,
 
 309
 00:14:40,870 --> 00:14:41,580
@@ -1728,7 +1728,7 @@ an index.
 
 433
 00:20:32,440 --> 00:20:33,630
-For o lab workloads, 
+For olap workloads, 
 
 434
 00:20:33,640 --> 00:20:36,270
@@ -1744,7 +1744,7 @@ because those are sort of different types of queries.
 
 437
 00:20:43,680 --> 00:20:46,900
-Think of things like select start from table where attribute
+Think of things like select * from table where attribute
 
 438
 00:20:46,910 --> 00:20:50,140
@@ -1772,7 +1772,7 @@ we're going to maintain a separate vector with a bit set to one,
 
 444
 00:21:12,340 --> 00:21:16,620
-whether a tubal at that offset has that particular value. 
+whether a tuple at that offset has that particular value. 
 
 445
 00:21:18,530 --> 00:21:19,840
@@ -1788,7 +1788,7 @@ in the actual data columns themselves.
 
 448
 00:21:25,950 --> 00:21:28,980
-I th position in the bit map corresponds to the I th position in the two bone. 
+I th position in the bit map corresponds to the I th position in the tuple. 
 
 449
 00:21:30,040 --> 00:21:30,430
