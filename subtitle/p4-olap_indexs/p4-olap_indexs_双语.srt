@@ -16,17 +16,17 @@ We have the devil spoken stone.
 4
 00:00:10,890 --> 00:00:12,560
 Up one heads, the bed make shots.
-抬起一个头 在床上投篮
+抬起一个头 床上投篮
 
 5
 00:00:12,570 --> 00:00:17,730
 But today we talk about a lot of accents which is sort of as I said, 
-但今天我们讨论了很多口音 正如我所说的
+但今天我们讨论了很多口音
 
 6
 00:00:17,740 --> 00:00:22,690
 the spoiler is going to be that some of these a lot of techniques were described. 
-剧透将是其中一些技术的描述
+正如我所说的 剧透将会是其中的一些 很多技术都被描述了
 
 7
 00:00:22,700 --> 00:00:25,690
@@ -36,7 +36,7 @@ The modern columnar databases aren't going to support us.
 8
 00:00:26,100 --> 00:00:31,730
 But we'll mostly see the bit map indexes will be mostly used in row store
-但是我们将主要看到pit映射索引将主要用于数据库系统中的行存储
+但是我们将主要看到位图索引将主要用于数据库系统中的行存储
 
 9
 00:00:31,740 --> 00:00:35,580
@@ -71,7 +71,7 @@ of the columnar storage versus row based storage.
 15
 00:00:53,470 --> 00:00:57,360
 And I talked about how most modern olap systems
-我谈到了大多数现代重叠系统将如何实现
+我谈到了大多数现代olap系统将如何实现
 
 16
 00:00:57,370 --> 00:00:59,520
@@ -81,7 +81,7 @@ are going to be implementing some variant of packs,
 17
 00:01:00,320 --> 00:01:03,030
 because that's me better for doing sequential access potential scans. 
-因为我更适合进行顺序访问潜在扫描
+因为这更适合进行顺序访问潜在扫描
 
 18
 00:01:04,020 --> 00:01:05,210
@@ -116,17 +116,17 @@ We're scaling one column.
 24
 00:01:20,730 --> 00:01:25,110
 If we know what the 1/100 offset within that column, 
-如果我们知道那一列中的1/100偏移
+如果我们知道该列中的1/100偏移量
 
 25
 00:01:25,410 --> 00:01:27,660
 we know how to do the simple math to jump to the hunter, 
-我们就知道如何做简单的数学计算来跳到猎人
+我们就知道如何进行简单的数学计算来跳转到Hunter
 
 26
 00:01:28,200 --> 00:01:31,560
 offset at the other columns to go stitch two tuples back together. 
-在其他列中偏移来将两个球重新缝合在一起
+在其他列中偏移以将两个元组重新缝合在一起
 
 27
 00:01:31,570 --> 00:01:36,600
@@ -176,27 +176,27 @@ are making.
 36
 00:02:06,510 --> 00:02:10,890
 So the first thing we sort of motivate what we're talking about today is
-所以我们今天讨论的第一件事是
+所以我们今天讨论的第一件事是当我们讨论olap索引时
 
 37
 00:02:10,900 --> 00:02:12,490
 when we talk about olap indexes, 
-当我们讨论实验室索引时
+我们必须得到
 
 38
 00:02:12,980 --> 00:02:16,370
 we have to sort of get all the things we learned in introduction class. 
-我们必须得到我们在导论课上学到的所有东西
+我们在导论课上学到的所有东西
 
 39
 00:02:17,160 --> 00:02:18,280
 Spout indexes, 
-特别是b+
+特别是b
 
 40
 00:02:19,030 --> 00:02:20,890
 like, in particular, for b+ trees.
-树的喷口索引
++树的spout索引
 
 41
 00:02:20,900 --> 00:02:22,280
@@ -251,7 +251,7 @@ right?
 51
 00:02:47,800 --> 00:02:52,040
 And in the oltp world also as well, 
-在OTP世界中
+在OLTP世界中
 
 52
 00:02:52,390 --> 00:02:54,440
@@ -331,12 +331,12 @@ assuming that our files are read only.
 67
 00:03:36,210 --> 00:03:39,740
 And we typically don't need to find individual tuples, 
-我们通常不需要找到单独的tubal
+我们通常不需要找到单独的元组
 
 68
 00:03:39,750 --> 00:03:42,920
 at least the lower points of the query plant, 
-至少不需要找到查询设备的较低点
+至少不需要找到查询工厂的较低点
 
 69
 00:03:42,930 --> 00:03:45,040
@@ -346,12 +346,12 @@ the access methods on the tables themselves.
 70
 00:03:45,490 --> 00:03:46,440
 When we do joins, 
-当我们连接时
+当我们进行连接时
 
 71
 00:03:46,570 --> 00:03:48,880
 we have to find individual two tuples or values that match. 
-我们必须找到匹配的两个极点或值
+我们必须找到匹配的两个元组或值
 
 72
 00:03:49,400 --> 00:03:50,950
@@ -386,7 +386,7 @@ like everybody lives in pittsburgh.
 78
 00:04:03,520 --> 00:04:06,030
 The data structure that we would use to make oltp workloads run
-我们用来使otp工作负载运行得
+我们用来使oltp工作负载运行得
 
 79
 00:04:06,040 --> 00:04:08,600
@@ -401,7 +401,7 @@ for for analytical queries.
 81
 00:04:12,590 --> 00:04:18,300
 So the question is, what can we actually do to speed up sequential scans?
-所以问题是 我们实际上能做什么来加速光谱扫描
+所以问题是 我们实际上可以做些什么来加快顺序扫描
 
 82
 00:04:20,950 --> 00:04:21,690
@@ -441,12 +441,12 @@ Instead of stalling, every single time i've got to go get new data.
 89
 00:04:37,710 --> 00:04:39,130
 If I know i'm going to sequential scan, 
-如果我知道我会被压扁
+如果我知道我要进行顺序扫描
 
 90
 00:04:39,140 --> 00:04:42,000
 you scan a bunch of files or a bunch of pages that are contagious. 
-你就会扫描一堆文件或一堆具有传染性的页面
+你会扫描一堆文件或一堆具有传染性的页面
 
 91
 00:04:42,460 --> 00:04:44,100
@@ -556,12 +556,12 @@ or just the columns of that I needed at that point of the operator.
 112
 00:05:36,020 --> 00:05:40,520
 I'm copying moving list data around materialize views, as I said,
-我在物化视图中复制移动列表数据
+我在物化视图中复制移动列表数据 正如我所说的
 
 113
 00:05:40,730 --> 00:05:43,100
 we're not going to discuss in this class, 
-正如我所说的 我们不打算在这门课上讨论
+我们不会在这门课上讨论
 
 114
 00:05:43,560 --> 00:05:46,060
@@ -1016,7 +1016,7 @@ That's going to allow it to identify portions of the database,
 204
 00:09:51,850 --> 00:09:56,390
 the portions of the data files for a table that's needed in a scan that it doesn't. 
-即扫描中需要的表的数据文件部分 而它不需要
+即扫描中需要但它不需要的表的数据文件部分
 
 205
 00:09:56,680 --> 00:09:57,390
@@ -1166,7 +1166,7 @@ That's the other extreme.
 234
 00:11:13,850 --> 00:11:16,800
 So we want something in the middle where it's going to be
-所以我们想要中间的东西 它将足够大
+所以我们希望在中间有一个足够大的东西
 
 235
 00:11:17,180 --> 00:11:19,780
@@ -1286,12 +1286,12 @@ So we can order that for now.
 258
 00:12:23,890 --> 00:12:26,410
 The considerations we have to have for anything anytime we're doing
-任何时候我们在进行数据修剪或使用辅助
+无论何时我们在做数据修剪或使用辅助数据结构
 
 259
 00:12:26,420 --> 00:12:28,930
 data pruning or using auxiliary data structures. 
-数据结构时都必须考虑的事项
+我们都必须考虑任何事情
 
 260
 00:12:29,750 --> 00:12:32,210
@@ -1361,12 +1361,12 @@ my extreme example where everything is set to true on 1 billion rows.
 273
 00:13:03,710 --> 00:13:05,140
 If I build ab plus tree on that, 
-如果我在那上面建立ab+树
+如果我在它上面建立ab+树
 
 274
 00:13:05,530 --> 00:13:06,620
 or a bit map index on that, 
-或者在那上面建立一个位图索引 它是无用的
+或者在它上面建立一个位图索引 它是无用的
 
 275
 00:13:07,510 --> 00:13:10,860
@@ -1481,7 +1481,7 @@ that most systems use,
 297
 00:14:07,950 --> 00:14:08,910
 where the olap system is used. 
-其中使用了左侧系统
+其中使用了OLAP系统
 
 298
 00:14:09,180 --> 00:14:11,700
@@ -1536,7 +1536,7 @@ Right?
 308
 00:14:35,160 --> 00:14:40,860
 So say a sample column, it has52 tuple with this consuming a single table,
-比如说一个样本列 它有52个极点
+比如说一个示例列 它有52个元组
 
 309
 00:14:40,870 --> 00:14:41,580
@@ -1651,7 +1651,7 @@ This is the zone map.
 331
 00:15:36,200 --> 00:15:39,210
 I think oracle invented the term zone map. 
-我认为甲骨文发明了“区域地图”这个词
+我认为甲骨文发明了区域地图这个词
 
 332
 00:15:39,220 --> 00:15:40,960
@@ -1721,7 +1721,7 @@ And we're done.
 345
 00:16:19,330 --> 00:16:19,930
 As I said before, 
-正如我之前所说
+正如我之前所说的
 
 346
 00:16:19,940 --> 00:16:23,210
@@ -1741,12 +1741,12 @@ I have a zoom map on the entire table.
 349
 00:16:32,240 --> 00:16:34,090
 That's not going to be either, 
-这也不会发生
+这也是不可能的
 
 350
 00:16:34,100 --> 00:16:38,030
 because if I have actually, it could help,
-因为如果我确实有
+因为如果我实际上有
 
 351
 00:16:38,040 --> 00:16:40,950
@@ -1756,7 +1756,7 @@ because if I know that the thing i'm looking for is not in the bounds
 352
 00:16:40,960 --> 00:16:42,190
 of the zone amount of the entire table, 
-因为如果我知道我要找的东西不在整个表的区域数量的范围内
+因为如果我知道我正在寻找的东西不在整个表的区域数量的范围内
 
 353
 00:16:42,490 --> 00:16:44,050
@@ -1981,7 +1981,7 @@ away substantial portions of data.
 397
 00:18:49,410 --> 00:18:51,970
 It just means that there's some amount of data they were able to throw it away. 
-这只是意味着有一些数据 他们可以扔掉它
+这只是意味着他们可以丢弃一些数据
 
 398
 00:18:52,620 --> 00:18:53,930
@@ -2161,7 +2161,7 @@ an index.
 433
 00:20:32,440 --> 00:20:33,630
 For olap workloads, 
-对于O Lab工作负载
+对于OLAP工作负载
 
 434
 00:20:33,640 --> 00:20:36,270
@@ -2181,7 +2181,7 @@ because those are sort of different types of queries.
 437
 00:20:43,680 --> 00:20:46,900
 Think of things like select * from table where attribute
-想想像SELECT START FROM TABLE这样的东西
+想想像SELECT*FROM TABLE这样的东西
 
 438
 00:20:46,910 --> 00:20:50,140
@@ -2216,7 +2216,7 @@ we're going to maintain a separate vector with a bit set to one,
 444
 00:21:12,340 --> 00:21:16,620
 whether a tuple at that offset has that particular value. 
-其中一个位设置为1 无论该偏移处的tubal是否具有该特定值
+其中一个位设置为1 无论该偏移处的元组是否具有该特定值
 
 445
 00:21:18,530 --> 00:21:19,840
@@ -2236,7 +2236,7 @@ in the actual data columns themselves.
 448
 00:21:25,950 --> 00:21:28,980
 I th position in the bit map corresponds to the I th position in the tuple. 
-位图中的第I个位置对应于两个骨骼中的第I个位置
+位图中的第I个位置对应于元组中的第I个位置
 
 449
 00:21:30,040 --> 00:21:30,430
@@ -2316,7 +2316,7 @@ That's all it is just bit maps.
 464
 00:22:18,020 --> 00:22:20,450
 Then you can pino has range indexes, 
-然后你可以有范围索引
+然后你可以使用范围索引
 
 465
 00:22:21,760 --> 00:22:23,790
@@ -2386,7 +2386,7 @@ within the original data has that particular value.
 478
 00:22:58,540 --> 00:23:02,020
 If i'm looking inside this, if I jump to the 4th all set here,
-如果我在里面看 如果我跳到这里的第四个所有设置
+如果我在里面看 如果我跳到这里的第四个设置
 
 479
 00:23:02,340 --> 00:23:07,300
@@ -2441,17 +2441,17 @@ What kind of data is suitable to be used in a bit map index?
 489
 00:23:41,240 --> 00:23:44,950
 Because if it's a the worst case scenario, again, thinking extremes,
-因为如果这是一个最坏的情况 再次考虑极端情况
+因为如果这是一个最坏的情况
 
 490
 00:23:44,960 --> 00:23:47,770
 if it's a auto increment key or serial key, 
-如果它是一个自动增量键或串行键
+再一次考虑极端情况 如果它是一个自动增量键或序列键
 
 491
 00:23:48,160 --> 00:23:51,550
-where every two pole has had a unique value. 
-其中每两个极点都有一个唯一的值
+where every tuple has had a unique value. 
+其中每个元组都有一个唯一的值
 
 492
 00:23:51,850 --> 00:23:52,610
@@ -2670,18 +2670,18 @@ His statement is this only works for categorical variables of values,
 
 535
 00:26:04,210 --> 00:26:05,900
-which is the same thing, as she saying in e num.
-正如她在e num中所说的
+which is the same thing, as she saying in enum.
+正如她在枚举中所说的
 
 536
 00:26:06,650 --> 00:26:10,930
 I will say through our analysis of schemers, 
-我要说的是 通过我们对阴谋家的分析 大多数人都不会
+我要说的是 通过我们对阴谋家的分析
 
 537
 00:26:11,370 --> 00:26:14,050
-most people don't, there's like edoms are super rare,
-就像edom是非常罕见的
+most people don't, there's like enum are super rare,
+大多数人都不会 像枚举这样的东西是非常罕见的
 
 538
 00:26:14,910 --> 00:26:14,950
@@ -2691,12 +2691,12 @@ right?
 539
 00:26:15,160 --> 00:26:18,230
 Even though like it may be like in the application, treat,
-即使像它可能像在应用程序中
+即使它可能像在应用程序中一样
 
 540
 00:26:18,240 --> 00:26:19,270
 it really isn't enough. 
-对待 这真的是不够的
+但它确实不够
 
 541
 00:26:19,680 --> 00:26:22,000
@@ -2716,7 +2716,7 @@ that like it's a category of variable.
 544
 00:26:27,850 --> 00:26:32,090
 But like it'll work on anything like you like, 
-但我想 它可以在任何你喜欢的东西上工作
+但我认为它可以在任何你喜欢的东西上工作
 
 545
 00:26:32,430 --> 00:26:36,130
@@ -2955,8 +2955,8 @@ This sort of naive scheme was like,
 
 592
 00:28:46,150 --> 00:28:51,460
-let's just create giant bit maps for the entire length of all the two poles, 
-让我们为所有两个极点的整个长度或表的大小创建巨大的位图
+let's just create giant bit maps for the entire length of all the tuples, 
+让我们为所有元组的整个长度或表的大小创建巨大的位图
 
 593
 00:28:51,710 --> 00:28:55,380
@@ -3116,7 +3116,7 @@ I could possibly have a match within some range.
 624
 00:30:35,160 --> 00:30:37,530
 I think i'm matching more triples than I actually I am matching. 
-我认为我匹配的三元组比我实际匹配的要多
+我认为我匹配的三元数比我实际匹配的要多
 
 625
 00:30:37,750 --> 00:30:39,700
@@ -3146,17 +3146,17 @@ Patchy piano came out of,
 630
 00:30:50,990 --> 00:30:52,350
 it came out of linked in, I forgot,
-它来自linkedin
+我忘了
 
 631
 00:30:52,620 --> 00:30:59,370
 but a it's an open source system or that system that supports makes
-我忘了 但它是一个开源系统
+它来自linkedin 但它是一个开源系统
 
 632
 00:30:59,380 --> 00:31:00,570
 heavy use of range indexes. 
-或者支持大量使用范围索引的系统
+或者说它支持大量使用范围索引的系统
 
 633
 00:31:01,820 --> 00:31:04,210
@@ -3165,13 +3165,13 @@ Again, the human has to specify these ranges.
 
 634
 00:31:04,670 --> 00:31:06,860
-As far as I know that no data system can actually automatically figure
+As far as I know that no database system can actually automatically figure
 据我所知
 
 635
 00:31:06,870 --> 00:31:07,980
 these things out for you yet. 
-目前还没有数据系统可以自动为你解决这些问题
+目前还没有数据库系统能够自动为您解决这些问题
 
 636
 00:31:10,080 --> 00:31:13,670
@@ -3305,13 +3305,13 @@ every or in its bit internal bit map.
 
 662
 00:32:31,360 --> 00:32:32,770
-And then every no, 
-然后每一个不
+And then every node, 
+然后每个节点
 
 663
 00:32:32,780 --> 00:32:33,970
 it's going to have four children. 
-它会有四个孩子
+它将有四个孩子
 
 664
 00:32:34,630 --> 00:32:36,710
@@ -3386,7 +3386,7 @@ and I have the bits at the corresponding location.
 678
 00:33:10,570 --> 00:33:13,120
 I'm not actually storing the bunch of zeros. 
-我实际上并没有存储这一堆零
+我实际上并没有存储一堆零
 
 679
 00:33:13,600 --> 00:33:17,360
@@ -3676,7 +3676,7 @@ So like the the cost ever had this storage savings you would get is
 736
 00:35:49,250 --> 00:35:52,950
 not worth the sort of the performance panel you pay for using
-就像曾经有过的成本一样
+就像曾经的成本一样
 
 737
 00:35:53,210 --> 00:35:54,700
@@ -3925,8 +3925,8 @@ For this one, again,
 
 786
 00:38:04,430 --> 00:38:09,190
-we're going to have our original table is going to have this idid field. 
-同样 我们将有我们的原始表 将有这个idid字段
+we're going to have our original table is going to have this id field. 
+同样 我们将让我们的原始表将有这个id字段
 
 787
 00:38:09,680 --> 00:38:11,570
@@ -3961,12 +3961,12 @@ Right?
 793
 00:38:21,280 --> 00:38:26,830
 What we're going to do now is we're going to flip around how we're
-我们现在要做的是
+我们现在要做的是 我们要翻转一下
 
 794
 00:38:26,840 --> 00:38:28,530
 actually going to be storing
-我们要翻转一下我们实际上是如何将数据存储在值本身中的
+我们实际上是如何将数据存储在值本身中的
 
 795
 00:38:29,310 --> 00:38:33,050
@@ -4026,17 +4026,17 @@ think of this as like you wouldn't want to store the table itself like this.
 806
 00:39:02,540 --> 00:39:05,410
 This would be an auxiliary data structure like an index that we
-这将是一个辅助数据结构
+这将是一个类似于索引的辅助数据结构
 
 807
 00:39:05,420 --> 00:39:08,820
 can then identify what offsets in the column and the original table
-类似于索引
+然后我们可以确定列中的哪些偏移量与原始表
 
 808
 00:39:08,830 --> 00:39:09,500
 are matching. 
-然后我们可以识别列中的哪些偏移量与原始表匹配
+匹配
 
 809
 00:39:09,910 --> 00:39:13,410
@@ -4160,8 +4160,8 @@ of the attribute.
 
 833
 00:40:25,700 --> 00:40:27,650
-Here's all the bits for all the two poles. 
-这是所有两极的所有比特
+Here's all the bits for all the tuples. 
+这是所有元组的所有位
 
 834
 00:40:29,630 --> 00:40:31,580
@@ -4241,7 +4241,7 @@ a a little bit and say whether a what two boy
 849
 00:41:15,190 --> 00:41:17,630
 different positions in each row matches. 
-并说每一行中的两个不同位置是否匹配
+并说出每一行中两个不同位置的男孩是否匹配
 
 850
 00:41:18,840 --> 00:41:19,000
@@ -4306,7 +4306,7 @@ And at some point, we realized there's recently and we're done,
 862
 00:41:53,070 --> 00:41:55,220
 or there's no matches having a stop early. 
-或者没有比赛可以提前结束
+或者没有比赛可以提前停止
 
 863
 00:41:57,320 --> 00:41:57,450
@@ -4315,8 +4315,8 @@ Right?
 
 864
 00:41:57,460 --> 00:42:01,810
-So this is a different way to think about how to evaluate two poles. 
-所以这是一种不同的方式来思考如何评估两极
+So this is a different way to think about how to evaluate tuples. 
+所以这是一种不同的方式来思考如何评估元组
 
 865
 00:42:01,820 --> 00:42:03,670
@@ -4330,13 +4330,13 @@ for every single tubal apply a predicate.
 
 867
 00:42:05,890 --> 00:42:08,280
-Now we're looking a batch of two balls all at once, 
-现在我们一次看一批两个球
+Now we're looking a batch of tuples all at once, 
+现在 我们一次查找一批元组
 
 868
 00:42:08,850 --> 00:42:13,530
 while we're doing this by bit across all of them. 
-同时我们在所有的球上做这个
+同时在所有元组中逐位执行此操作
 
 869
 00:42:18,990 --> 00:42:20,810
@@ -4456,7 +4456,7 @@ and then having a four lip looking at every single tube one by one,
 892
 00:43:14,810 --> 00:43:16,610
 you go across these bit slices. 
-你穿过这些位片
+你可以检查这些位片
 
 893
 00:43:16,970 --> 00:43:18,000
@@ -4636,17 +4636,17 @@ This is sort of assuming once it's in memory,
 928
 00:44:47,770 --> 00:44:53,200
 can you quickly rip through the the data that is in memory
-一旦它在内存中
+一旦它在内存中 你可以快速通过内存中的数据
 
 929
 00:44:53,210 --> 00:44:54,400
 without having to go
-你可以快速通过内存中的数据而不必去吗
+而不必去吗
 
 930
 00:44:55,800 --> 00:44:59,110
-without having to go one tube up by tube or attribute and advocate, 
-不需要一管一管地往上走 也不需要属性和宣传
+without having to go one tuple by tuple or attribute and attribute, 
+无需逐个元组或逐个属性
 
 931
 00:45:01,300 --> 00:45:02,280
@@ -4686,7 +4686,7 @@ I don't need to read anything else because I had these bit sliced indexes filter
 938
 00:45:19,810 --> 00:45:23,290
 Then I end up reading less data in total, and that's great.
-然后我最终读取的数据总量减少了 这很好
+那么我最终读取的数据总量就会减少 这很好
 
 939
 00:45:25,630 --> 00:45:25,950
@@ -4850,8 +4850,8 @@ So this idea first came from university of wisconsin,
 
 971
 00:47:04,220 --> 00:47:07,220
-and it was implemented in a o lab. 
-并在一个实验室中实现
+and it was implemented in a olap. 
+并在OLAP中实现
 
 972
 00:47:07,470 --> 00:47:08,990
@@ -4861,17 +4861,17 @@ A better lab engine called quick step.
 973
 00:47:09,310 --> 00:47:11,880
 Think of like duct db before duct db which isn't called quick step, 
-想想管道数据库之前的管道数据库 它不叫快速步骤
+想想ductdb之前的ductdb
 
 974
 00:47:11,890 --> 00:47:14,520
-but it didn't have sequel, didn't have a parser, didn't have a query planar.
-但它没有sequel 没有解析器 没有查询平面
+but it didn't have sql, didn't have a parser, didn't have a query planar.
+它不叫quickstep 但它没有sql 没有解析器 没有查询平面
 
 975
 00:47:15,170 --> 00:47:17,560
-It was like rock stevie, but for analytics,
-这就像罗克·史蒂维 但用于分析
+It was like rockdb, but for analytics,
+它就像rockdb 但用于分析
 
 976
 00:47:17,770 --> 00:47:19,430
@@ -5130,8 +5130,8 @@ Right?
 
 1027
 00:49:28,590 --> 00:49:31,350
-So say we have our two poles here. 
-所以说我们在这里有两个极点
+So say we have our tuples here. 
+假设我们在这里有元组
 
 1028
 00:49:33,470 --> 00:49:35,620
@@ -5166,22 +5166,22 @@ We would know how many values we need to store.
 1034
 00:49:54,740 --> 00:49:57,090
 We're going to represent them in sort of this, 
-我们将用这种方式来表示它们 以一种编织的方式
+我们将以这种方式表示它们
 
 1035
 00:49:57,830 --> 00:50:04,140
 a in a weaved manner where we were stored in the continuous memory
-我们被存储在连续的记忆中
+以一种编织的方式 我们存储在连续内存中 将会有间隙
 
 1036
 00:50:04,150 --> 00:50:05,700
 will be have gaps where we
-将会有间隙
+我们将返回
 
 1037
 00:50:05,710 --> 00:50:08,060
-would come back around and get the next batch of two balls. 
-我们会回来并得到下一批两个球
+would come back around and get the next batch of tuples. 
+并获得下一批元组
 
 1038
 00:50:08,820 --> 00:50:09,910
@@ -5361,7 +5361,7 @@ Back in the 80s, I think arm is 32 bits.
 1073
 00:51:36,320 --> 00:51:38,810
 It doesn't matter to, for simplicity, we're using this.
-这并不重要 为了简单起见 我们使用这个
+为了简单起见 我们使用这个并不重要
 
 1074
 00:51:43,730 --> 00:51:43,900
@@ -5385,8 +5385,8 @@ Select start from table where value is less than five.
 
 1078
 00:51:52,860 --> 00:51:57,140
-We're just going to deal with just two poles like t one and t four I that I
-我们只需要处理两个极点 就像我在返回之前展示的t1和t4
+We're just going to deal with just two tuples like t one and t four I that I
+我们将只处理两个元组 比如我在返回之前展示的t1和t4
 
 1079
 00:51:57,150 --> 00:51:58,660
@@ -5585,8 +5585,8 @@ of these bit wise comparisons.
 
 1118
 00:53:37,250 --> 00:53:40,170
-So again, nothing i'm showing here is actually, cindy,
-所以 我在这里展示的都不是真的 辛迪
+So again, nothing i'm showing here is actually, SIMD,
+所以 我在这里展示的东西实际上都不是SIMD
 
 1119
 00:53:41,210 --> 00:53:43,090
@@ -5620,13 +5620,13 @@ This is pretty cool.
 
 1125
 00:53:55,990 --> 00:53:57,580
-Again, the1970s, cindy,
+Again, the1970s, SIMD,
 同样 在20世纪70年代
 
 1126
 00:53:57,590 --> 00:54:01,160
-I think cindy existed theoretically with flints taxonomy. 
-辛迪 我认为辛迪理论上存在于弗林特的分类法中
+I think SIMD existed theoretically with flints taxonomy. 
+simd 我认为simd理论上存在于弗林特的分类法中
 
 1127
 00:54:01,430 --> 00:54:03,500
@@ -5680,8 +5680,8 @@ we just have a one and a zero to say this match.
 
 1137
 00:54:32,770 --> 00:54:35,120
-We've got to convert this back into what is the offset of the tube bowl. 
-我们必须把它转换回管碗的偏移量
+We've got to convert this back into what is the offset of the tuple. 
+我们必须将其转换回元组的偏移量
 
 1138
 00:54:35,130 --> 00:54:37,300
@@ -5746,7 +5746,7 @@ This is why they're assuming they're dictionary encoded in order preserving.
 1150
 00:55:12,130 --> 00:55:13,480
 So again, these are a bunch of,
-再一次 这些是一堆
+所以 这些是一堆
 
 1151
 00:55:14,280 --> 00:55:15,920
@@ -5756,7 +5756,7 @@ say, the state codes in the united states.
 1152
 00:55:16,350 --> 00:55:17,840
 You could represent that in these bits. 
-你可以用这些位来表示
+你可以用这些比特来表示
 
 1153
 00:55:19,770 --> 00:55:21,920
@@ -5826,12 +5826,12 @@ in the list.
 1166
 00:55:57,710 --> 00:56:00,250
 Then now when you combine these together, 
-然后现在当你把这些结合在一起时
+然后现在当你把这些组合在一起时
 
 1167
 00:56:00,570 --> 00:56:03,830
-then you end up with a bit map that says what tubal actually matched. 
-你最终会得到一个位图 说明输卵管实际上匹配的是什么
+then you end up with a bit map that says what tuple actually matched. 
+你最终会得到一个位图 它说明了什么元组实际上匹配
 
 1168
 00:56:05,070 --> 00:56:08,750
@@ -6186,7 +6186,7 @@ I don't, I don't know whether they actually implemented this in quick step.
 1238
 01:00:00,060 --> 01:00:01,410
 No, the system I know, actually does this.
-不 我知道的系统 实际上是这样做的
+不 我所知道的系统 实际上是这样的
 
 1239
 01:00:01,730 --> 01:00:04,500
@@ -6205,8 +6205,8 @@ You guys read same thing as before.
 
 1242
 01:00:10,850 --> 01:00:14,520
-We're going to split our two balls up into segments or row groups. 
-我们将把两个球分成多个部分或行组
+We're going to split our tuples up into segments or row groups. 
+我们将把元组拆分为段或行组
 
 1243
 01:00:15,210 --> 01:00:18,770
@@ -6235,8 +6235,8 @@ And each segment will store those bits.
 
 1248
 01:00:33,750 --> 01:00:38,330
-In this case here, even though the second segment only has 22poles,
-在这种情况下 即使第二段只有22个极点
+In this case here, even though the second segment only has 2 tuples,
+在这种情况下 即使第二段只有2个元组
 
 1249
 01:00:38,610 --> 01:00:43,180
@@ -6265,18 +6265,18 @@ When we want to start doing evaluating two balls, we can use.
 
 1254
 01:00:58,340 --> 01:00:58,930
-Now, cindy,
+Now, SIMD,
 现在
 
 1255
 01:00:59,610 --> 01:01:01,610
-to compare two balls, i'm sorry,
-辛迪 要比较两个球
+to compare tuples, i'm sorry,
+simd 比较元组
 
 1256
 01:01:01,620 --> 01:01:07,870
 to compare bits on a bit by bit basis within the value that we're looking for. 
-我很抱歉 要在我们正在寻找的价值范围内逐位比较
+我很抱歉 在我们正在寻找的值内逐位比较位
 
 1257
 01:01:09,070 --> 01:01:11,860
@@ -6410,8 +6410,8 @@ So this is basically bit slicing,
 
 1283
 01:02:20,500 --> 01:02:23,860
-but a way to do it with sigm d efficiently. 
-但这是一种使用SIGM D高效完成的方法
+but a way to do it with SIMD efficiently. 
+但这是一种使用SIMD高效实现的方法
 
 1284
 01:02:27,300 --> 01:02:27,700
@@ -6426,12 +6426,12 @@ In the case,
 1286
 01:02:32,420 --> 01:02:34,570
 in the horizontal coding, we can't do early pruning,
-在水平编码中 我们不能进行早期修剪
+在水平编码中 我们不能进行早期剪枝
 
 1287
 01:02:35,430 --> 01:02:38,090
-because we had to always look at the whole two balls, 
-因为我们必须始终查看整个两个球
+because we had to always look at the whole tuples, 
+因为我们必须始终查看整个元组
 
 1288
 01:02:38,100 --> 01:02:41,420
@@ -6455,8 +6455,8 @@ Is this different from this place?
 
 1292
 01:02:48,860 --> 01:02:51,510
-It's just showing you how to do it with cindy. 
-它只是向你展示如何与辛迪合作
+It's just showing you how to do it with SIMD. 
+它只是向您展示如何使用SIMD
 
 1293
 01:02:57,410 --> 01:02:57,940
@@ -6490,8 +6490,8 @@ Right?
 
 1299
 01:03:13,490 --> 01:03:19,360
-In this case here, we're able to examine82 poles with two instructions.
-在这种情况下 我们可以用两个指令来检查82个极点
+In this case here, we're able to examine 8 tuples with two instructions.
+在本例中 我们可以用两条指令检查8个元组
 
 1300
 01:03:20,300 --> 01:03:20,900
@@ -6505,8 +6505,8 @@ It's amazing.
 
 1302
 01:03:24,090 --> 01:03:28,240
-Again, if you had to do a scruncher scan with a for loop and evaluate2+1×1,
-同样 如果您必须使用for循环和evaluate2+1×1执行scruncher扫描
+Again, if you had to do a sequential scan with a for loop and evaluate tuples one by one,
+同样 如果您必须使用for循环执行顺序扫描并逐个计算元组
 
 1303
 01:03:28,710 --> 01:03:29,890
@@ -6525,13 +6525,13 @@ It's not entirely true.
 
 1306
 01:03:33,110 --> 01:03:34,220
-I it's two sydney instructions, 
-这是两个悉尼的指示
+I it's two SIMD instructions, 
+这是两条SIMD指令
 
 1307
 01:03:34,230 --> 01:03:36,260
 but there's instructions to get things in and out of the registers. 
-但有指示把东西从收银机里拿进拿出
+但有指令可以让东西进出寄存器
 
 1308
 01:03:36,270 --> 01:03:37,020
@@ -6640,8 +6640,8 @@ and it says something it matches, I know it matches.
 
 1329
 01:04:30,480 --> 01:04:34,070
-And i'll have to go double check on the actual tube and make sure I
-我得再检查一遍实际的试管
+And i'll have to go double check on the actual tuple and make sure I
+我必须仔细检查实际的元组
 
 1330
 01:04:34,080 --> 01:04:34,910
@@ -6806,12 +6806,12 @@ or not.
 1362
 01:06:05,090 --> 01:06:07,860
 And again, if I get a one here or one over here,
-再一次 如果我在这里或这里得到一个1
+同样 如果我在这里或这里得到一个1
 
 1363
 01:06:08,160 --> 01:06:11,240
-I got to go check the original two poles and see whether it's
-我必须去检查原来的两个极点
+I got to go check the original tuples and see whether it's
+我必须去检查原始元组
 
 1364
 01:06:11,250 --> 01:06:12,000
@@ -6851,12 +6851,12 @@ It's the same as it's like a bloom filter.
 1371
 01:06:27,060 --> 01:06:30,030
 A without, I guess,
-我想
+没有 我想
 
 1372
 01:06:30,040 --> 01:06:34,160
 a any sort of false positive rate guarantees or things like that. 
-没有任何形式的误报率保证或类似的东西
+任何形式的误报率保证或类似的东西
 
 1373
 01:06:35,420 --> 01:06:37,780
@@ -7041,7 +7041,7 @@ I can just do that look ups and avoid having to go read things I don't need.
 1409
 01:08:24,340 --> 01:08:26,010
 Here's a high level overview how it works. 
-这里有一个高层次的概述 它是如何工作的
+这里是一个高层次的概述它是如何工作的
 
 1410
 01:08:26,230 --> 01:08:27,480
@@ -7096,7 +7096,7 @@ equivalent.
 1420
 01:08:50,740 --> 01:08:54,640
 You want the you don't have one range, 
-你想要你没有一个范围
+你想你没有一个范围
 
 1421
 01:08:54,650 --> 01:08:55,680
@@ -7406,7 +7406,7 @@ So his statement is,
 1482
 01:12:01,960 --> 01:12:03,570
 when I talked about the hierarchical encoding, 
-当我谈到层次编码时
+当我谈到分层编码时
 
 1483
 01:12:03,580 --> 01:12:07,260
@@ -7421,7 +7421,7 @@ all the bits that was just trying to find the matches from the bits,
 1485
 01:12:10,510 --> 01:12:12,540
 like when they were set to one, 
-就像当它们被设置为1时
+比如当它们被设置为1时
 
 1486
 01:12:12,790 --> 01:12:16,780
@@ -7451,7 +7451,7 @@ Then for the ones that are 01,
 1491
 01:12:29,910 --> 01:12:32,020
 it depends on what the query actually needs. 
-这取决于查询实际需要什么
+它取决于查询实际需要什么
 
 1492
 01:12:32,620 --> 01:12:35,060
@@ -7466,7 +7466,7 @@ and the actual the data itself.
 1494
 01:12:37,520 --> 01:12:38,670
 You would scan this thing first, 
-你应该先扫描这个东西
+你会先扫描这个东西
 
 1495
 01:12:38,680 --> 01:12:39,750
@@ -7545,8 +7545,8 @@ is it 00 you're going to have to do?
 
 1510
 01:13:19,730 --> 01:13:25,590
-The his statement is11 of the organizations you would get is
-他的陈述是你会得到的11个组织
+The his statement is one of the organizations you would get is
+他的声明是你会得到的组织之一
 
 1511
 01:13:27,940 --> 01:13:30,390
@@ -7636,12 +7636,12 @@ Bit map indexes are more common in the sort of the enterprise row stores honestl
 1528
 01:14:19,660 --> 01:14:20,980
 Postcards lessons themselves enterprise, 
-明信片课程本身是企业
+明信片本身就是企业的课程
 
 1529
 01:14:20,990 --> 01:14:23,430
-but I like the oracles and sequel servers, 
-但我喜欢神谕和续集服务器
+but I like the oracles and sql servers, 
+但我喜欢甲骨文和SQL服务器
 
 1530
 01:14:23,440 --> 01:14:24,510
@@ -7706,12 +7706,12 @@ We ignore that.
 1542
 01:14:49,690 --> 01:14:55,020
 And then our verte index is just like a mapping from a word or an n graham
-然后我们的verte索引就像是从文本字段中的一个单词或一个n
+然后
 
 1543
 01:14:55,030 --> 01:14:57,750
-within a text field to the extra tubes that match. 
-graham到匹配的额外管道的映射
+within a text field to the extra tuples that match. 
+我们的Verte索引就像是从文本字段中的单词或N Graham到匹配的额外元组的映射
 
 1544
 01:15:01,300 --> 01:15:01,850
@@ -7725,8 +7725,8 @@ We'll talk about data compression.
 
 1546
 01:15:03,700 --> 01:15:05,290
-We'll spend most of the time talking about two poles. 
-我们将花大部分时间讨论两极
+We'll spend most of the time talking about tuples. 
+我们将花大部分时间讨论元组
 
 1547
 01:15:05,690 --> 01:15:09,490
@@ -7830,13 +7830,13 @@ rather than always go into their internal base tables.
 
 1567
 01:16:17,770 --> 01:16:20,000
-There's foreign data rappers to read csv files, 
-有外国数据说唱歌手读取CSV文件
+There's foreign data wrappers to read csv files, 
+有外部数据包装器来读取CSV文件
 
 1568
 01:16:20,620 --> 01:16:21,960
-foreign data rappers to read. 
-外国数据说唱歌手读取
+foreign data wrapper to read. 
+外部数据包装器来读取
 
 1569
 01:16:23,120 --> 01:16:25,150
@@ -7890,13 +7890,13 @@ But again,
 
 1579
 01:16:43,710 --> 01:16:45,780
-from the segal perspective, it looks like a regular table,
-从segal的角度来看 它看起来就像一个普通的表
+from the sql perspective, it looks like a regular table,
+从sql的角度来看 它看起来就像一个普通的表
 
 1580
 01:16:45,790 --> 01:16:47,140
 even though it's going to go through your code. 
-尽管它要遍历您的代码
+即使它要通过你的代码
 
 1581
 01:16:48,630 --> 01:16:51,370
@@ -7911,7 +7911,7 @@ because you could use that for project three,
 1583
 01:16:53,670 --> 01:16:56,510
 but also to actually implement the things that we're talking
-但也可以实际实现我们今天在课堂上讨论的东西
+而且还可以实际实现我们今天在课堂上讨论的东西
 
 1584
 01:16:56,520 --> 01:16:59,960
@@ -8105,8 +8105,8 @@ I understand what the offsets are.
 
 1622
 01:18:27,940 --> 01:18:30,180
-Know how to put two bulls back together. 
-知道如何把两头牛重新组合起来
+Know how to put tuples back together. 
+知道如何将元组重新组合在一起
 
 1623
 01:18:30,790 --> 01:18:36,200
@@ -8135,8 +8135,8 @@ and then instructions on the website how to actually compile and then link
 
 1628
 01:18:46,100 --> 01:18:47,250
-it into progress. 
-然后将其链接到进度中
+it into postgres. 
+然后将其链接到Postgres
 
 1629
 01:18:48,820 --> 01:18:53,020
@@ -8145,18 +8145,18 @@ And then the last step is then you want to actually support predicate evaluation
 
 1630
 01:18:53,430 --> 01:18:54,570
-So you can have postgraduates, 
-所以你可以有研究生
+So you can have postgres, 
+所以你可以有Postgres
 
 1631
 01:18:54,580 --> 01:18:55,810
-take the where calls. 
-接电话
+take the where clause. 
+使用WHERE子句
 
 1632
 01:18:56,170 --> 01:18:58,450
 We're not trying to support all everything you can possibly do in a where clause, 
-我们并没有试图支持你在where子句中可能做的所有事情
+我们并不试图支持你在where子句中可能做的所有事情
 
 1633
 01:18:58,930 --> 01:19:03,310
@@ -8436,7 +8436,7 @@ right?
 1688
 01:21:26,100 --> 01:21:26,890
 Any questions? 
-有什么问题吗
+有问题吗
 
 1689
 01:21:27,700 --> 01:21:29,890

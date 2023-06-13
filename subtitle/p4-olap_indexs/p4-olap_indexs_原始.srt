@@ -1960,7 +1960,7 @@ if it's a auto increment key or serial key,
 
 491
 00:23:48,160 --> 00:23:51,550
-where every two pole has had a unique value. 
+where every tuple has had a unique value. 
 
 492
 00:23:51,850 --> 00:23:52,610
@@ -2136,7 +2136,7 @@ His statement is this only works for categorical variables of values,
 
 535
 00:26:04,210 --> 00:26:05,900
-which is the same thing, as she saying in e num.
+which is the same thing, as she saying in enum.
 
 536
 00:26:06,650 --> 00:26:10,930
@@ -2144,7 +2144,7 @@ I will say through our analysis of schemers,
 
 537
 00:26:11,370 --> 00:26:14,050
-most people don't, there's like edoms are super rare,
+most people don't, there's like enum are super rare,
 
 538
 00:26:14,910 --> 00:26:14,950
@@ -2364,7 +2364,7 @@ This sort of naive scheme was like,
 
 592
 00:28:46,150 --> 00:28:51,460
-let's just create giant bit maps for the entire length of all the two poles, 
+let's just create giant bit maps for the entire length of all the tuples, 
 
 593
 00:28:51,710 --> 00:28:55,380
@@ -2532,7 +2532,7 @@ Again, the human has to specify these ranges.
 
 634
 00:31:04,670 --> 00:31:06,860
-As far as I know that no data system can actually automatically figure
+As far as I know that no database system can actually automatically figure
 
 635
 00:31:06,870 --> 00:31:07,980
@@ -2644,7 +2644,7 @@ every or in its bit internal bit map.
 
 662
 00:32:31,360 --> 00:32:32,770
-And then every no, 
+And then every node, 
 
 663
 00:32:32,780 --> 00:32:33,970
@@ -3140,7 +3140,7 @@ For this one, again,
 
 786
 00:38:04,430 --> 00:38:09,190
-we're going to have our original table is going to have this idid field. 
+we're going to have our original table is going to have this id field. 
 
 787
 00:38:09,680 --> 00:38:11,570
@@ -3328,7 +3328,7 @@ of the attribute.
 
 833
 00:40:25,700 --> 00:40:27,650
-Here's all the bits for all the two poles. 
+Here's all the bits for all the tuples. 
 
 834
 00:40:29,630 --> 00:40:31,580
@@ -3452,7 +3452,7 @@ Right?
 
 864
 00:41:57,460 --> 00:42:01,810
-So this is a different way to think about how to evaluate two poles. 
+So this is a different way to think about how to evaluate tuples. 
 
 865
 00:42:01,820 --> 00:42:03,670
@@ -3464,7 +3464,7 @@ for every single tubal apply a predicate.
 
 867
 00:42:05,890 --> 00:42:08,280
-Now we're looking a batch of two balls all at once, 
+Now we're looking a batch of tuples all at once, 
 
 868
 00:42:08,850 --> 00:42:13,530
@@ -3716,7 +3716,7 @@ without having to go
 
 930
 00:44:55,800 --> 00:44:59,110
-without having to go one tube up by tube or attribute and advocate, 
+without having to go one tuple by tuple or attribute and attribute, 
 
 931
 00:45:01,300 --> 00:45:02,280
@@ -3880,7 +3880,7 @@ So this idea first came from university of wisconsin,
 
 971
 00:47:04,220 --> 00:47:07,220
-and it was implemented in a o lab. 
+and it was implemented in a olap. 
 
 972
 00:47:07,470 --> 00:47:08,990
@@ -3892,11 +3892,11 @@ Think of like duct db before duct db which isn't called quick step,
 
 974
 00:47:11,890 --> 00:47:14,520
-but it didn't have sequel, didn't have a parser, didn't have a query planar.
+but it didn't have sql, didn't have a parser, didn't have a query planar.
 
 975
 00:47:15,170 --> 00:47:17,560
-It was like rock stevie, but for analytics,
+It was like rockdb, but for analytics,
 
 976
 00:47:17,770 --> 00:47:19,430
@@ -4104,7 +4104,7 @@ Right?
 
 1027
 00:49:28,590 --> 00:49:31,350
-So say we have our two poles here. 
+So say we have our tuples here. 
 
 1028
 00:49:33,470 --> 00:49:35,620
@@ -4144,7 +4144,7 @@ will be have gaps where we
 
 1037
 00:50:05,710 --> 00:50:08,060
-would come back around and get the next batch of two balls. 
+would come back around and get the next batch of tuples. 
 
 1038
 00:50:08,820 --> 00:50:09,910
@@ -4308,7 +4308,7 @@ Select start from table where value is less than five.
 
 1078
 00:51:52,860 --> 00:51:57,140
-We're just going to deal with just two poles like t one and t four I that I
+We're just going to deal with just two tuples like t one and t four I that I
 
 1079
 00:51:57,150 --> 00:51:58,660
@@ -4468,7 +4468,7 @@ of these bit wise comparisons.
 
 1118
 00:53:37,250 --> 00:53:40,170
-So again, nothing i'm showing here is actually, cindy,
+So again, nothing i'm showing here is actually, SIMD,
 
 1119
 00:53:41,210 --> 00:53:43,090
@@ -4496,11 +4496,11 @@ This is pretty cool.
 
 1125
 00:53:55,990 --> 00:53:57,580
-Again, the1970s, cindy,
+Again, the1970s, SIMD,
 
 1126
 00:53:57,590 --> 00:54:01,160
-I think cindy existed theoretically with flints taxonomy. 
+I think SIMD existed theoretically with flints taxonomy. 
 
 1127
 00:54:01,430 --> 00:54:03,500
@@ -4544,7 +4544,7 @@ we just have a one and a zero to say this match.
 
 1137
 00:54:32,770 --> 00:54:35,120
-We've got to convert this back into what is the offset of the tube bowl. 
+We've got to convert this back into what is the offset of the tuple. 
 
 1138
 00:54:35,130 --> 00:54:37,300
@@ -4664,7 +4664,7 @@ Then now when you combine these together,
 
 1167
 00:56:00,570 --> 00:56:03,830
-then you end up with a bit map that says what tubal actually matched. 
+then you end up with a bit map that says what tuple actually matched. 
 
 1168
 00:56:05,070 --> 00:56:08,750
@@ -4964,7 +4964,7 @@ You guys read same thing as before.
 
 1242
 01:00:10,850 --> 01:00:14,520
-We're going to split our two balls up into segments or row groups. 
+We're going to split our tuples up into segments or row groups. 
 
 1243
 01:00:15,210 --> 01:00:18,770
@@ -4988,7 +4988,7 @@ And each segment will store those bits.
 
 1248
 01:00:33,750 --> 01:00:38,330
-In this case here, even though the second segment only has 22poles,
+In this case here, even though the second segment only has 2 tuples,
 
 1249
 01:00:38,610 --> 01:00:43,180
@@ -5012,11 +5012,11 @@ When we want to start doing evaluating two balls, we can use.
 
 1254
 01:00:58,340 --> 01:00:58,930
-Now, cindy,
+Now, SIMD,
 
 1255
 01:00:59,610 --> 01:01:01,610
-to compare two balls, i'm sorry,
+to compare tuples, i'm sorry,
 
 1256
 01:01:01,620 --> 01:01:07,870
@@ -5128,7 +5128,7 @@ So this is basically bit slicing,
 
 1283
 01:02:20,500 --> 01:02:23,860
-but a way to do it with sigm d efficiently. 
+but a way to do it with SIMD efficiently. 
 
 1284
 01:02:27,300 --> 01:02:27,700
@@ -5144,7 +5144,7 @@ in the horizontal coding, we can't do early pruning,
 
 1287
 01:02:35,430 --> 01:02:38,090
-because we had to always look at the whole two balls, 
+because we had to always look at the whole tuples, 
 
 1288
 01:02:38,100 --> 01:02:41,420
@@ -5164,7 +5164,7 @@ Is this different from this place?
 
 1292
 01:02:48,860 --> 01:02:51,510
-It's just showing you how to do it with cindy. 
+It's just showing you how to do it with SIMD. 
 
 1293
 01:02:57,410 --> 01:02:57,940
@@ -5192,7 +5192,7 @@ Right?
 
 1299
 01:03:13,490 --> 01:03:19,360
-In this case here, we're able to examine82 poles with two instructions.
+In this case here, we're able to examine 8 tuples with two instructions.
 
 1300
 01:03:20,300 --> 01:03:20,900
@@ -5204,7 +5204,7 @@ It's amazing.
 
 1302
 01:03:24,090 --> 01:03:28,240
-Again, if you had to do a scruncher scan with a for loop and evaluate2+1×1,
+Again, if you had to do a sequential scan with a for loop and evaluate tuples one by one,
 
 1303
 01:03:28,710 --> 01:03:29,890
@@ -5220,7 +5220,7 @@ It's not entirely true.
 
 1306
 01:03:33,110 --> 01:03:34,220
-I it's two sydney instructions, 
+I it's two SIMD instructions, 
 
 1307
 01:03:34,230 --> 01:03:36,260
@@ -5312,7 +5312,7 @@ and it says something it matches, I know it matches.
 
 1329
 01:04:30,480 --> 01:04:34,070
-And i'll have to go double check on the actual tube and make sure I
+And i'll have to go double check on the actual tuple and make sure I
 
 1330
 01:04:34,080 --> 01:04:34,910
@@ -5448,7 +5448,7 @@ And again, if I get a one here or one over here,
 
 1363
 01:06:08,160 --> 01:06:11,240
-I got to go check the original two poles and see whether it's
+I got to go check the original tuples and see whether it's
 
 1364
 01:06:11,250 --> 01:06:12,000
@@ -6036,7 +6036,7 @@ is it 00 you're going to have to do?
 
 1510
 01:13:19,730 --> 01:13:25,590
-The his statement is11 of the organizations you would get is
+The his statement is one of the organizations you would get is
 
 1511
 01:13:27,940 --> 01:13:30,390
@@ -6112,7 +6112,7 @@ Postcards lessons themselves enterprise,
 
 1529
 01:14:20,990 --> 01:14:23,430
-but I like the oracles and sequel servers, 
+but I like the oracles and sql servers, 
 
 1530
 01:14:23,440 --> 01:14:24,510
@@ -6168,7 +6168,7 @@ And then our verte index is just like a mapping from a word or an n graham
 
 1543
 01:14:55,030 --> 01:14:57,750
-within a text field to the extra tubes that match. 
+within a text field to the extra tuples that match. 
 
 1544
 01:15:01,300 --> 01:15:01,850
@@ -6180,7 +6180,7 @@ We'll talk about data compression.
 
 1546
 01:15:03,700 --> 01:15:05,290
-We'll spend most of the time talking about two poles. 
+We'll spend most of the time talking about tuples. 
 
 1547
 01:15:05,690 --> 01:15:09,490
@@ -6264,11 +6264,11 @@ rather than always go into their internal base tables.
 
 1567
 01:16:17,770 --> 01:16:20,000
-There's foreign data rappers to read csv files, 
+There's foreign data wrappers to read csv files, 
 
 1568
 01:16:20,620 --> 01:16:21,960
-foreign data rappers to read. 
+foreign data wrapper to read. 
 
 1569
 01:16:23,120 --> 01:16:25,150
@@ -6312,7 +6312,7 @@ But again,
 
 1579
 01:16:43,710 --> 01:16:45,780
-from the segal perspective, it looks like a regular table,
+from the sql perspective, it looks like a regular table,
 
 1580
 01:16:45,790 --> 01:16:47,140
@@ -6484,7 +6484,7 @@ I understand what the offsets are.
 
 1622
 01:18:27,940 --> 01:18:30,180
-Know how to put two bulls back together. 
+Know how to put tuples back together. 
 
 1623
 01:18:30,790 --> 01:18:36,200
@@ -6508,7 +6508,7 @@ and then instructions on the website how to actually compile and then link
 
 1628
 01:18:46,100 --> 01:18:47,250
-it into progress. 
+it into postgres. 
 
 1629
 01:18:48,820 --> 01:18:53,020
@@ -6516,11 +6516,11 @@ And then the last step is then you want to actually support predicate evaluation
 
 1630
 01:18:53,430 --> 01:18:54,570
-So you can have postgraduates, 
+So you can have postgres, 
 
 1631
 01:18:54,580 --> 01:18:55,810
-take the where calls. 
+take the where clause. 
 
 1632
 01:18:56,170 --> 01:18:58,450
